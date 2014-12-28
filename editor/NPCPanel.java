@@ -87,7 +87,8 @@ public class NPCPanel extends JPanel implements ActionListener {
 					} else {
 						JOptionPane.showMessageDialog(this, "Gewählte Datei enthält ist keine NPC-Datei.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-						
+					
+					ois.close();
 					
 				} catch (FileNotFoundException e1) {
 					//Da das File von einem FileChooser kommt, sollte das nicht passieren.

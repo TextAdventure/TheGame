@@ -49,7 +49,7 @@ public class OrtAllgemeinPanel extends JPanel {
 		south.add(p, BorderLayout.NORTH);
 		
 		p = new JPanel(new BorderLayout());
-		this.beschreibung = new JTextArea(ort.getBeschreibung());
+		this.beschreibung = new JTextArea(ort.getDescription());
 		beschreibung.setSize(beschreibung.getMaximumSize());
 		beschreibung.setLineWrap(true);
 		scroll = new JScrollPane(this.beschreibung);

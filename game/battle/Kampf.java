@@ -17,7 +17,7 @@ public class Kampf implements Serializable {
 	// Alle Gegner, die in diesem Kampf erscheinen.
 	private Entity[] gegner;
 	transient private Entity[] kampf; // Mit den Buchstaben.
-	
+
 	/**
 	 * Ein Kampf hat eine wahrscheinlichkeit fuer sein auftreten und eine gewisse Anzahl an Gegner.
 	 * @param wahrscheinlichkeit Die Wahrscheinlichkeit dafuer, ob ein Kampf stattfindet.

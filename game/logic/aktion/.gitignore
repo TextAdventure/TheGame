@@ -1,0 +1,15 @@
+/Aktion.class
+/AusgabeAktion.class
+/OrtAddAusgangAktion.class
+/OrtAddGegenstandAktion.class
+/OrtAddKommandoGegenstandAktion.class
+/OrtAddUntersuchbaresObjektAktion.class
+/OrtRemoveAusgangAktion.class
+/OrtRemoveUntersuchbaresObjektAktion.class
+/OrtSetBeschreibungAktion.class
+/OrtSetNamenAktion.class
+/RuesteAusAktion.class
+/SpielerAddFaehigkeitAktion.class
+/SpielerAddGegenstandAktion.class
+/SpielerRemoveGegenstandAktion.class
+/UntersuchbaresObjektSetBeschreibungAktion.class

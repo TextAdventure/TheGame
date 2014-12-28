@@ -1,6 +1,6 @@
 package editor;
 
-import game.Gegenstand;
+import game.items.Gegenstand;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -59,7 +59,7 @@ public class GegenstandTabelleDialog extends JDialog implements ActionListener {
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
 		WeltObjekt welt = new WeltObjekt();
-		welt.addGegenstand(new Gegenstand(new String[]{"Auto"}, NumerusGenus.NEUTRAL, "ein kleines rotes Auto."));
+		welt.addGegenstand(new Gegenstand(new String[]{"Auto"}, "Autos", NumerusGenus.NEUTRUM, "Ein kleines rotes Auto."));
 		
 		new GegenstandTabelleDialog(welt).setVisible(true);
 	}

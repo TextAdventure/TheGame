@@ -24,7 +24,7 @@ public class AusgangErweitert implements Serializable {
 	Point[] points;
 	boolean von1nach2 = true;
 	boolean von2nach1 = true;
-	int bez_von1nach2 = Ausgang.UNDEFINIERT;
-	int bez_von2nach1 = Ausgang.UNDEFINIERT;
+	int bez_von1nach2 = Ausgang.EIGENE;
+	int bez_von2nach1 = Ausgang.EIGENE;
 	
 }

@@ -1,6 +1,6 @@
 package editor;
 
-import game.Gegenstand;
+import game.items.Gegenstand;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -16,10 +16,10 @@ public class GegenstandTabelle extends JTable {
 		model = new DefaultTableModel(colNames, 0);
 		setModel(model);
 		
-		Gegenstand[] geg = welt.getGegenstaende();
+		Gegenstand[] geg = Gegenstand.GEGENSTAENDE;
 		for(Gegenstand g : geg) {
 			String eigenschaften = "";
-			String[] row = {"", g.getName(), g.getNumGen().toString(), g.getBeschreibung(), eigenschaften};
+			String[] row = {"", g.getName(), g.getNumGen().toString(), g.getDescription(), eigenschaften};
 			model.addRow(row);
 		}	
 		
@@ -27,7 +27,7 @@ public class GegenstandTabelle extends JTable {
 	
 	void addGegenstand(Gegenstand g) {
 		String eigenschaften = "";
-		String[] row = {"", g.getName(), g.getNumGen().toString(), g.getBeschreibung(), eigenschaften};
+		String[] row = {"", g.getName(), g.getNumGen().toString(), g.getDescription(), eigenschaften};
 		model.addRow(row);
 	}
 	

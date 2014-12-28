@@ -38,7 +38,7 @@ public class WorkspaceMouseOrt extends MouseAdapter {
 		if(ide.getSelectedTool() != Tools.NEW_ORT) return;
 		definiereOrt = true;
 		start = evt.getPoint();
-		ort = new OrtErweitert(new Ort("unbenannt"), start, new Dimension(minSize, minSize));
+		ort = new OrtErweitert(new Ort("unbenannt", ""), start, new Dimension(minSize, minSize));
 		welt.addOrt(ort);
 		parent.repaint();
 	}

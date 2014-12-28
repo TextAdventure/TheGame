@@ -85,7 +85,7 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 		p.add(new JLabel("Grammatik. Geschlecht:"));
 		allgemein.add(p, c);		
 		
-		NumerusGenus[] numGenArr = new NumerusGenus[]{NumerusGenus.FEMININ, NumerusGenus.MASKULIN, NumerusGenus.NEUTRAL, NumerusGenus.PLURAL}; 
+		NumerusGenus[] numGenArr = new NumerusGenus[]{NumerusGenus.FEMININ, NumerusGenus.MASKULIN, NumerusGenus.NEUTRUM, NumerusGenus.PLURAL}; 
 		numGen = new JComboBox<NumerusGenus>(numGenArr);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;

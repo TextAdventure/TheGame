@@ -1,6 +1,6 @@
 package editor;
 
-import game.Gegenstand;
+import game.items.Gegenstand;
 
 import java.awt.Point;
 import java.io.Serializable;
