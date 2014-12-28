@@ -1,9 +1,9 @@
 package util;
 
-import game.Inventar;
+import game.items.Inventar;
 
 /**
- * Ein Event, das Invetar an den Listener uebergibt, der dieses dann ausgeben kann 
+ * Ein Event, das Invetar an den Listener uebergibt, der dieses dann ausgeben kann
  */
 public class InventoryEvent {
 	// Das auszugebende Inventar
@@ -13,7 +13,7 @@ public class InventoryEvent {
 	public InventoryEvent(Inventar inventory){
 		this.inventory = inventory;
 	}
-	  
+
 	// Gibt das Inventar zurueck.
 	public Inventar getInventory(){
 		return inventory;

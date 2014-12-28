@@ -6,14 +6,14 @@ package util;
 public class StringEvent {
 	// Das Kommando des Spielers
 	private String command;
-	  
+
 	// Ein neues Event wird mit einem Befehl erstellt.
-	public StringEvent(String command){
+	public StringEvent(String command) {
 		this.command = command;
 	}
-	  
+
 	// Gibt den Befehl zurueck.
-	public String getCommand(){
+	public String getCommand() {
 	    return command;
 	}
 }

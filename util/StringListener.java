@@ -5,5 +5,5 @@ package util;
  */
 public interface StringListener {
 	// Diese Methode muss ueberschrieben werden.
-	public void actionPerformed(StringEvent evt);
+	public abstract void actionPerformed(StringEvent evt);
 }

@@ -28,15 +28,15 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	private static enum Mode {EINFUEGEN, VERVOLLSTAENDIGEN};
 	// Der Modus dieses Eingabefelds.
 	private Mode modus;
-	  
+
 	// Die maximale Laenge des Strings in Pixel, die in das Textfeld passen.
 	private final int maxLaenge;
-	  
+
 	// Die Liste aller bekannten Woerter.
 	private ArrayList<String> woerter;
 	// Die zuletzt eingegebenen Kommandos.
 	private ArrayList<String> kommandos;
-	  
+
 	// Die Nummer des aktuelle Kommando.
 	private int iterator;
 	// Das aktuelle Kommando.
@@ -52,17 +52,17 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	 */
 	public Eingabefeld(GUI gui){
 		this.gui = gui;
-	    
+
 	    this.setSize(690, 20);
-	    
+
 	    maxLaenge = this.getWidth() - 5;
-	    
+
 	    iterator = 0;
 
 	    getDocument().addDocumentListener(this);
-	    
+
 	    woerter = new ArrayList<String>();
-	    
+
 	    kommandos = new ArrayList<String>();
 
 	    // Auto-Vervollstaendigung uebernehmen.
@@ -70,20 +70,20 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    ActionMap ame = getActionMap();
 	    ime.put(KeyStroke.getKeyStroke("ENTER"), "EXE");
 	    ame.put((Object)"EXE", (Action)new AktionAusfuehren());
-	    
+
 	    // Letztes Kommando anzeigen.
 	    InputMap iml = getInputMap();
 	    ActionMap aml = getActionMap();
 	    iml.put(KeyStroke.getKeyStroke("UP"), "LKOM");
 	    aml.put((Object)"LKOM", (Action)new AktionLetztesKommando());
-	    
+
 	    // Naechstes Kommando anzeigen.
 	    InputMap imn = getInputMap();
 	    ActionMap amn = getActionMap();
 	    imn.put(KeyStroke.getKeyStroke("DOWN"), "NKOM");
 	    amn.put((Object)"NKOM", (Action)new AktionNaechstesKommando());
 	}
-	  
+
 	/**
 	 *  Diese Methode gibt ein String aus allen bekannten Woertern zurueck, aufgrund eines Wort Teils.
 	 *  word: das Wort nach dem gesucht wird.
@@ -96,15 +96,15 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    }
 	    return "";
 	}
-	  
+
 	// Die Listener Methoden
-	  
+
 	// @override                nichts tun
 	public void changedUpdate(DocumentEvent evt){}
-	  
+
 	// @override                nichts tun
 	public void removeUpdate(DocumentEvent evt){}
-	  
+
 	// @override
 	public void insertUpdate(DocumentEvent evt){
 		// Wenn die Eingabe zu gross wird, wird sie abgeschnitten.
@@ -116,11 +116,11 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    	// nach Farbe ueberpruefen
 	    	return;
 	    }
-	    
+
 	    // Wird fuer Kommandowechsel benoetigt.
 	    aktuellesKommando = getText();
 	    iterator = 0;
-	    
+
 	    int pos = evt.getOffset();
 	    String text = null;
 	    try{
@@ -142,10 +142,10 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    if(pos - beginn < 2){
 	    	return;
 	    }
-	    
+
 	    // Das Praefix wird in Kleinbuchstaben verglichen.
 	    String praefix = text.substring(beginn + 1);
-	  
+
 	    // Alternative Methode
 	    if(!getWord(praefix.toLowerCase()).equals("")){
 	    	// Die fertige Vervollstaendigung wird gebildet.
@@ -158,12 +158,12 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    }
 	    modus = Mode.EINFUEGEN;
 	}
-	  
+
 	/** @override
 	 *  Immer wenn ein Event auftritt wird das neue Wort ueberprueft und ggf der Liste hinzugefuegt.
 	 */
-	public void actionPerformed(StringEvent evt){
-		if(!woerter.contains(evt.getCommand())){
+	public void actionPerformed(StringEvent evt) {
+		if(!woerter.contains(evt.getCommand())) {
 			woerter.add(evt.getCommand());
 			Collections.sort(woerter);
 	    }
@@ -181,7 +181,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    private int laenge;
 	    // Gibt an, ob ersetzt werden soll.
 	    private boolean ersetzen;
-	    
+
 	    /**
 	     *  Ein neuer Vervollstaendigungs-Auftrag wird erzeugt mit einem Wort und einem Beginn.
 	     *  vervollstaendigung: die Vervollstaendigung, die noch an das Wort angebracht werden muss.
@@ -193,7 +193,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    	this.laenge = laenge;
 	    	this.ersetzen = ersetzen;
 	    }
-	    
+
 	    /**
 	     *  Das Skript, das ausgefuehrt wird.
 	     */
@@ -210,12 +210,12 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    	modus = Mode.VERVOLLSTAENDIGEN;
 	    }
 	}
-	  
+
 	/**
 	 *  Diese Subklasse fuehrt eine Aktion aus, wenn Enter gedrueckt wird.
 	 */
 	private class AktionAusfuehren extends AbstractAction{
-		
+
 		// Die serielle Versionsnummer
 		private static final long serialVersionUID = 1L;
 
@@ -233,9 +233,9 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 			}else{
 				String wort = getText().trim();
 				iterator = 0;
-				
+
 				// Das Kommando wird an das Spiel uebergeben.
-				gui.uebergebBefehl(wort);
+				gui.uebergebeBefehl(wort);
 
 				// Das eingegebene Kommando der Liste hinzufuegen.
 				if(!wort.equals("")){
@@ -257,12 +257,12 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 			}
 		}
 	}
-	  
+
 	/**
 	 *  Diese Subklasse holt das letzte eingegebene Kommando zurueck.
 	 */
 	private class AktionLetztesKommando extends AbstractAction{
-		
+
 		// Die serielle Versionsnummer
 		private static final long serialVersionUID = 1L;
 
@@ -288,10 +288,10 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 				setCaretPosition(0);
 				moveCaretPosition(kommando.length());
 				iterator++;
-			}	
-		}	
+			}
+		}
 	}
-	  
+
 	/**
 	 *  Diese Subklasse holt das naechste eingegebene Kommando zurueck.
 	 */

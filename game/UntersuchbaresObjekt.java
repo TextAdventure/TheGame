@@ -1,86 +1,121 @@
 package game;
 
-import game.bedingung.Bedingung;
-
 import java.io.Serializable;
 
+import util.IPrintable;
 
-public class UntersuchbaresObjekt implements Serializable {
+/**
+ * Ein UntersuchbaresObjekt kann sich der Spieler genauer anschauen, um Informationen darueber zu erhalten.
+ */
+public class UntersuchbaresObjekt implements Serializable, IPrintable {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
+
+	/* --- Die Variablen --- */
 
 	// Der Name des Objekts.
 	private String name;
 	// Die Beschreibung, die bei einer Untersuchung angezeigt wird.
 	private String beschreibung;
+
 	// Gibt an, ob das Objekt bereits untersucht wurde.
 	private boolean untersucht;
-	// Diese Bedingung wird ueberprueft, wenn das Objekt untersucht wird.
-	private Bedingung bedingung;
-	  
+
+	/* --- Der Konstruktor --- */
+
 	/**
-	 *  Mit diesem Konstruktor wird ein neues UntersuchbaresObjekt erstellt.
-	 *  objektName: der Name des Objekts.
-	 *  objektBeschreibung: die Beschreibung des Objekts.
+	 * Erstellt ein neues UntersuchbaresObjekt mit einem Namen und einer Beschreibung.
+	 * @param name Der Name des Objekts.
+	 * @param beschreibung Die Beschreibung des Objekts.
 	 */
-	public UntersuchbaresObjekt(String objektName, String objektBeschreibung){
-	    name = objektName;
-	    beschreibung = objektBeschreibung;
+	public UntersuchbaresObjekt(String name, String beschreibung) {
+	    this.name = name;
+	    this.beschreibung = beschreibung;
 	    untersucht = false;
 	}
-	  
+
+	/* --- Die Methoden --- */
+
+	/* Name */
 	/**
-	 *  Gibt den Namen des Objekts zurueck.
+	 * Gibt den Namen des Objekts zurueck, OHNE Modifikatoren.
+	 * @return Den Namen des Objektes.
 	 */
-	public String getName(){
-	    untersucht = true;
-	    return name;
+	 @Override
+	public String getName() {
+		 String actual = name;
+		 while(name.contains("<c=")) {
+			 actual = name.replaceFirst("</c>", "");
+			 actual = name.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
+		 }
+		 return actual;
 	}
-	  
 	/**
-	 *  Aendert den Namen des Objekts auf den uebergebenen Namen.
-	 *  neuerName: der neue Name fuer das Objekt.
+	 * Gibt den Namen des Objektes zurueck, MIT Modifikatoren.
+	 * @return Den Namen des Objektes.
 	 */
-	public void setName(String neuerName){
-	    name = neuerName;
+	@Override
+	public String getNameExtended() {
+		return name;
 	}
-	  
 	/**
-	 *  Gibt die Beschreibung des Objekt zurueck und prueft die Bedingung, falls vorhanden.
+	 * Aendert den Namen des Objekts auf den uebergebenen Namen und der Untersucht-Status wird zurueckgesetzt.
+	 * @param name Der neue Name des Objekts.
 	 */
-	public String getBeschreibung(){
-	    untersucht = true;	 
+	public void setName(String name) {
+	    this.name = name;
+	    untersucht = false;
+	}
+	/* Beschreibung */
+	/**
+	 * Gibt die Beschreibung des Objekt zurueck.
+	 * @return Die Beschreibung des Objekts.
+	 */
+	@Override
+	public String getDescription() {
 	    return beschreibung;
 	}
-	  
 	/**
-	 *  Aendert die Beschreibung des Objekts auf die uebergebene Beschreibung.
-	 *  neueBeschreibung: die neue Beschreibung fuer das Objekt.
+	 * Aendert die Beschreibung des Objekts auf die uebergebene Beschreibung und der Untersucht-Status wird zurueckgesetzt.
+	 * @param beschreibung Die neue Beschreibung des Objekts.
 	 */
-	public void setBeschreibung(String neueBeschreibung){
-	    beschreibung = neueBeschreibung;
+	public void setBeschreibung(String beschreibung) {
+	    this.beschreibung = beschreibung;
+	    untersucht = false;
 	}
-	  
+	/* Untersucht */
 	/**
-	 *  Gibt zurueck, ob das Objekt bereits untersucht wurde;
+	 * Gibt zurueck, ob das Objekt bereits untersucht wurde.
+	 * @return True, wenn es untersucht wurde, ansonsten false.
 	 */
-	public boolean wurdeUntersucht(){
+	public boolean isUntersucht() {
 	    return untersucht;
 	}
-	
 	/**
-	 * Fuegt eine Bedingung hinzu, die jedesmal ueberprueft wird, wenn das Objekt untersucht wird.
-	 * bedingung: die neue Bedingung, ein UntersachbareObjekt kann aber immer nur eine Bedingung haben.
+	 * Das Objekt wird untersucht, es gibt seinen Namen und Beschreibung zurueck und prueft die Bedingung, damit wurde es untersucht.
+	 * @return Der Name und die Beschreibung des Objekts.
 	 */
-	public void addBedingung(Bedingung bedingung){
-		this.bedingung = bedingung;
+	public String untersuchen() {
+		untersucht = true;
+		return name + "#" + beschreibung;
 	}
-	
-	/**
-	 * Ueberprueft die Bedingung.
-	 */
-	public void pruefen(){
-		if(bedingung != null) bedingung.pruefen();
+
+
+	@Override
+	public String getParam(String param) {
+		switch (param) {
+		case("name"): return getName();
+		case("nameExt"): return getNameExtended();
+		case("besucht"): return isUntersucht() ? "wahr" : "falsch";
+		}
+		return null;
 	}
+
+	@Override
+	public String[] getParams() {
+		return new String[] {"name", "nameExt", "besucht"};
+	}
+
+
 }

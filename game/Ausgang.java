@@ -3,61 +3,63 @@ package game;
 import java.io.Serializable;
 
 /**
- *  Diese Klasse repraesentiert den Ausgang auseinem Ort zum naechsten.
+ * Diese Klasse repraesentiert den Ausgang von einem Ort zu einem anderen.
  */
 public class Ausgang implements Serializable {
-	// Die serielle Versionsnummer
+
+	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	// Die Statischen int Werte fuer die Richtungen des Ausgangs.
-	// Der int-Wert fuer einen Ausgang, der keine Richtung.
-	public static final int UNDEFINIERT = 0;
+	/* --- Die statischen Konstanten --- */
 
-	// Der int-Wert fuer einen Ausgang in Richtung Osten.
-	public static final int OSTEN = 1;
-	// Der int-Wert fuer einen Ausgang in Richtung Suedosten.
-	public static final int SUEDOSTEN = 2;
-	// Der int-Wert fuer einen Ausgang in Richtung Sueden.
-	public static final int SUEDEN = 3;
-	// Der int-Wert fuer einen Ausgang in Richtung Suedwesten.
-	public static final int SUEDWESTEN = 4;
-	// Der int-Wert fuer einen Ausgang in Richtung Westen.
-	public static final int WESTEN = 5;
-	// Der int-Wert fuer einen Ausgang in Richtung Nordwesten.
-	public static final int NORDWESTEN = 6;
-	// Der int-Wert fuer einen Ausgang in Richtung Norden.
-	public static final int NORDEN = 7;
-	// Der int-Wert fuer einen Ausgang in Richtung Nordosten.
-	public static final int NORDOSTEN = 8;
+	// Der byte-Wert fuer einen Ausgang, der keine Richtung hat, er wird auf der Karte nicht angezeigt.
+	public static final byte EIGENE = 0;
 
-	// Der int-Wert fuer einen Ausgang, der nach unten fuehrt.
-	public static final int RUNTER = 9;
-	// Der int-Wert fuer einen Ausgang, der nach oben fuehrt.
-	public static final int HOCH = 10;
-	// Der int-Wert fuer einen Ausgang, der in etwas hineinfuehrt.
-	public static final int BETRETEN = 11;
-	// Der int-Wert fuer einen Ausgang, der aus etwas herausfuehrt.
-	public static final int VERLASSEN = 12;
-	  
+	// Der byte-Wert fuer einen Ausgang in Richtung Osten.
+	public static final byte OSTEN = 1;
+	// Der byte-Wert fuer einen Ausgang in Richtung Suedosten.
+	public static final byte SUEDOSTEN = 2;
+	// Der byte-Wert fuer einen Ausgang in Richtung Sueden.
+	public static final byte SUEDEN = 3;
+	// Der byte-Wert fuer einen Ausgang in Richtung Suedwesten.
+	public static final byte SUEDWESTEN = 4;
+	// Der byte-Wert fuer einen Ausgang in Richtung Westen.
+	public static final byte WESTEN = 5;
+	// Der byte-Wert fuer einen Ausgang in Richtung Nordwesten.
+	public static final byte NORDWESTEN = 6;
+	// Der byte-Wert fuer einen Ausgang in Richtung Norden.
+	public static final byte NORDEN = 7;
+	// Der byte-Wert fuer einen Ausgang in Richtung Nordosten.
+	public static final byte NORDOSTEN = 8;
+
+	// Der byte-Wert fuer einen Ausgang, der nach unten fuehrt.
+	public static final byte RUNTER = 9;
+	// Der byte-Wert fuer einen Ausgang, der nach oben fuehrt.
+	public static final byte HOCH = 10;
+	// Der byte-Wert fuer einen Ausgang, der in etwas hineinfuehrt.
+	public static final byte BETRETEN = 11;
+	// Der byte-Wert fuer einen Ausgang, der aus etwas herausfuehrt.
+	public static final byte VERLASSEN = 12;
+
 	// Die Woerter der Richtungen als String, in einem Array (normal geschrieben).
 	public static final String[] richtungen = {
 		"Undefiniert",
 
 	    "Osten",
-	    "Südosten",
-	    "Süden",
-	    "Südwesten",
+	    "Sï¿½dosten",
+	    "Sï¿½den",
+	    "Sï¿½dwesten",
 	    "Westen",
 	    "Nordwesten",
 	    "Norden",
 	    "Nordosten",
-	    
+
 	    "Runter",
 	    "Hoch",
 	    "Betreten",
 	    "Verlassen"
 	};
-	  
+
 	// Die Abkuerzungen der Richtungen, in einem Array (in Grossbuchstaben).
 	public static final String[] abkuerzungen = {
 		"UNDEF",
@@ -70,109 +72,126 @@ public class Ausgang implements Serializable {
 	    "NW",
 	    "N",
 	    "NO",
-	    
+
 	    "R",
 	    "H",
 	    "B",
 	    "V"
 	};
-	
+
+
+	/* --- Die Variablen --- */
+
 	// Der Ort, zu dem dieser Ausgang fuehrt.
 	private Ort zielort;
 	// Die Richtung, in der der Zielort liegt.
-	private int richtung;
+	private byte richtung;
 	// Die Richtung, als Wort ausgeschrieben.
 	private String richtungsName;
 	// Die Abkuerzung fuer den Richtungsname.
 	private String abkuerzung;
-	  
+
+
+	/* --- Der Konstruktor --- */
+
 	/**
-	 *  Dieser Konstruktor erzeugt einen Ausgang mit einem Zielort und einer Richtung.
-	 *  richtung: die Richtung, in die der Ausgang fuehrt.
-	 *  fuehrtZu: der Ort, zu dem der Ausgang fuehrt.
+	 * Dieser Konstruktor erzeugt einen Ausgang mit einem Zielort und einer Richtung.
+	 * @param richtung Die Richtung, in die der Ausgang fuehrt.
+	 * @param zielort Der Ort, zu dem der Ausgang fuehrt.
 	 */
-	public Ausgang(int richtung, Ort fuehrtZu){
-		zielort = fuehrtZu;
+	public Ausgang(byte richtung, Ort zielort) {
+  		this.zielort = zielort;
 	    this.richtung = richtung;
 	    // Werte werden nicht ueberprueft, da sie eigentlich von den statics sein sollten.
 	    richtungsName = richtungen[richtung];
 	    abkuerzung = abkuerzungen[richtung];
 	}
-	  
+
+
+
+	/* --- Die Methoden --- */
+
 	/**
-	 *  Diese Methode aendert die Richtung(int) und alle Variablen.
-	 *  neueRichtung: die neue Richtung des Ausgangs
+	 * Gibt dem Ausgang eine neue Richtung und aendert auch den Namen der Richtung und die Abkuerzung.
+	 * @param neueRichtung Die neue Richtung des Ausgangs
 	 */
-	public void setRichtung(int neueRichtung){
+	public void setRichtung(byte neueRichtung) {
 	    richtung = neueRichtung;
 	    richtungsName = richtungen[richtung];
 	    abkuerzung = abkuerzungen[richtung];
 	}
-	  
+
+
+
 	/**
-	 *  Diese Methode gibt den int Richtungswert zurueck.
+	 * Aendert die Richtung unabhaengig von den Standard Parameter, wird verwendet, um eigene Ausgaenge zu kreieren.
+	 * @param neueRichtung Die neue Richtung, dadurch werden die anderen Parameter nicht veraendert.
+	 * @return Sich selbst.
 	 */
-	public int getRichtung(){
+	public Ausgang setRichtungUnabhaengig(byte neueRichtung) {
+		richtung = neueRichtung;
+		return this;
+	}
+
+	/**
+	 * Gibt den Richtungswert als byte zurueck.
+	 * @return Den byte-Wert der Richtung des Ausgangs.
+	 */
+	public byte getRichtung() {
 	    return richtung;
 	}
-	  
+
+
 	/**
-	 *  Diese Methode gibt die Richtung zurueck, in die der Ausgang fuehrt (als Wort, normal geschrieben).
+	 * Gibt die Richtung zurueck, in die der Ausgang fuehrt, als Wort(normal geschrieben).
+	 * @return Den Name der Richtung, in die der Ausgang fuehrt.
 	 */
-	public String getRichtungsName(){
+	public String getRichtungsName() {
 	    return richtungsName;
 	}
-	  
+
 	/**
-	 *  Diese Methode aendert die Richtung des Ausgangs (nur den String).
-	 *  neueRichtung: neuer Name fuer die Richtung in die der Ausgang fuehrt.
+	 * Aendert die Richtung des Ausgangs (nur den String).
+	 * @param neueRichtung Der neue Name fuer die Richtung in die der Ausgang fuehrt.
+	 * @return Sich selbst.
 	 */
-	public void setRichtungsName(String neueRichtung){
+	public Ausgang setRichtungsName(String neueRichtung) {
 	    richtungsName = neueRichtung;
+	    return this;
 	}
-	  
+
 	/**
-	 *  Diese Methode gibt die Richtung zurueck als Abkuerzung.
+	 * Gibt die Richtung zurueck als Abkuerzung.
+	 * @return Die Abkuerzung fuer den Richtungsnamen.
 	 */
-	public String getAbkuerzung(){
+	public String getAbkuerzung() {
 	    return abkuerzung;
 	}
-	  
+
 	/**
-	 *  Diese Methode aendert die Abkuerzung des Ausgangs.
-	 *  neueAbkuerzung: die neue Abkuerzung fuer den Ausgang
+	 * Aendert die Abkuerzung des Ausgangs.
+	 * @param neueAbkuerzung Der neue Name der Abkuerzung fuer den Ausgang.
+	 * @return Sich selbst.
 	 */
-	public void setAbkuerzung(String neueAbkuerzung){
+	public Ausgang setAbkuerzung(String neueAbkuerzung) {
 		abkuerzung = neueAbkuerzung;
+		return this;
 	}
-	  
+
 	/**
-	 *  Diese Methode gibt den Zielort des Ausgangs zurueck.
+	 * Gibt den Zielort des Ausgangs zurueck.
+	 * @return Der Zielort des Ausgangs.
 	 */
-	public Ort getZielort(){
+	public Ort getZielort() {
 	    return zielort;
 	}
-	  
+
 	/**
-	 *  Diese Methode aendert das Ziel des Ausgangs.
-	 *  neuesZiel: der neue Ort, zu dem der Ausgang fuehrt.
+	 *  Aendert das Ziel des Ausgangs und gibt ihm einen neuen Zielort.
+	 *  @param zielort Der neue Ort, zu dem der Ausgang fuehrt.
 	 */
-	public void setZielort(Ort neuesZiel){
-		zielort = neuesZiel;
+	public void setZielort(Ort zielort) {
+		this.zielort = zielort;
 	}
-	
-	/**
-	 * Gibt zu einer gegeben Richtung die Rückrichtung zurück. Beispielsweise ist 
-	 * getRueckrichtung(Ausgang.WESTEN) == Assgang.OSTEN
-	 * @param richtung Die Richtung, deren Umkehhrung man haben möchte.
-	 * @return Die Rpckrichtung zu richtung.
-	 */
-	public static int getRueckrichtung(int richtung) {
-		if(richtung >= 1 && richtung <= 8)
-			return richtung > 4 ? richtung-4 : richtung+4;				//OSTEN bis NORDOSTEN 
-		if(richtung == 9 || richtung == 10) return 19-richtung;			//HOCH RUNTER
-		if(richtung == 11 || richtung == 12) return 21-richtung;		//BETETEN VERLASSEN
-		
-		return Ausgang.UNDEFINIERT;										//default return-Wert
-	}
+
 }

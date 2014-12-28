@@ -1,8 +1,5 @@
 package gui;
 
-import game.Ausgang;
-import game.Ort;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,28 +10,30 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
+import game.Ausgang;
+import game.Ort;
 
 public class MiniMap extends Canvas {
 
-	// Die serielle Versionsnummer
+	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
 	// Der Ort, an dem sich der Spieler befindet.
 	private Ort position;
-	// Die alte Position des Spielers.
+	/*// Die alte Position des Spielers. TODO
 	private Ort altePosition;
 	// Die letzte Position
-	private Point punkt;
-	  
+	private Point punkt;*/
+
 	// ALLE IMAGES FUER DIE ANZEIGE???
-	  
+
 	// Das Image fuer einen Punkt.
-	private BufferedImage point = null;
+	transient private BufferedImage point = null;
 	// Das Image fuer eine Durchgezogene Linie.
-	private BufferedImage linieFull = null;
+	transient private BufferedImage linieFull = null;
 	// Das Image fuer eine fadende Linie.
-	private BufferedImage linieFade = null;
-	  
+	transient private BufferedImage linieFade = null;
+
 	/**
 	 *  Eine neue Map wird erstellt und ihr wird nichts uebergeben.
 	 */
@@ -51,22 +50,22 @@ public class MiniMap extends Canvas {
 	    	System.err.println("Es trat ein Fehler beim laden der Datei auf.");
 	    	e.printStackTrace();
 	    }
-	    
-	    punkt = new Point(0, 0);
-	    
+
+	    //punkt = new Point(0, 0);TODO
+
 	    this.setSize(300, 240);
 	}
-	  
+
 	/**
 	 *  Wird jedesmal ausgeloest, wenn die aktuelle Position des Spielers sich veraendert hat.
 	 */
 	public void updateMiniMap(Ort ort){
 		// DIE MAP MUSS NEU GENERIERT WERDEN
-	    altePosition = position;
+	    //altePosition = position;TODO
 	    position = ort;
 	    repaint();                       // ???
 	}
-	  
+
 	/** @override
 	 *  Die paint() wird ueberschrieben, sodass sie die Map neu zeichnet, wenn sie aufgerufen wird.
 	 */
@@ -74,7 +73,7 @@ public class MiniMap extends Canvas {
 		// Die Methode faengt in der Mitte an, bei der Spieler Position, und zeichnet die anderen Orte um die Spieler Position herum.
 	    BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = (Graphics2D)img.getGraphics();
-	    
+
 	    if(position != null){
 	    	for(Ausgang a: position.getAusgaenge().toArray(new Ausgang[0])){
 	    		Point p = zeichneVerbindung(getWidth() / 2, getHeight() / 2, a, g2d);
@@ -105,7 +104,7 @@ public class MiniMap extends Canvas {
 
 	    g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
-	  
+
 	private void zeichnePunkt(Color farbe, int x, int y, Graphics2D g2d){
 	    int xpos = x - point.getWidth() / 2;
 	    int ypos = y - point.getHeight() / 2;
@@ -119,16 +118,15 @@ public class MiniMap extends Canvas {
 	    g2d.fillOval(xpos-1, ypos-1, point.getWidth() + 2, point.getHeight() + 2);
 	    g2d.setColor(old);
 	}
-	  
+
 	private Point zeichneVerbindung(int xstart, int ystart, Ausgang richtung, Graphics2D g2d){
 		BufferedImage img = linieFull;
 	    if(!richtung.getZielort().istBesucht()) img = linieFade;
-	    if(richtung.getRichtung() > 8 || richtung.getRichtung() == 0){
-	    	System.out.println("Noch nicht auswertbar");
+	    if(richtung.getRichtung() > 8 || richtung.getRichtung() == 0) {
 	    	return null;
 	    }
 	    double angle = (richtung.getRichtung() - 1) * Math.PI / 4.0;
-	    
+
 	    AffineTransform at = new AffineTransform();
 	    //at.translate(xstart * 0.17, 0);        //MUSS VERBESSERT WERDEN
 	    //at.shear(-0.2, 0.0);

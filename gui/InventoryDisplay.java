@@ -1,7 +1,5 @@
 package gui;
 
-import game.Stapel;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -9,6 +7,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import game.items.Stapel;
+import game.items.Waehrung;
 import util.InventoryEvent;
 import util.InventoryListener;
 
@@ -21,9 +21,9 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	private JScrollPane scroll;
 	// Das Document, das beschrieben wird.
 	private StyledDocument document;
-	  
+
 	/**
-	 *  Ein InventoryDisplay wird den Inventar uebergeben, sodass dieses das InventoryDisplay aktualisiert.
+	 *  Ein InventoryDisplay wird ein Inventar uebergeben, sodass dieses das InventoryDisplay aktualisiert.
 	 */
 	public InventoryDisplay(){
 		scroll = new JScrollPane(this);
@@ -33,17 +33,17 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	    document.setParagraphAttributes(0, document.getLength(), font, false);
 
 	    scroll.setSize(290, 400);
-	    
+
 	    this.setEditable(false);
 	}
-	  
+
 	/**
 	 *  Diese Methode gibt das JScrollPane zurueck.
 	 */
 	public JScrollPane getJScrollPane(){
 	    return scroll;
 	}
-	  
+
 	/**
 	 *  Diese Methode fuegt einen String dem JTextPane hinzu, ohne Zeilenumbruch.
 	 *  text: der uebergebene Text.
@@ -58,7 +58,7 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	    	System.err.println(e.getStackTrace());
 	    }
 	}
-	  
+
 	/**
 	 *  Diese Methode fuegt einen String dem JTextPane hinzu und veraendert die Groesse des Texts.
 	 *  text: der uebergebene Text.
@@ -70,7 +70,7 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	    StyleConstants.setFontSize(sas, size);
 	    document.setCharacterAttributes(document.getLength() - text.length(), document.getLength(), sas, false);
 	}
-	  
+
 	/**
 	 *  Das InventoryDisplay wird geloescht, sodass es neu beschrieben werden kann.
 	 */
@@ -81,16 +81,24 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 			System.err.println(e.getStackTrace());
 	    }
 	}
-	  
-	/** @override
+
+
+	/**
 	 *  Ueberschreibt die update Methode des Listeners.
 	 */
-	public void inventoryUpdate(InventoryEvent evt){
+	@Override
+	public void inventoryUpdate(InventoryEvent evt) {
 		clear();
 	    printSize("Inventar:", 18);
-	    for(Stapel s: evt.getInventory().getAlleStapel()){
-	    	//if(s == null) continue;
-	    	print("\n" + s.getAnzahl() + " x " + s.getGegenstand().getName());
-	    }
+	    for(Stapel s: evt.getInventory().getStapel())
+	    	printSize("\n" + s.getAnzahl() + " " + s.getName(), 14);
+
+	    if(evt.getInventory().getGeldbeutel().istLeer())
+	    	return;
+
+	    print("\n\n");
+	    printSize("W�hrungen:", 18);
+	    for(Waehrung w : evt.getInventory().getGeldbeutel().getWaehrungen())
+	    	printSize("\n" + evt.getInventory().getGeldbeutel().getMenge(w) + " " + evt.getInventory().getGeldbeutel().getName(w), 14);
 	}
 }

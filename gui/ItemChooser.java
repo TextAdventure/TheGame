@@ -1,7 +1,5 @@
 package gui;
 
-import game.Gegenstand;
-
 import java.awt.Container;
 import java.awt.event.ActionListener;
 
@@ -11,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import game.items.Gegenstand;
 
 public class ItemChooser extends Container {
 
@@ -22,34 +21,34 @@ public class ItemChooser extends Container {
 	// Der JSpinner zum einstellen der Gegenstands Anzahl.
 	private JTextField number;
 	// Die gueltige, groesste Zahl fuer den JSpinner.
-	private int max;
-	  
+	//private int max;TODO
+
 	/**
 	 *  Ein neuer ItemChooser wird eine Position uebergeben, an der er sich befindet.               // HIER MUSS MIT DER AKTUALISIERUNG NACHGEBESSERT WERDEN (JTextField)
 	 */
 	public ItemChooser(int x, int y){
 		select = new JComboBox<String>();
 	    number = new JTextField();
-	    max = 1;
-	    
+	    //max = 1;TODO
+
 	    this.add(select);
 	    this.add(number);
 	    // Zentriert den Text in der JComboBoxes und den JTextField.
 	    ((JLabel)select.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 	    number.setHorizontalAlignment(SwingConstants.CENTER);
-	    
+
 	    this.setBounds(x, y, 330, 25);
 	    this.setLayout(null);
 	    number.setBounds(0, 0, 40, 25);
 	    number.setEnabled(false);
 	    select.setBounds(40, 0, 290, 25);
-	    
+
 	    select.setFont(select.getFont().deriveFont(20).deriveFont(java.awt.Font.BOLD));
 	    number.setFont(select.getFont());
 	}
-	  
+
 	// ALLE METHODEN FUER DIE JCOMBOBOX
-	  
+
 	// Gibt das von der JComboBox ausgewaehlte Element zurueck, als Gegenstand.
 	public Gegenstand getSelectedItem(){
 	    return Gegenstand.getGegenstand((String)select.getSelectedItem());
@@ -88,7 +87,7 @@ public class ItemChooser extends Container {
 	public void addActionListener(ActionListener listener){
 	    select.addActionListener(listener);
 	}
-	  
+
 	// ALLE METHODEN FUER DAS JTEXTFIELD
 
 	// Uebergibt einen Wert fuer das JTextField.
@@ -103,17 +102,17 @@ public class ItemChooser extends Container {
 	public void resetNumber(){
 		number.setText("");
 	}
-	  
+
 	// Diese Klasse wird gebraucht, um den Text des JTextFields anzupassen.
 	private class TextUpdate implements Runnable{
 		// Der zuersetzende Wert
 	    private int value;
-	    
+
 	    // Ein neues TextUpdate wird mit einen Wert initialisiert.
 	    public TextUpdate(int value){
 	    	this.value = value;
 	    }
-	    
+
 	    // @override  Die run(), die ausgefuehrt wird.
 	    public void run(){
 	    	number.setText(String.valueOf(value));

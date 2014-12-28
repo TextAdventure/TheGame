@@ -1,10 +1,16 @@
 package game;
 
-import game.bedingung.Bedingung;
+import game.battle.Kampf;
+import game.items.Gegenstand;
+import game.items.Inventar;
+import game.items.KommandoGegenstand;
+import game.items.Stapel;
+import game.logic.Ereignis;
 
 import java.io.Serializable;
-import java.util.Random;
 import java.util.Vector;
+
+import util.IPrintable;
 
 import npc.NPC;
 
@@ -12,10 +18,12 @@ import npc.NPC;
 /**
  *  Diese Klasse repraesentiert jeden Ort/Raum im Spiel.
  */
-public class Ort implements Serializable {
+public class Ort implements Serializable, IPrintable {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
+
+	/* --- Die Variablen --- */
 
 	// Gibt an, ob dieser Ort bereits besucht wurde.
 	private boolean besucht;
@@ -23,484 +31,541 @@ public class Ort implements Serializable {
 	private String name;
 	// Die Beschreibung fuer diesen Ort.
 	private String beschreibung;
-	  
+
 	// Alle Ausgaenge, dieaus dem Raum herausfuehren.
 	private Vector<Ausgang> ausgaenge;
+
 	// Dieser Vector enthaelt alle Objekte, die untersucht werden koennen.
 	private Vector<UntersuchbaresObjekt> untersuchbareObjekte;
+
 	// Alle Gegenstaende an diesem Ort.
 	private Inventar gegenstaende;
-	// Alle Gegenstaende, die bei einer Benutzung eine Aktion ausloesen.
-	private Vector<Gegenstand> verwendbareGegenstaende;
-	// Alle Aktionen, die mit diesem Ort zusammenhaengen.
-	private Vector<Bedingung> bedingungen;
+
+	// Alle Gegenstaende, die bei einer Benutzung eine Aktion ausloesen koennen.
+	private Vector<KommandoGegenstand> kommandoGegenstaende;
+
 	// Alle Custom Commands fuer diesen Ort.
 	private Vector<Kommando> kommandos;
+
 	// Alle Gegner an diesem Ort.
-	private Vector<Gegner> enemies;
-	// Alle Wahrscheinlichkeiten fuer die Gegner.
-	private Vector<Double> wahrscheinlichkeiten;
+	private Vector<Kampf> kaempfe;
+
 	// Alle Behaelter an diesem Ort.
 	private Vector<Behaelter> behaelter;
+
 	// Alle NPCs an diesem Ort.
 	private Vector<NPC> npcs;
-	
-	// Alle Schluessel fuer verschlossene Tueren
-	private Vector<Schluessel> schluessel;
-	// Alle Ausgaenge hinter den Tueren.
-	private Vector<Ausgang> tueren;
-	  
+
+	// Alle Tueren and diesem Ort
+	private Vector<Tuer> tueren;
+
+	// Alle Ressourcen Punkte an diesem Ort
+	private Vector<RessourcenPunkt> ressourcen;
+
 	// Die Wahrscheinlichkeitt fuer einen Kampf.
 	private double pKampf;
-	  
+
+	/* --- Der Konstruktor --- */
+
 	/**
-	 *  Die Konstruktoren fuer einen Ort. Einer ist leer, der andere voll.
-	 *  Ausgaenge muessen spaeter hinzugefuegt werden.
+	 * Einem neuen Ort wird lediglich ein Name und eine Beschreibung uebergeben, der Rest muss spaeter nizugefuegt werden.
+	 * @param name Der Name fuer diesen Ort.
+	 * @param beschreibung Die Beschreibung fuer diesen Ort.
 	 */
-	  
-	// Der Ort hat nur einen Namen.
-	public Ort(String name){
-		// Nur der Name wird initialisiert.
-	    this.name = name;
-	    beschreibung = new String();
-	    ausgaenge = new Vector<Ausgang>();
-	    untersuchbareObjekte = new Vector<UntersuchbaresObjekt>();
-	    gegenstaende = new Inventar();
-	    verwendbareGegenstaende = new Vector<Gegenstand>();
-	    bedingungen = new Vector<Bedingung>();
-	    kommandos = new Vector<Kommando>();
-	    enemies = new Vector<Gegner>();
-	    wahrscheinlichkeiten = new Vector<Double>();
-	    behaelter = new Vector<Behaelter>();
-	    npcs = new Vector<NPC>();
-	    
-	    schluessel = new Vector<Schluessel>();
-	    tueren = new Vector<Ausgang>();
-	    
-	    besucht = false;
-	    pKampf = 100.0;
-	}
-	  
-	// Der Ort hat sowohl Name als auch Beschreibung.
-	public Ort(String name, String beschreibung){
-		// Der Name und die Beschreibung wird initialisiert.
+	public Ort(String name, String beschreibung) {
 	    this.name = name;
 	    this.beschreibung = beschreibung;
 	    ausgaenge = new Vector<Ausgang>();
 	    untersuchbareObjekte = new Vector<UntersuchbaresObjekt>();
 	    gegenstaende = new Inventar();
-	    verwendbareGegenstaende = new Vector<Gegenstand>();
-	    bedingungen = new Vector<Bedingung>();
+	    kommandoGegenstaende = new Vector<KommandoGegenstand>();
 	    kommandos = new Vector<Kommando>();
-	    enemies = new Vector<Gegner>();
-	    wahrscheinlichkeiten = new Vector<Double>();
+	    kaempfe = new Vector<Kampf>();
 	    behaelter = new Vector<Behaelter>();
 	    npcs = new Vector<NPC>();
+	    tueren = new Vector<Tuer>();
+	    ressourcen = new Vector<RessourcenPunkt>();
 
-	    schluessel = new Vector<Schluessel>();
-	    tueren = new Vector<Ausgang>();
-	    
 	    besucht = false;
 	    pKampf = 100.0;
 	}
-	  
+
+	/* --- Die Methoden --- */
+
+	/* Name und Beschreibung */
 	/**
-	 *  Diese Methode fuegt einen Ausgang hinzu, der zuerst erstellt wird, ueberprueft aber, ob er bereits in der Liste ist.
-	 *  richtung: die Richtung, in die der Ausgang fuehrt.
-	 *  zielort: der Ort, zu dem der Ausgnag fuehrt.
+	 * Gibt den Namen des Orts zurueck, OHNE Modifikatoren.
+	 * @return Den Namen.
 	 */
-	public void addAusgang(int richtung, Ort zielort){
-		Ausgang ausgang = new Ausgang(richtung, zielort);
-	    if(!ausgaenge.contains(ausgang)){
-	    	// Wenn der Ausgang noch nicht in der Liste ist, wird er hinzugefuegt.
-	    	ausgaenge.add(ausgang);
-	    }
-	}
-	/**
-	 * Fügt einen Ausgang zu einem gegeben Zielort hinzu und fügt dem Zielort auch gleich
-	 * einen "Rückausgang" zu diesem Ort hinzu.
-	 * @param richtung Die Richtung, in der der Zielort liegen soll.
-	 * @param zielort Der Zielort.
-	 */
-	public void addAusgangMitRueckweg(int richtung, Ort zielort) {
-		addAusgang(richtung, zielort);
-		zielort.addAusgang(Ausgang.getRueckrichtung(richtung), this);
-	}
-	/**
-	 *  Diese Methode fuegt einen Ausgang hinzu, ueberprueft aber, ob er bereits in der Liste ist.
-	 *  ausgang: dieser Ausgang wird der Liste der Ausgaenge hinzugefuegt.
-	 */
-	public void addAusgang(Ausgang ausgang){
-		if(!ausgaenge.contains(ausgang)){
-			// Wenn der Ausgang noch nicht in der Liste ist, wird er hinzugefuegt.
-			ausgaenge.add(ausgang);
-	    }
-	}
-	/**
-	 *  Diese Methode entfernt einen Ausgang aus der Liste der Ausgaenge.
-	 *  ausgang: der Ausgang, der entfernt werden soll.
-	 */
-	public void removeAusgang(Ausgang ausgang){
-		if(ausgaenge.contains(ausgang)){
-			// Der Ausgang wird nur entfernt, wen der sich in der Liste befindet.
-			ausgaenge.remove(ausgang);
-	    }
-	}
-	/**
-	 *  Gibt einen Ausgang zurueck basierend auf der Richtung.
-	 *  richtung: die Richtung, in die der Ausgang fuhert.
-	 */
-	public Ausgang getAusgang(int richtung){
-		for(Ausgang a: ausgaenge.toArray(new Ausgang[0])){
-			if(a.getRichtung() == richtung) return a;
-	    }
-	    return null;
-	}
-	/**
-	 *  Diese Methode gibt alle Ausgaenge zurueck, die dieser Ort hat.
-	 */
-	public Vector<Ausgang> getAusgaenge(){
-		// Es wird nur eine Kopie der Liste zurueckgegeben, da so die urspruengliche
-	    // Liste nicht veraendert werden kann.
-	    return (Vector<Ausgang>)ausgaenge.clone();
-	}
-	/**
-	 *  Gibt zurueck, ob der Ort Ausgaenge hat.
-	 */
-	public boolean hatAusgaenge(){
-		if(!ausgaenge.isEmpty()){
-			return true;
-	    }
-		return false;
-	}
-	/**
-	 * Gibt zurueck, ob der Ort einen entsprechenden @ausgang hat oder auch nicht.
-	 * @param ausgang Der Ausgang auf den der Ort ueberprueft werden soll.
-	 */
-	public boolean hasAusgang(Ausgang ausgang) {
-		for(Ausgang a: ausgaenge.toArray(new Ausgang[0])) {
-			if(a.equals(ausgang)) return true;
+	@Override
+	public String getName() {
+		// Es werden nur farben ersetzt, da von mehr nicht auszugehen ist im Moment.
+		String actual = name;
+		while(name.contains("<c=")) {
+			actual = name.replaceFirst("</c>", "");
+			actual = name.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
 		}
-		return false;
-	}	
-	  
-	/**
-	 *  Teilt dem Ort mit, dass der Spieler sich bereits dort befand.
-	 */
-	public void besucht(){
-		besucht = true;
+		return actual;
 	}
 	/**
-	 *  Gibt zurueck, ob der Ort bereits besucht wurde.
+	 * Gibt den Namen des Orts MIT Modifikatoren zurueck.
+	 * @return Den erweiterten Namen.
 	 */
-	public boolean istBesucht(){
-		return besucht;
-	}
-	  
-	/**
-	 *  Diese Methode gibt den Name des Orts zurueck.
-	 */
-	public String getName(){
+	@Override
+	public String getNameExtended() {
 		return name;
 	}
 	/**
-	 *  Diese Methode aendert den Namen des Orts auf den uebergebenen Name.
-	 *  neuerName: der neue Name des Orts
+	 * Aendert den Namen des Orts zu dem uebergebenen Namen, dadurh wird er wieder unbesucht.
+	 * @param neuerName Der neue Name fuer diesen Ort.
 	 */
-	public void setName(String neuerName){
+	public void setName(String neuerName) {
 		name = neuerName;
+		besucht = false;
 	}
-	  
 	/**
-	 *  Diese Methode gibt die Beschreibung des Orts zurueck.
+	 * Gibt die Beschreibung des Orts zurueck, dadurh wird er wieder unbesucht.
+	 * @return Die Beschreibung.
 	 */
-	public String getBeschreibung(){
+	@Override
+	public String getDescription() {
 		return beschreibung;
 	}
 	/**
-	 *  Diese Methode aendert die Beschreibung des Orts auf die uebergebenen Beschreibung.
-	 *  neueBeschreibung: die neue Beschreibung des Orts
+	 * Aendert die Beschreibung des Orts zu der uebergebenen Beschreibung.
+	 * @param neueBeschreibung die neue Beschreibung fuer diesen Ort.
 	 */
-	public void setBeschreibung(String neueBeschreibung){
+	public void setBeschreibung(String neueBeschreibung) {
 	    beschreibung = neueBeschreibung;
+	    besucht = false;
 	}
-	
-	// neue Methoden
-	  
+
+	/* Parameter */
+
+	@Override
+	public String getParam(String param) {
+		// Alle Parameter muessen von Hand in getParams() registriert werden!
+		switch(param) {
+		case "name": return this.getNameExtended();
+		case "anzahlAusgï¿½nge": return Integer.toString(this.getAusgaenge().size());
+		case "anzahlGegenstï¿½nde": return Integer.toString(this.gegenstaende.getAlleGegenstaende().length);
+		case "anzahlUntersuchbaresObjekt": return Integer.toString(this.untersuchbareObjekte.size());
+		case "anzahlNichtUntersucht":
+			int i = 0;
+			for(UntersuchbaresObjekt o : this.untersuchbareObjekte)
+				if(!o.isUntersucht())
+					i++;
+			return Integer.toString(i);
+		case "anzahlNPC": return Integer.toString(this.npcs.size());
+		case "alleNPCs":
+			String s = "";
+			for(NPC npc : this.npcs)
+				s += npc.getName() + ", ";
+			if(s.equals(""))
+				return "";
+			return s.substring(0, s.length() - 2);
+		}
+		// Alle moeglichen Zielorte und Richtungen.
+		for(Ausgang a : this.getAusgaenge().toArray(new Ausgang[0]))
+			if(a.getRichtungsName().toLowerCase().equals(param))
+				return a.getZielort().getNameExtended();
+
+		return "";
+	}
+	@Override
+	public String[] getParams() {
+		Vector<String> params = new Vector<String>();
+		params.add("name"); params.add("anzahlAusgï¿½nge"); params.add("anzahlUntersuchbaresObjekt"); params.add("anzahlNichtUntersucht");
+		params.add("anzahlGegenstï¿½nde"); params.add("anzahlNPC"); params.add("alleNPCs");
+
+		for(Ausgang a : ausgaenge)
+			params.add(a.getRichtungsName().toLowerCase());
+
+		return params.toArray(new String[0]);
+	}
+
+	/* Besucht */
+
 	/**
-	 *  Diese Methode fuegt ein neues Objekt ein, dass untersucht werden kann.
-	 *  objName: der Name des Objekts.
-	 *  objBeschreibung: die Beschreibung, die bei einer Untersuchung angezeigt wird.
+	 * "Besucht" diesen Ort und gibt den Namen und die Beschreibung zurueck, dadurch ist der Ort besucht.
+	 * @return Den Namen und die Beschreibung.
 	 */
-	public void addUntersuchbaresObjekt(String objName, String objBeschreibung){
+	public String besuchen() {
+		besucht = true;
+		return name + "#" + beschreibung;
+	}
+	/**
+	 * Gibt zurueck, ob der Ort bereits besucht wurde.
+	 * @return Wahr, wenn der Spieler bereits einmal hier war, ansonsten false.
+	 */
+	public boolean istBesucht() {
+		return besucht;
+	}
+
+	/* Ausgang */
+	/**
+	 * Fuegt dem Ort einen Ausgang hinzu.
+	 * @param richtung Die Richtung, in die er fuehrt.
+	 * @param zielort Der Ort zu dem der Ausgang fuehrt.
+	 */
+	public void addAusgang(byte richtung, Ort zielort) {
+		if(!ausgaenge.contains(new Ausgang(richtung, zielort)))
+			ausgaenge.add(new Ausgang(richtung, zielort));
+	}
+	/**
+	 * Fuegt dem Ort einen Ausgang hinzu.
+	 * @param ausgang Der neue Ausgang an diesem Ort.
+	 */
+	public void addAusgang(Ausgang ausgang) {
+		if(!ausgaenge.contains(ausgang))
+			ausgaenge.add(ausgang);
+	}
+	/**
+	 * Entfernt einen Ausgang aus der Liste der Ausgaenge.
+	 * @param ausgang Der zuentfernde Ausgang.
+	 */
+	public void removeAusgang(Ausgang ausgang) {
+		ausgaenge.remove(ausgang);
+	}
+	/**
+	 * Gibt alle Ausgaenge zurueck, die dieser Ort hat.
+	 * @return Ein Array mit allen Ausgaengen.
+	 */
+	public Vector<Ausgang> getAusgaenge() {
+		// Es wird nur eine Kopie der Liste zurueckgegeben, da so die urspruengliche
+	    // Liste nicht veraendert werden kann.
+		/*Vector<Ausgang> kopie = new Vector<Ausgang>();	TODO
+		Collections.copy(ausgaenge, kopie);
+	    return kopie;*/
+
+		//return (Vector<Ausgang>) ausgaenge.clone();
+
+		return ausgaenge;
+	}
+	/**
+	 * Gibt einen Ausgang zurueck, basierend auf der Richtung.
+	 * @param richtung Die Richtung des Ausgangs.
+	 * @return Den Ausgang selbst, falls vorhanden ansonsten null.
+	 */
+	public Ausgang getAusgang(int richtung) {
+		for(Ausgang a : ausgaenge)
+			if(a.getRichtung() == richtung)
+				return a;
+		return null;
+	}
+	/**
+	 * Gibt einen Ausgang zurueck, basierend auf dem Namen der Richtung oder dem Namen der Abkuerzung.
+	 * @param nameOderAbkuerzung Der Name der Richtung oder deren Abkuerzung.
+	 * @return Den Ausgang selbst, falls vorhanden ansonsten null.
+	 */
+	public Ausgang getAusgang(String nameOderAbkuerzung) {
+		for(Ausgang a : ausgaenge)
+			if(a.getRichtungsName().equalsIgnoreCase(nameOderAbkuerzung) || a.getAbkuerzung().equalsIgnoreCase(nameOderAbkuerzung))
+				return a;
+		return null;
+	}
+	/**
+	 * Gibt zurueck, ob der Ort einen entsprechenden Ausgang hat oder auch nicht.
+	 * @param ausgang Der Ausgang auf den der Ort ueberprueft werden soll.
+	 * @return Wahr, wenn der Ort diesen Ausgang hat.
+	 */
+	public boolean hasAusgang(Ausgang ausgang) {
+		for(Ausgang a : ausgaenge) {
+			if(a == ausgang) return true;
+		}
+		return false;
+	}
+
+	/* UntersuchbaresObjekt */
+	/**
+	 * Fuegt ein neues UntersuchbaresObjekt hinzu, das untersucht werden kann.
+	 * @param objName Der Name des Objekts.
+	 * @param objBeschreibung Die Beschreibung fuer das Objekt.
+	 */
+	public void addUntersuchbaresObjekt(String objName, String objBeschreibung) {
 		untersuchbareObjekte.add(new UntersuchbaresObjekt(objName, objBeschreibung));
 	}
 	/**
-	 * Fuegt ein neues Objekt ein, dass untersucht werden kann.
-	 * objekt: das neue UntersuchbareObjekt.
+	 * Fuegt ein neues UntersuchbaresObjekt hinzu, das untersucht werden kann.
+	 * @param objekt Das UntersuchbareObjekt fuer den Ort.
 	 */
-	public void addUntersuchbaresObjekt(UntersuchbaresObjekt objekt){
+	public void addUntersuchbaresObjekt(UntersuchbaresObjekt objekt) {
 		untersuchbareObjekte.add(objekt);
 	}
-	
 	/**
-	 *  Diese Methode entfernt ein UntersuchbaresObjekt aufgrund des Namens.
-	 *  objektName: der Name des UntersuchbarenObjekts.
+	 * Entfernt ein UntersuchbaresObjekt aufgrund des Namens.
+	 * @param objektName Der Name des zuentfernden Objekts.
 	 */
-	public void removeUntersuchbaresObjekt(String objektName){
+	public void removeUntersuchbaresObjekt(String objektName) {
 		UntersuchbaresObjekt objekt = getUntersuchbaresObjekt(objektName);
-	    if(objekt != null){
-	    	untersuchbareObjekte.remove(objekt);
-	    	objekt = null;
-	    }
+	    if(objekt == null) return;
+	    untersuchbareObjekte.remove(objekt);
 	}
 	/**
-	 *  Diese Methode entfernt ein UntersuchbaresObjekt.
-	 *  objekt: das UntersuchbarenObjekts.
+	 * Entfernt ein UntersuchbaresObjekt.
+	 * @param objekt Das zuentfernende UntersuchbareObjekt.
 	 */
-	public void removeUntersuchbaresObjekt(UntersuchbaresObjekt objekt){
-	    if(objekt != null){
-	    	untersuchbareObjekte.remove(objekt);
-	    	objekt = null;
-	    }
+	public void removeUntersuchbaresObjekt(UntersuchbaresObjekt objekt) {
+	    if(objekt == null) return;
+	    untersuchbareObjekte.remove(objekt);
 	}
 	/**
-	 *  Diese Methode gibt ein Array zurueck, welches alle Namen der UntersuchbarenObjekte enthaelt.
+	 * Gibt aufgrund des Namens ein UntersuchbaresObjekt zurueck.
+	 * @param objektName Der Name des UntersuchbarenObjekts.
+	 * @return Das UntersuchbareObjekt, falls es gefunden wurde, ansonsten null.
 	 */
-	public String[] getUntersuchbareObjekteNamen(){
-		String[] namen = new String[untersuchbareObjekte.size()];
-	    for(int i = 0; i > untersuchbareObjekte.size(); i++){
-	    	namen[i] = untersuchbareObjekte.get(i).getName();
-	    }
-	    if(namen.length != 0) return namen;
-	    else{
-	    	String[] str = { "NICHTS" };
-	    	return str;
-	    }
+	public UntersuchbaresObjekt getUntersuchbaresObjekt(String objektName) {
+		for(UntersuchbaresObjekt o : untersuchbareObjekte) {
+			if(o.getName().equalsIgnoreCase(objektName))
+				return o;
+	  }
+	  return null;
 	}
-	/**
-	 * Diese Methode gibt alle UntersuchbarenObjekte dieses Orts zurück.
+
+  /**
+	 * Diese Methode gibt alle UntersuchbarenObjekte dieses Orts zurï¿½ck.
 	 */
 	public UntersuchbaresObjekt[] getUnteruschbareObjekte() {
 		return untersuchbareObjekte.toArray(new UntersuchbaresObjekt[0]);
 	}
-	/**
-	 *  Diese Methode gibt aufgrund des Namens eines UntersuchbaresObjekt zurueck.
-	 *  objektName: der Name des Objekts, das zurueckgegeben werden soll.
-	 */
-	public UntersuchbaresObjekt getUntersuchbaresObjekt(String objektName){
-		for(UntersuchbaresObjekt o: untersuchbareObjekte.toArray(new UntersuchbaresObjekt[0])){
-			if(o.getName().equals(objektName)){
-				return o;
-			}
-	    }
-	    return null;
-	}
 
+
+	/* Gegenstand */
 	/**
-	 *  Diese Methode fuegt eine bestimmte Anzahl eines Gegenstand an diesem Ort hinzu.
-	 *  gegenstand: der neu hinzugefuegte Gegenstand.
+	 * Fuegt eine bestimmte Anzahl eines Gegenstand an diesem Ort hinzu.
+	 * @param gegenstand Der Gegenstand, der hinzugefuegt werden soll.
+	 * @param anzahl Die Anzahl des Gegenstands.
 	 */
-	public void addGegenstand(Gegenstand gegenstand, int anzahl){
+	public void addGegenstand(Gegenstand gegenstand, int anzahl) {
 		gegenstaende.addGegenstand(gegenstand, anzahl);
 	}
 	/**
-	 *  Diese Methode entfernt den uebergebenen Gegenstand aus diesem Ort.
-	 *  gegenstand: der zu entfernen ist.
+	 * Entfernt alle vorhandenen Gegenstaende diesen Typs von diesem Ort.
+	 * @param gegenstand Der zuentfernende Gegenstand.
 	 */
-	public void removeGegenstand(Gegenstand gegenstand){
+	public void removeGegenstand(Gegenstand gegenstand) {
 		gegenstaende.removeAlleGegenstand(gegenstand);
 	}
 	/**
-	 *  Diese Methode gibt aufgrund des Namens eines Gegenstand zurueck.
-	 *  gegenstandName: der Name des Gegenstands.
+	 * Gibt aufgrund des Namens einen Gegenstand zurueck.
+	 * @param gegenstandName Der Name des gesuchten Gegenstands.
+	 * @return Der Gegenstand, falls er gefunden wurde, ansonsten null.
 	 */
-	public Stapel getGegenstand(String gegenstandName){
+	public Stapel getGegenstand(String gegenstandName) {
 	    Gegenstand gegenstand = Gegenstand.getGegenstand(gegenstandName);
 	    if(gegenstand == null) return null;
-	    for(Gegenstand g: gegenstaende.getAlleGegenstaende()){
-	    	if(gegenstand.getName().equals(g.getName())){
-	    		return gegenstaende.getStapel(g);
-	    	}
-	    }
-	    return null;
+	    return gegenstaende.getStapel(gegenstand);
 	}
-	
 	/**
 	 * Gibt aus, ob sich so ein Gegenstand an diesem Ort befindet, falls dies der Fall ist wird wahr zurueckgegeben.
 	 * @param gegenstand Der Gegenstand, auf den der Ort untersucht wird.
+	 * @return Wahr, wenn der Gegenstand an diesem Ort ist, falsewenn nicht.
 	 */
 	public boolean hasGegenstand(Gegenstand gegenstand) {
-		for(Gegenstand g: gegenstaende.getAlleGegenstaende()) {
-			if(gegenstand.equals(g)) return true;
-		}
-		return false;
+		if(gegenstaende.containsGegenstand(gegenstand))
+			return true;
+		else
+			return false;
 	}
-	  
+
+	/* KommandoGegenstaende & Tuer */
 	/**
-	 *  Fuegt einen Gegenstand hinzu, der, wenn er verwendet wird, eine Aktion ausloest.
-	 *  gegenstand: der Gegenstand, der verwendet werden muss.
-	 *  aktion: die Aktion, die nach der Verwendung ausgefuehrt wird.
+	 * Fuegt einen Gegenstand hinzu, der, wenn er verwendet wird, eine Aktion ausloesen kann.
+	 * @param gegenstand Der Gegenstand, der verwendet werden muss.
 	 */
-	public void addKommandoGegenstand(Gegenstand gegenstand, Bedingung bedingung){
-		if(!verwendbareGegenstaende.contains(gegenstand)){
-			verwendbareGegenstaende.add(gegenstand);
-			bedingungen.add(bedingung);
-	    }
+	public void addKommandoGegenstand(KommandoGegenstand gegenstand) {
+		kommandoGegenstaende.add(gegenstand);
 	}
 	/**
-	 *  Fuehrt eine Aktion entsprechend eines verwendeten Gegenstands aus.
+	 * Fuegt dem Ort eine verschlossene Tuer hinzu, die mit einem schluessel einen ausgang oeffnet.
+	 * @param ausgang Der neue Ausgang hinter der Tuer.
+	 * @param ereignis Das Ereignis, das erfuellt sein muss, sodass sich die Tuer oeffnet.
+	 * @param schluessel Die Schluessel fuer die Tuer.
 	 */
-	public boolean fuehreAktionAus(Gegenstand gegenstand){
+	public void addTuer(Ausgang ausgang, Ereignis ereignis, Gegenstand... schluessel) {
+		tueren.add(new Tuer(ausgang, ereignis, schluessel));
+	}
+	/**
+	 * Fuehrt eine Aktion fuer einen Gegenstand aus.
+	 * @param gegenstand Der Gegenstand, der verwendet wurde.
+	 * @return True, wenn ein Gegenstand gefunden wurde, ansonsten false;
+	 */
+	public boolean fuehreAktionAus(Gegenstand gegenstand) {
 		if(gegenstand == null) return false;
+
 	    boolean gefunden = false;
-	    for(Gegenstand g: verwendbareGegenstaende.toArray(new Gegenstand[0])){
-	    	if(gegenstand == g){
-	    		Bedingung b = bedingungen.get(verwendbareGegenstaende.indexOf(g));
-	    		b.pruefen();
-	    		if(b.istErfuellt()){
-	    			verwendbareGegenstaende.remove(g);
-	    			bedingungen.remove(b);
-	    		}
-	    		gefunden = true;
+
+	    for(Tuer t : tueren.toArray(new Tuer[0])) {
+	    	if(t.oeffnen(gegenstand)) {
+	    		addAusgang(t.getAusgang());
+	    		tueren.remove(t);
+	    		return true;
 	    	}
 	    }
-	    
-	    for(Gegenstand g: schluessel.toArray(new Schluessel[0])) {
-	    	if(gegenstand == g) {
-	    		if(g instanceof Schluessel && ((Schluessel)g).verwenden()) {
-	    			int index = schluessel.indexOf(g);
-		    		this.addAusgang(tueren.get(index));
-		    		schluessel.remove(index);
-		    		tueren.remove(index);
-		    		gefunden = true;
-	    		}     		
-	    	}
-	    }
-	    
+
+	    for(KommandoGegenstand kg : kommandoGegenstaende)
+	    	if(kg.equals(gegenstand))
+	    		if(((KommandoGegenstand) gegenstand).verwendet())
+	    			return true;
+
 	    return gefunden;
 	}
-	  
+
+	/* Kommando & NPC */
 	/**
-	 *  Diese Methode fuegt diesem Ort ein spezial Kommando hinzu.
-	 *  kommando: der Befehl, der von Spieler eingegeben werden muss.
-	 *  Bedingung: die Bedingung, die Erfuellt sein muss, sodass eine Aktion ausgefuehrt wird.
+	 * Fuegt diesem Ort ein spezial Kommando hinzu.
+	 * @param kommando Der Befehl, der von Spieler eingegeben werden muss.
+	 * @param ereignis Das Ereignis, das erfuellt sein muss, sodass die Aktion ausgefuehrt wird.
 	 */
-	public void addCustomCommand(String kommando, Bedingung bedingung){
-		Kommando k = new Kommando(kommando, bedingung);
-	    if(!kommandos.contains(k)){
-	    	kommandos.add(k);
-	    }
+	public void addCustomCommand(Ereignis ereignis, String... kommando) {
+	    kommandos.add(new Kommando(ereignis, kommando));
 	}
-	/**
-	 *  Uberprueft, ob hier ein Kommando moeglich ist.
-	 *  befehl: der eingegebene Befehl.
-	 */
-	public boolean kommandoEingegeben(String befehl){
-	    for(Kommando k: kommandos.toArray(new Kommando[0])){
-	    	if(k.getBefehl().equalsIgnoreCase(befehl)){
-	    		k.getBedingung().pruefen();
-	    		return true;
-	    	}
-	    }
-	    
-	    //prüfe auf NPCs
-	    for(NPC npc : npcs) {
-	    	if(npc.ansprechen(befehl))
-	    		return true;
-	    }
-	    
-	    return false;
-	}
-	  
-	/**
-	 *  Fuegt diesem Ort einen Gegner hinzu, der mit der uebergebenen Wahrscheinlichkeit angreift.
-	 *  gegner: der Gegner an diesem Ort
-	 *  wahrscheinlichkeit: die Wahrscheinlichkeit fuer das erscheinen dieses Gegners in Prozent
-	 */
-	public void addGegner(Gegner gegner, double wahrscheinlichkeit){
-	    if(!enemies.contains(gegner)){
-	    	enemies.add(gegner);
-	    	wahrscheinlichkeiten.add(wahrscheinlichkeit);
-	    }
-	}
-	/**
-	 *  Ueberprueft, ob ein Kampf stattfinden wird.
-	 */
-	public Gegner findetKampfStatt(){
-		Random r = new Random();
-	    for(int i = 0; i < enemies.size(); i++){
-	    	if(!(r.nextDouble() * pKampf <= wahrscheinlichkeiten.get(i))) continue;
-	    	return new Gegner(enemies.get(i));
-	    }
-	    return null;
-	}
-	  
-	/**
-	 *  Fuegt dem Ort einen Behaelter hinzu.
-	 *  behaelter: der neue Behaelter.
-	 */
-	public void addBehaelter(Behaelter behaelter){
-		if(!this.behaelter.contains(behaelter)) this.behaelter.add(behaelter);
-	}
-	/**
-	 *  Gibt alle Gegenstaende aus einem Behaelter zurueck, der aufgrund des Typs ermittelt wird.
-	 *  typ: der Typ des Behaelters.
-	 */
-	public Stapel[] getBehaelterInhalt(byte typ){
-	    for(Behaelter b: behaelter.toArray(new Behaelter[0])){
-	    	if(b.getTyp() == typ){
-	    		Stapel[] loot = b.pluendern();
-	    		behaelter.remove(b);
-	    		if(loot.length == 0) return new Stapel[0];
-	    		return loot;
-	    	}
-	    }
-	    return null;
-	}
-	
-	/**
-	 * Fuegt dem Ort eine verschlossene "Tuer" hinzu, die mit einem @schluessel einen @ausgang oeffnet.
-	 * @param schluessel Der Schluessel fuer die Tuer.
-	 * @param ausgang Der neue Ausgang hinter der "Tuer".
-	 */
-	public void addTuer(Schluessel schluessel, Ausgang ausgang) {
-		this.schluessel.add(schluessel);
-		this.tueren.add(ausgang);		
-	}
-	
 	/**
 	 * Fuegt dem Ort einen neuen NPC hinzu.
-	 * @param npc Der NPC, der hinzugefügt werden soll.
+	 * @param npc Der NPC, der hinzugefuegt werden soll.
 	 */
 	public void addNPC(NPC npc) {
 		if(!npcs.contains(npc))
 			npcs.add(npc);
 	}
-	
+  /**
+	 * Gibt alle NPCs an diesem Ort zurï¿½ck.
+	 */
+	public NPC[] getNPCs() {
+		return npcs.toArray(new NPC[0]);
+	}
 	/**
-	 * Löscht einen NPC von diesem Ort.
+	 * Entfernt einen NPC von diesem Ort.
 	 * @param npc Der NPC, der entfernt werden soll.
 	 */
 	public void removeNPC(NPC npc) {
 		npcs.remove(npc);
 	}
-	
+
 	/**
-	 * Gibt alle NPCs an diesem Ort zurück.
-	 */
-	public NPC[] getNPCs() {
-		return npcs.toArray(new NPC[0]);
-	}
-	
-	/**
-	 * Prüft, ob der gegebene NPC an diesem Ort ist.
-	 * @param npc
-	 * @return
+	 * Prueft, ob der gegebene NPC an diesem Ort ist.
+	 * @param npc Der NPC, nach dem gesucht wird.
+	 * @return True, wenn der NPC da ist, ansonsten false.
 	 */
 	public boolean istNpcDa(NPC npc) {
 		return npcs.contains(npc);
 	}
-	
-	
+	/**
+	 * Ueberprueft, ob das eingegeben Kommando an diesem Ort verwendet werden kann.
+	 * @param befehl Das Kommando vom Spieler.
+	 * @return True, wenn es einsetzbar ist, ansonsten falls.
+	 */
+	public boolean kommandoEingegeben(String befehl) {
+	    for(Kommando k : kommandos.toArray(new Kommando[0])) {
+	    	if(k.istBefehl(befehl)) {
+	    		if(k.getEreignis().eingetreten())
+	    			kommandos.remove(k);
+	    		return true;
+	    	}
+	    }
+
+	    //prï¿½fe auf NPCs
+	    for(NPC npc : npcs) {
+	    	if(npc.ansprechen(befehl))
+	    		return true;
+	    }
+
+	    return false;
+	}
+
+
+	/* Gegener */	// TODO muss noch in einen KAMPF umgewandelt werden und insgesamt verbessert werden.
+	/**
+	 * Fuegt diesem Ort einen Kampf hinzu, der an diesem Ort eintreten kann.
+	 * @param kampf Der neue Kampf, der an diesem Ort stattfinden kann.
+	 */
+	public void addKampf(Kampf kampf) {
+	    kaempfe.add(kampf);
+	}
+	/**
+	 * Ueberprueft, ob ein Kampf stattfinden wird.
+	 * @return Den Kampf, der stattfindet oder null, wenn keiner stattfindet.
+	 */
+	public Kampf findetKampfStatt() {
+		// testet, ob ueberhaupt ein Kampf stattfinden kann.
+		if(SpielWelt.WELT.r.nextDouble() * 100 > pKampf)
+			return null;
+
+		int sigmaChance = 0;
+		for(Kampf k : kaempfe)
+			sigmaChance += k.getChance();
+
+		// Kein Kampf an diesem Ort.
+		if(sigmaChance == 0)
+			return null;
+
+		// Exklusive obere Grenze!
+		int nInt = SpielWelt.WELT.r.nextInt(sigmaChance + 1);
+		for(Kampf k : kaempfe)
+			if(nInt >= sigmaChance - k.getChance() && nInt <= sigmaChance)
+				return k.reset();
+			else
+				sigmaChance -= k.getChance();
+		// Es findet kein Kampf statt.
+		return null;
+	}
+	/**
+	 * Aendert die Wahrscheinlichkeit fuer einen Kampf an diesem Ort.
+	 * @param wahrscheinlichkeit Die neue Wahrscheinlichkeit fuer einen Kampf.
+	 * @return Sich selbst.
+	 */
+	public Ort setWahrscheinlichkeitFuerKampf(double wahrscheinlichkeit) {
+		this.pKampf = wahrscheinlichkeit;
+		return this;
+	}
+	/* Behaelter */
+	/**
+	 * Fuegt dem Ort einen Behaelter hinzu.
+	 * @param behaelter Der neue Behaelter an diesem Ort.
+	 */
+	public void addBehaelter(Behaelter behaelter) {
+		if(!this.behaelter.contains(behaelter))
+			this.behaelter.add(behaelter);
+	}
+	/**
+	 * Gibt alle Gegenstaende aus einem Behaelter zurueck, der aufgrund des Typs ermittelt wird.
+	 * @param typ Der Typ des Behaelters, der gesucht wird.
+	 * @return Den Inhalt des Behaelters.
+	 */
+	public Stapel[] getBehaelterInhalt(byte typ) {
+	    for(Behaelter b : behaelter.toArray(new Behaelter[0])) {
+	    	if(b.getTyp() == typ) {
+	    		Stapel[] loot = b.pluendern();
+	    		behaelter.remove(b);
+	    		return loot;
+	    	}
+	    }
+	    return null;
+	}
+
+
+	/* Ressourcen Punkte */
+
+	/**
+	 * Fuegt dem Ort einen Ressourcen Punkt hinzu.
+	 * @param ressourcenPunkt Der neue Ressourcen Punkt an diesem Ort.
+	 */
+	public void addRessourcenPunkt(RessourcenPunkt ressourcenPunkt) {
+		if(!this.ressourcen.contains(ressourcenPunkt))
+			ressourcen.add(ressourcenPunkt);
+	}
+
+	/**
+	 * Gibt den Ressourcen Punkt zurueck.
+	 * @param name Der Name des Ressourcen Punkts.
+	 * @return Den Ressourcen Punkt und null, falls es so einen Ressourcen Punkt nicht an diesem Ort gibt.
+	 */
+	public RessourcenPunkt getRessourcenPunkt(String name) {
+		for(RessourcenPunkt rp : ressourcen)
+			if(rp.getName().equalsIgnoreCase(name))
+				return rp;
+		return null;
+	}
+
+
 }
