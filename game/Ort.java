@@ -147,8 +147,8 @@ public class Ort implements Serializable, IPrintable {
 		// Alle Parameter muessen von Hand in getParams() registriert werden!
 		switch(param) {
 		case "name": return this.getNameExtended();
-		case "anzahlAusgï¿½nge": return Integer.toString(this.getAusgaenge().size());
-		case "anzahlGegenstï¿½nde": return Integer.toString(this.gegenstaende.getAlleGegenstaende().length);
+		case "anzahlAusgänge": return Integer.toString(this.getAusgaenge().size());
+		case "anzahlGegenstände": return Integer.toString(this.gegenstaende.getAlleGegenstaende().length);
 		case "anzahlUntersuchbaresObjekt": return Integer.toString(this.untersuchbareObjekte.size());
 		case "anzahlNichtUntersucht":
 			int i = 0;
@@ -175,7 +175,7 @@ public class Ort implements Serializable, IPrintable {
 	@Override
 	public String[] getParams() {
 		Vector<String> params = new Vector<String>();
-		params.add("name"); params.add("anzahlAusgï¿½nge"); params.add("anzahlUntersuchbaresObjekt"); params.add("anzahlNichtUntersucht");
+		params.add("name"); params.add("anzahlAusgänge"); params.add("anzahlUntersuchbaresObjekt"); params.add("anzahlNichtUntersucht");
 		params.add("anzahlGegenstï¿½nde"); params.add("anzahlNPC"); params.add("alleNPCs");
 
 		for(Ausgang a : ausgaenge)
@@ -464,7 +464,7 @@ public class Ort implements Serializable, IPrintable {
 	    	}
 	    }
 
-	    //prï¿½fe auf NPCs
+	    //prüfe auf NPCs
 	    for(NPC npc : npcs) {
 	    	if(npc.ansprechen(befehl))
 	    		return true;
