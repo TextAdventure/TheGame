@@ -14,10 +14,13 @@ import java.util.Vector;
 import util.StringEvent;
 
 /**
- *  Diese Klasse testet das Spiel und fuehrt es aus.
+ * Interpretiert die Eingabe des Spielers und uebermittelt sie an die SpielWelt.
+ * @author Marvin
  */
-public class SpielTest {
-
+public class Interpreter {
+	
+	/* --- Variablen --- */
+	
 	// Die Datei, die geladen werden soll.
 	private static final String datei = "spielstand.dat";
 	// Die SpielWelt, die geladen wird.
@@ -30,10 +33,13 @@ public class SpielTest {
 	// Die Booleans fuer die Abfrage.
 	private boolean gueltigesKommando;
 
+	/* --- Konstruktor --- */
+	
 	/**
-	 *  Der Konstruktor fuer einen neuen SpielTest, der InpuStream fuer den Test, der OutpuStream fuer die SpielWelt.
+	 * Erstellt einen neuen Interpreter fuer die Eingabe des Spielers, der sie dann weitergibt an die SpielWelt.
+	 * @param gui Die GUI, die diesen Interpreter erstellt hat.
 	 */
-	public SpielTest(GUI gui) {
+	public Interpreter(GUI gui) {
 		this.gui = gui;
 
 	    // Es wird erst ein File-, dann ein ObjectInputStream erstellt, um die Daten zu laden.
@@ -41,7 +47,7 @@ public class SpielTest {
 	    	FileInputStream fis = new FileInputStream(datei);
 	    	ObjectInputStream ois = new ObjectInputStream(fis);
 	    	welt = (SpielWelt) ois.readObject();
-	    	welt.updateGegenstandsListe();
+	    	welt.updateListen();
 	    	welt.setGUI(gui);
 	    	welt.getSpieler().resetTemp();
 
@@ -60,8 +66,14 @@ public class SpielTest {
 	    r = new Random();
 	}
 
+	/* --- Methoden --- */
+	
+	/**
+	 * Testet einen Befehl und gibt dann die noetigen Befehle an die SpielWelt weiter.
+	 * @param befehl Die Eingabe des Spielers.
+	 */
 	public void ueberpruefeBefehl(String befehl) {
-		// Wenn der Spieler sich im Kampf oder im Gesprï¿½ch mit einem NPC befindet, dann wird der Befehl direkt
+		// Wenn der Spieler sich im Kampf oder im Gespraech mit einem NPC befindet, dann wird der Befehl direkt
 		// an die Welt weitergegeben.
 	    if(welt.spielerKaempft() || welt.spielerSpricht()) {
 	    	welt.actionPerformed(new StringEvent(befehl));
@@ -75,67 +87,64 @@ public class SpielTest {
 	    gueltigesKommando = false;
 
 	    // Die Eingabe des Spielers wird ueberprueft.
-	    if(befehl.length() == 0) {
+	    if(befehl.length() == 0)
 	    	gueltigesKommando = true;
-	    }
-
+	    
 	    // Alle Befehle werden als Grossbuchstaben verglichen, um Schreibfehler zu korrigieren.
 
-	    // Uberprueft, ob es an diesem Ort Custom Commands gibt.
-	    if(welt.sucheKommando(befehl)) {
+	    // Uberprueft, ob es an diesem Ort eigene Kommandos gibt.
+	    if(welt.sucheKommando(befehl))
 	    	gueltigesKommando = true;
-	    }
+	    
 	    // Globale Kommandos, die hinzugefuegt wurden.
-	    if(welt.ueberpruefeKommandos(befehl)) {
+	    if(welt.ueberpruefeKommandos(befehl))
 	    	gueltigesKommando = true;
-	    }
 
 	    Kommando kommando = Kommando.getKommando(befehl);
 	    String eingabe = Kommando.getEingabe();
 
 	    if(kommando != Kommando.INVALID && !gueltigesKommando) {
 	    	// Der Spieler hat den Untersuchen Befehl eingegeben.
-	    	if(kommando == Kommando.UNTERSUCHEN) {
+	    	if(kommando == Kommando.UNTERSUCHEN)
 	    		welt.sucheUntersuchbaresObjekt(eingabe);
-	    	}
+	    	
 	    	// Der Spieler hat den Nehmen Befehl eingegeben.
-	    	if(kommando == Kommando.NEHMEN) {
+	    	if(kommando == Kommando.NEHMEN)
 	    		welt.sucheGegenstand(eingabe);
-	    	}
+	    	
 	    	// Der Spieler hat den Verwenden Befehl eingegeben.
-	    	if(kommando == Kommando.VERWENDEN) {
+	    	if(kommando == Kommando.VERWENDEN)
 	    		welt.verwendeGegenstand(Gegenstand.getGegenstand(eingabe));
-	    	}
+	    	
 	    	// Der Spieler hat den Kombinieren Befehl eingegeben.
-	    	if(kommando == Kommando.KOMBINIEREN) {
-	    		//welt.kombiniere(eingabe.split(", "));
+	    	if(kommando == Kommando.KOMBINIEREN)
 	    		gui.kombinationsGUIStarten();
-	    	}
+	    	
 	    	// Der Spieler hat den Ausruesten Befehl eingegeben.
-	    	if(kommando == Kommando.AUSRUESTEN) {
+	    	if(kommando == Kommando.AUSRUESTEN)
 	    		welt.ausruesten(eingabe);
-	    	}
+	    	
 	    	// Der Spieler hat den Ablegen Befehl eingegeben.
-	    	if(kommando == Kommando.ABLEGEN) {
+	    	if(kommando == Kommando.ABLEGEN)
 	    		welt.ablegen(eingabe);
-	    	}
+	    	
 	    	// Der Spieler hat den Ausruestung Befehl eingegeben.
-	    	if(kommando == Kommando.AUSRUESTUNG) {
+	    	if(kommando == Kommando.AUSRUESTUNG)
 	    		welt.zeigeAusruestungAn();
-	    	}
+	    	
 	    	// Der Spieler hat den Status Befehl eingegeben.
-	    	if(kommando == Kommando.STATUS) {
+	    	if(kommando == Kommando.STATUS)
 	    		welt.zeigeStatusAn();
-	    	}
+	    	
 	    	// Der Spieler hat den Info Befehl eingegeben.
 	    	if(kommando == Kommando.INFO) {
 	    		Gegenstand g = Gegenstand.getGegenstand(eingabe);
 	    		welt.zeigeGegenstandInfosAn(g);
 	    	}
 	    	// Der Spieler hat den Oeffnen Befehl eingegeben.
-	    	if(kommando == Kommando.OEFFNEN) {
+	    	if(kommando == Kommando.OEFFNEN)
 	    		welt.sucheBehaelter(eingabe);
-	    	}
+	    	
 	    	welt.println();
 	    	gueltigesKommando = true;
 	    }
@@ -167,7 +176,7 @@ public class SpielTest {
 	    		ObjectInputStream ois = new ObjectInputStream(fis);
 	    		welt = (SpielWelt)ois.readObject();
 	    		ois.close();
-	    		welt.updateGegenstandsListe();
+	    		welt.updateListen();
 	    		welt.setGUI(gui);
 	    		welt.println("Es wurde das Spiel aus " + pfad + " geladen.");
 		    	welt.getSpieler().resetTemp();
@@ -186,7 +195,7 @@ public class SpielTest {
 	    }
 
 	    // Es wird eine Kopie des Ausgangslisten Vectors angefordert.
-	    Vector<Ausgang> ausgaenge = welt.aktuellePosition().getAusgaenge();
+	    Vector<Ausgang> ausgaenge = welt.getAktuellePosition().getAusgaenge();
 
 	    // Alle Ausgaenge werden ueberprueft, ob sie uebereinstimmen.
 	    for(Ausgang a : ausgaenge.toArray(new Ausgang[0])) {
@@ -213,15 +222,14 @@ public class SpielTest {
 	    // Der Spieler wird gewarnt, dass das Kommando ungueltig ist.
 	    if(!gueltigesKommando) {
 	    	switch(r.nextInt(5)) {
-	    		case(0): welt.print("ungï¿½ltiges Kommando"); break;
-	    		case(1): welt.print("kein gï¿½ltiges Kommando"); break;
-	    		case(2): welt.print("Dieses Kommando ist ungï¿½ltig."); break;
-	    		case(3): welt.print("Nur gï¿½ltige Kommandos kï¿½nnen ausgefï¿½hrt werden."); break;
-	    		case(4): welt.print("Dieses Kommando kann nicht ausgefï¿½hrt werden."); break;
+	    		case(0): welt.print("ungültiges Kommando"); break;
+	    		case(1): welt.print("kein gültiges Kommando"); break;
+	    		case(2): welt.print("Dieses Kommando ist ungültig."); break;
+	    		case(3): welt.print("Nur gültige Kommandos können ausgeführt werden."); break;
+	    		case(4): welt.print("Dieses Kommando kann nicht ausgeführt werden."); break;
 	    	}
 	    	welt.println("\n");
 	    }
 	}
-
-
+	
 }

@@ -6,28 +6,29 @@ import game.items.Gegenstand;
 import game.logic.Ereignis;
 
 /**
- * Eine Tuer verwaltet einen Schluessel und einen Ausgang, sodass diese leichter zuzuordnen sind.
+ * Eine Tuer wird geoeffnet, wenn der richtige Schluessel verwendet wird, dabei tritt ein Ereignis ein.
+ * @author Marvin
  */
 public class Tuer implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 	
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Die Schluessel, die die Tuer oeffnen.
 	private Gegenstand[] schluessel;
 	// Der Ausgang, der hinter der Tuer liegt.
 	private Ausgang ausgang;
-	// Das Ereignis, das geprueft wird, wenn der Schluessel an der Tuer verwendet wird.
+	// Das Ereignis, das eintritt wird, wenn der Schluessel an der Tuer verwendet wird.
 	private Ereignis ereignis;
 	
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Erstellt eine Tuer, die einen Ausgang hat und mehrere moegliche Schluessel, die verwendet werden koennen.
 	 * @param ausgang Der Ausgang, der hinter der Tuer liegt.
-	 * @param Logik Die Logik, die geprueft wird, wenn der Schluessel an der Tuer verwendet wird.
+	 * @param ereignis Das Ereignis, das dadurch ausgeloest wird.
 	 * @param schluessel Alle Schluessel, mit denen man die Tuer oeffnen kann.
 	 */
 	public Tuer(Ausgang ausgang, Ereignis ereignis, Gegenstand...schluessel) {
@@ -36,7 +37,7 @@ public class Tuer implements Serializable {
 		this.schluessel = schluessel;
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Ausgang der Tuer zurueck.
@@ -57,5 +58,5 @@ public class Tuer implements Serializable {
 				return ereignis.eingetreten();
 		return false;
 	}
-	
+
 }

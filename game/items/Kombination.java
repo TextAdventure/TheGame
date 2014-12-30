@@ -203,7 +203,7 @@ public class Kombination implements Serializable {
 	public boolean istEinrichtungVorhanden() {
 		if(this.einrichtung == null)
 			return true;
-		return SpielWelt.WELT.spielerPosition.getUntersuchbaresObjekt(einrichtung.getName()) != null ? true : false;
+		return SpielWelt.WELT.getAktuellePosition().getUntersuchbaresObjekt(einrichtung.getName()) != null ? true : false;
 	}
 	
 	// Diese Methode gibt das Produkt zurueck.
