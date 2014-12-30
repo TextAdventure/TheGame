@@ -1,6 +1,7 @@
 package editor;
 
 import game.Ausgang;
+import game.Ort;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -49,10 +50,20 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		JLabel label1 = new JLabel(ausgang.ort1.getName());
 		JLabel label2 = new JLabel(ausgang.ort2.getName());
 		JLabel pfeile = new JLabel(new ImageIcon("EditorGraphics/DoppelPfeil.png"));
+		
 		von1nach2Richtung = new JComboBox<String>(Ausgang.richtungen);
-		von1nach2Richtung.setSelectedIndex(ausgang.bez_von1nach2);
+		von1nach2Richtung.setEditable(true);
+		if(ausgang.bez_von1nach2 >= 0) 
+			von1nach2Richtung.setSelectedIndex(ausgang.bez_von1nach2);
+		else
+			von1nach2Richtung.setSelectedItem(ausgang.eigeneBez_von1nach2);		
+		
 		von2nach1Richtung = new JComboBox<String>(Ausgang.richtungen);
-		von2nach1Richtung.setSelectedIndex(ausgang.bez_von2nach1);
+		von2nach1Richtung.setEditable(true);
+		if(ausgang.bez_von2nach1 >= 0) 
+			von2nach1Richtung.setSelectedIndex(ausgang.bez_von2nach1);
+		else 
+			von2nach1Richtung.setSelectedItem(ausgang.bez_von2nach1);
 		
 		Dimension d1 = label1.getPreferredSize();
 		Dimension d2 = label2.getPreferredSize();
@@ -101,17 +112,25 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 	}
 	
 	public static void main(String[] args) {
+		System.out.println("test");
 		JFrame f = new JFrame("test");
 		f.setVisible(true);
-		//Ort ort1 = new Ort("Ort1", "Ein Ort.");
-		//Ort ort2 = new Ort("Ort2", "Noch ein Ort.");
-		//new AusgangDialog(f, new AusgangErweitert(ort1, ort2, new java.awt.Point(0, 0), new java.awt.Point(0, 0))).setVisible(true);
+		Ort ort1 = new Ort("Ort1", "Ein Ort.");
+		Ort ort2 = new Ort("Ort2", "Noch ein Ort.");
+		AusgangErweitert ae = new AusgangErweitert();
+		ae.ort1 = ort1;
+		ae.ort2 = ort2;
+		new AusgangDialog(f, ae).setVisible(true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ausgang.bez_von1nach2 = von1nach2Richtung.getSelectedIndex();
+		if(von1nach2Richtung.getSelectedIndex() == -1) 
+			ausgang.eigeneBez_von1nach2 = (String)von1nach2Richtung.getSelectedItem();
 		ausgang.bez_von2nach1 = von2nach1Richtung.getSelectedIndex();
+		if(von2nach1Richtung.getSelectedIndex() == -1) 
+			ausgang.eigeneBez_von2nach1 = (String)von1nach2Richtung.getSelectedItem();
 		ausgang.von1nach2 = von1nach2Bool.isSelected();
 		ausgang.von2nach1 = von2nach1Bool.isSelected();
 		dispose();

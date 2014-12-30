@@ -26,5 +26,7 @@ public class AusgangErweitert implements Serializable {
 	boolean von2nach1 = true;
 	int bez_von1nach2 = Ausgang.EIGENE;
 	int bez_von2nach1 = Ausgang.EIGENE;
+	String eigeneBez_von1nach2 = "";
+	String eigeneBez_von2nach1 = "";
 	
 }
