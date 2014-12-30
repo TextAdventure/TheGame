@@ -7,20 +7,26 @@ import game.entity.Gegner;
 
 /**
  * Ein Kampf besteht aus der Wahrscheinlichkeit fuer ihn und allen Gegnern die darin auftauchen.
+ * @author Marvin
  */
 public class Kampf implements Serializable {
+
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
+	/* --- Variablen --- */
+	
 	// Die Wahrscheinlichkeit fuer diesen Kampf.
 	private int wahrscheinlichkeit;
 	// Alle Gegner, die in diesem Kampf erscheinen.
 	private Entity[] gegner;
 	transient private Entity[] kampf; // Mit den Buchstaben.
 
+	/* --- Konstruktor --- */
+
 	/**
 	 * Ein Kampf hat eine wahrscheinlichkeit fuer sein auftreten und eine gewisse Anzahl an Gegner.
-	 * @param wahrscheinlichkeit Die Wahrscheinlichkeit dafuer, ob ein Kampf stattfindet.
+	 * @param wahrscheinlichkeit Die Wahrscheinlichkeit dafuer, ob dieser Kampf stattfindet.
 	 * @param gegner Die Gegner in diesem Kampf.
 	 */
 	public Kampf(int wahrscheinlichkeit, Entity... gegner) {
@@ -29,7 +35,7 @@ public class Kampf implements Serializable {
 		reset();
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt die Wahrscheinlichkeit fuer diesen Kampf zurueck.
@@ -52,7 +58,7 @@ public class Kampf implements Serializable {
 	}
 	
 	/**
-	 * Gibt alle Gegner, die am Kampf beteiligt sind zurueck, in einem Array. Ihren Namen wurde bereits Buchstaben hinzugefuegt.
+	 * Gibt alle Gegner, die am Kampf beteiligt sind, in einem Array zurueck. Ihren Namen wurde bereits Buchstaben hinzugefuegt.
 	 * @return Ein Array mit allen Gegnern fuer diesen Kampf.
 	 */
 	public Entity[] getKampfGegner() {
@@ -86,7 +92,7 @@ public class Kampf implements Serializable {
 	
 	/**
 	 * Gibt zurueck, ob alle Gegner tot sind oder nicht.
-	 * @return true, wenn alle Gegner tot sind, ansonsten false.
+	 * @return True, wenn alle Gegner tot sind, ansonsten false.
 	 */
 	public boolean alleTot() {
 		for(Entity g : kampf)

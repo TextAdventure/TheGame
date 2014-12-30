@@ -17,7 +17,7 @@ public abstract class Entity implements Serializable {
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 	
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Name des Lebewesens.
 	protected String name;
@@ -48,7 +48,7 @@ public abstract class Entity implements Serializable {
 	// Alle Drops, die der Gegner fallen lassen kann.
 	protected Vector<Drop> loot;
 	
-	/* --- Die Konstruktoren --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Erstellt ein neues Lebewesen mit Namen, Geschlecht, Beschreibung und den attributen.
@@ -56,7 +56,7 @@ public abstract class Entity implements Serializable {
 	 * @param numerusGenus Das Geschlecht.
 	 * @param beschreibung Die Beschreibung.
 	 * @param lp Die Lebenspunkte des Entities.
-	 * @param mp Die Mahiepunkte des Entities.
+	 * @param mp Die Magiepunkte des Entities.
 	 * @param attributswerte ALLE Attribute muessen in der ID Reihenfolge(wann sie erstellt wurden) eingegeben werden.
 	 */
 	public Entity(String name, NumerusGenus numerusGenus, String beschreibung, int lp, int mp, int... attributswerte) {
@@ -110,25 +110,62 @@ public abstract class Entity implements Serializable {
 		loot = new Vector<Drop>();
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/* - Alle Getter - */
 	
-	// Gibt den Namen zurueck.
-	public String getName() { return name; }
-	// Gibt den Numerus und Genus zurueck.
-	public NumerusGenus getNumGen() { return numGen; }
-	// Gibt die Beschreibung zurueck.
-	public String getBeschreibung() { return beschreibung; }
+	/**
+	 * Gibt den Namen zurueck.
+	 * @return Den Namen.
+	 */
+	public String getName() {
+		return name;
+	}
 	
-	// Gibt die maximalen LP zurueck.
-	public int getMaxLp() { return maxLp; }
-	// Gibt die aktuellen LP zurueck.
-	public int getLp() { return lp; }
-	// Gibt die maximalen MP zurueck.
-	public int getMaxMp() { return maxMp; }
-	// Gibt die aktuellen MP zurueck.
-	public int getMp() { return mp; }
+	/**
+	 * Gibt den Numerus und Genus zurueck.
+	 * @return Den Numerus und Genus.
+	 */
+	public NumerusGenus getNumGen() {
+		return numGen;
+	}
+	
+	/**
+	 * Gibt die Beschreibung zurueck.
+	 * @return Die Beschreibung.
+	 */
+	public String getBeschreibung() {
+		return beschreibung;
+	}
+	
+	/**
+	 * Gibt die maximalen LP zurueck.
+	 * @return Die maximalen LP.
+	 */
+	public int getMaxLp() {
+		return maxLp;
+	}
+	/**
+	 * Gibt die aktuellen LP zurueck.
+	 * @return Die aktuellen LP.
+	 */
+	public int getLp() {
+		return lp;
+	}
+	/**
+	 * Gibt die maximalen MP zurueck.
+	 * @return Die maximalen MP.
+	 */
+	public int getMaxMp() {
+		return maxMp;
+	}
+	/**
+	 * Gibt die aktuellen MP zurueck.
+	 * @return Die aktuellen MP.
+	 */
+	public int getMp() {
+		return mp;
+	}
 	
 	/**
 	 * Gibt ein Attribut aufgrund des Namens oder Parameternamens zurueck,
@@ -142,6 +179,7 @@ public abstract class Entity implements Serializable {
 				return attribute[a.getId()].getWert();
 		return -1;
 	}
+	
 	/**
 	 * Gibt ein temporaeres Attribut aufgrund des Namens oder Parameternamens zurueck,
 	 * falls es dieses Attribut nicht gibt wird -1 zurueckgegeben.
@@ -154,6 +192,7 @@ public abstract class Entity implements Serializable {
 				return attribute[a.getId()].getTemp();
 		return -1;
 	}
+	
 	/**
 	 * Gibt den Wert fuer eine Resistenz zurueck, basierend auf dem Namen oder dem Parameter.
 	 * @param nameOderParm Der Name oder die Parameterschreibweise.
@@ -165,6 +204,7 @@ public abstract class Entity implements Serializable {
 				return resistenzen[r.getId()].getWert();
 		return -1.0f;
 	}
+	
 	/**
 	 * Gibt eine temporaere Resistenz aufgrund des Namens oder Parameternamens zurueck,
 	 * falls es diese Resistenz nicht gibt wird -1 zurueckgegeben.
@@ -177,11 +217,12 @@ public abstract class Entity implements Serializable {
 				return resistenzen[r.getId()].getTemp();
 		return -1.0f;
 	}
+	
 	/**
-	 * 	
-	 * @param schadensart
-	 * @param schaden
-	 * @return
+	 * Gibt den Schadensbonus fuer eine bestimmte Schadensart und den Grundschaden zurueck.
+	 * @param schadensart Die Schadensart mit der angegriffen wird.
+	 * @param schaden Der zugefuegte Grundschaden.
+	 * @return Der Schaden mit dem Bonus dazu gerechnet.
 	 */
 	public int getSchadensBonus(Schadensart schadensart, int schaden) {
 		for(EntityDamageAmplifier eda : schadensMultiplikatoren)
@@ -190,18 +231,38 @@ public abstract class Entity implements Serializable {
 		return schaden;
 	}
 	
-	// Gibt alle Faehigkeiten zurueck.
-	public Faehigkeit[] getFaehigkeiten() { return faehigkeiten.toArray(new Faehigkeit[0]); }
+	/**
+	 * Gibt alle Faehigkeiten in einer Liste zurueck.
+	 * @return Alle Faehigkeiten.
+	 */
+	public Faehigkeit[] getFaehigkeiten() {
+		return faehigkeiten.toArray(new Faehigkeit[0]);
+		}
 	
-	// Gibt die Angriffsfaehigkeit des Entitys zurueck(muss ueberschrieben werden).
+	/**
+	 * Gibt die Angriffsfaehigkeit des Entitys zurueck(muss ueberschrieben werden).
+	 * @param kommando Das Angriffskommando.
+	 * @return Die Faehigkeit, die das Entity einsetzt.
+	 */
 	public abstract Faehigkeit getFaehigkeit(String kommando);
 	
 	/* - Alle add-Methoden - */
 	
-	// Fuegt den Leben ein wenig hinzu.
-	public void addLp(int wert) { lp = Math.min(lp + wert, maxLp); }
-	// Fuegt der Magie ein wenig hizu.
-	public void addMp(int wert) { mp = Math.min(mp + wert, maxMp); }
+	/**
+	 * Fuegt den LP einen Betrag hinzu.
+	 * @param wert Erhoeht die LP um diesen Wert.
+	 */
+	public void addLp(int wert) {
+		lp = Math.min(lp + wert, maxLp);
+	}
+	
+	/**
+	 * Fuegt den MP einen Betrag hinzu.
+	 * @param wert Erhoeht die MP um diesen Wert.
+	 */
+	public void addMp(int wert) {
+		mp = Math.min(mp + wert, maxMp);
+	}
 	
 	/**
 	 * Fuegt einem Attribut einen gewissen Wert hinzu, dazu wird der Name oder die Parameterschreibweise des Attributs benoetigt.
@@ -213,6 +274,7 @@ public abstract class Entity implements Serializable {
 			if(a.getName().equals(nameOderParam) || a.getParam().equals(nameOderParam))
 				attribute[a.getId()].addWert(wert);
 	}
+	
 	/**
 	 * Fuegt einem Attribut einen gewissen temporaeren Wert hinzu, dazu wird der Name oder die Parameterschreibweise des Attributs benoetigt.
 	 * @param wert Der temporaere Wert, der hinzugefuegt werden soll.
@@ -223,6 +285,7 @@ public abstract class Entity implements Serializable {
 			if(a.getName().equals(nameOderParam) || a.getParam().equals(nameOderParam))
 				attribute[a.getId()].addTemp(tempWert);
 	}
+	
 	/**
 	 * Fuegt der Resistenz einen gewissen Wert hinzu, dazu wird der Name oder die Parameterschreibweise der Resistenz benoetigt.
 	 * @param wert Der Wert, der hinzugefuegt werden soll.
@@ -233,6 +296,7 @@ public abstract class Entity implements Serializable {
 			if(r.getName().equals(nameOderParam) || r.getParam().equals(nameOderParam))
 				resistenzen[r.getId()].addWert(wert);
 	}
+	
 	/**
 	 * Fuegt der Resistenz einen gewissen temporaeren Wert hinzu, dazu wird der Name oder die Parameterschreibweise der Resistenz benoetigt.
 	 * @param wert Der temporaere Wert, der hinzugefuegt werden soll.
@@ -266,7 +330,6 @@ public abstract class Entity implements Serializable {
 		if(!faehigkeiten.contains(faehigkeit))
 			faehigkeiten.add(faehigkeit);
 	}
-	
 	
 	/* - Alle anderen Methoden - */
 	
@@ -304,6 +367,7 @@ public abstract class Entity implements Serializable {
 		for(Drop d : drops)
 			loot.add(d);
 	}
+	
 	/**
 	 * Gibt den Loot zurueck, der von dem Gegner erhalten wurde.
 	 * @return Den Loot.
@@ -324,4 +388,5 @@ public abstract class Entity implements Serializable {
 				sigmaChance -= d.getChance();
 		return new Stapel[0];
 	}
+
 }

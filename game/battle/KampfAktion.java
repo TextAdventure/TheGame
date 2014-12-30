@@ -6,10 +6,14 @@ import game.entity.Faehigkeit;
 import game.items.VerwendbarerGegenstand;
 
 /**
- * Eine Aktion eines Entities im Kampf, wird hierdurch repraesentiert.
+ * Eine Aktion eines Entities im Kampf, wird hierdurch repraesentiert. Dies bedeutet ein Angriff
+ * oder den Einsatz eines Gegenstand gegen ein Ziel.
+ * @author Marvin
  */
 public class KampfAktion implements Comparable<KampfAktion> {
 
+	/* --- Variablen --- */
+	
 	// Das angreifende Entity.
 	private Entity angreifer;
 	// Die Faehigkeit, die das Entity einsetzt.
@@ -20,6 +24,8 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	private int flk;
 	// Das Ziel, das angegriffen wird.
 	private Entity ziel;
+	
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Eine Kampfaktion, bei der ein Entity ein anderes angreift mit der uebergebenen Faehigkeit.
@@ -49,7 +55,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		this.ziel = ziel;
 	}
 
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt die Flinkheit des Angreifers zurueck.
@@ -58,6 +64,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	public int getFlk() {
 		return flk;
 	}
+	
 	/**
 	 * Gibt den Angreifer zurueck.
 	 * @return Den Angreifer.
@@ -65,6 +72,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	public Entity getAngreifer() {
 		return angreifer;
 	}
+	
 	/**
 	 * Gibt das Ziel der Aktion zurueck.
 	 * @return Das Ziel.
@@ -72,6 +80,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	public Entity getZiel() {
 		return ziel;
 	}
+	
 	/**
 	 * Macht die Aktion ungueltig.
 	 */
@@ -79,11 +88,12 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		this.faehigkeit = null;
 		this.gegenstand = null;
 	}
+	
 	/**
 	 * Ueberprueft, ob es eine gueltige Aktion ist oder nicht.	
 	 * @return true, wenn sie gueltig ist, ansonsten false.
 	 */
-	public boolean istGueltigeAktion() {
+	public boolean isGueltigeAktion() {
 		if(ziel == null)
 			return false;
 		if(faehigkeit != null)
@@ -92,6 +102,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 			return true;
 		return false;
 	}
+	
 	/**
 	 * Fuehrt die Aktion aus.
 	 */
@@ -104,7 +115,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		if(faehigkeit != null) {
 			int angriff = (int) (faehigkeit.getBonus(angreifer) * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
 			angriff = angreifer.getSchadensBonus(faehigkeit.getSchadensart(), angriff);
-			// Der Schaden ist auf 99.999 begrenzt.
+			// Der Schaden ist auf 99.999 begrenz, aber ist gleichzeitig immer groesser als 0t.
 			int schaden = Math.min(Math.max(ziel.fuegeSchadenZu(angriff, faehigkeit.getSchadensart()), 0), 99999);
 			// Ausgabe
 			String ausgabe = faehigkeit.getAusgabe();
@@ -139,7 +150,10 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	}
 
 	/**
-	 * Vergleicht zwei AKtionen und gibt einen int Wert zurueck, dieser ist kleiner, wenn die andere KampfAktion kleiner ist und umgkehrt einen positiven Wert.
+	 * Vergleicht zwei Aktionen und gibt einen int Wert zurueck, dieser ist kleiner, wenn die
+	 * andere KampfAktion kleiner(frueher dran) ist und umgkehrt einen positiven Wert.
+	 * @param aktion Eine andere KampfAktion.
+	 * @return -1 wenn die Aktion schneller ist, 0 bedeutet gleich und 1 langsamer als diese Aktion.
 	 */
 	@Override
 	public int compareTo(KampfAktion aktion) {
@@ -150,4 +164,5 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		else
 			return 1;
 	}
+	
 }

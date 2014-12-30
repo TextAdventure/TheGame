@@ -8,7 +8,6 @@ import game.entity.Effekt;
 import game.entity.Entity;
 import game.entity.Faehigkeit;
 import game.entity.Gegner;
-import game.entity.Gegnerart;
 import game.entity.Resistenz;
 import game.entity.Schadensart;
 import game.entity.Spieler;
@@ -97,8 +96,6 @@ public class SpielWelt implements Serializable, StringListener {
 	private Resistenz[] resistenzen;
 	// Alle Farben im Spiel(wird benoetigt, um die Farben zu speichern und zu laden)
 	private Vector<Farbe> farben;
-	// Alle Gegnerarten im Spiel(wird benoetigt, um die Gegenarten zu speichern und zu laden)
-	private Vector<Gegnerart> gegnerarten;
 
 	// Das Random-Objekt, das alle Zufallszahlen ausgibt.
 	public Random r;
@@ -127,7 +124,6 @@ public class SpielWelt implements Serializable, StringListener {
 	    schadensarten = Schadensart.SCHADEN;
 	    resistenzen = Resistenz.RESISTENZEN;
 	    Farbe.setAlleFarben(farben);
-	    gegnerarten = Gegnerart.GEGNERARTEN;
 
 	    setWelt(this);
 	}
@@ -169,7 +165,6 @@ public class SpielWelt implements Serializable, StringListener {
 	    Schadensart.SCHADEN = schadensarten;
 	    Resistenz.RESISTENZEN = resistenzen;
 	    Farbe.setAlleFarben(farben);
-	    Gegnerart.GEGNERARTEN = gegnerarten;
 	}
 	
 	/**
@@ -308,7 +303,7 @@ public class SpielWelt implements Serializable, StringListener {
 			spielerAktion = new KampfAktion(spieler, spielerF, ziel);
 
 		// Ueberprueft, ob der Spieler Mist bei der Eingabe gebaut hat.
-		if(!spielerAktion.istGueltigeAktion()) {
+		if(!spielerAktion.isGueltigeAktion()) {
 			ausgabe.println("Das ist keine gültige Aktion!\n");
 			return;
 		} else
@@ -321,7 +316,7 @@ public class SpielWelt implements Serializable, StringListener {
 		Collections.sort(aktionen);
 
 		for(KampfAktion aktion : aktionen.toArray(new KampfAktion[0])) {
-			if(aktion.istGueltigeAktion()) aktion.fuehreAktionAus();
+			if(aktion.isGueltigeAktion()) aktion.fuehreAktionAus();
 			if(spieler.getLp() <= 0) {
 				kampfEndet(false);
 				return;

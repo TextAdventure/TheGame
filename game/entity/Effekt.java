@@ -4,14 +4,15 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Ein Effekt, der im Kampf auf Spieler oder Gegner angewendet wird.
+ * Ein Effekt, der im Kampf auf Spieler oder Gegner angewendet werden kann.
+ * @author Marvin
  */
 public class Effekt implements Serializable {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
 
-	/* --- Die statischen Konstanten --- */
+	/* --- statischen Konstanten --- */
 	
 	// Heilen: param = Menge der Heilung(%, -)[pro Runde;Anzahl Runden] bsp.: [-]10[r4][%][;4[r2]]
 	public static final byte HEILEN = 0;
@@ -37,25 +38,25 @@ public class Effekt implements Serializable {
 	// Der Parameter des Effekts.
 	private String parameter;
 	  
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
-	 *  Ein neuer Effekt wird erstellt mit einem Typ und einem Parameter.
-	 *  @param typ Der Typ des Effekts.
-	 *  @param parameter Der Parameter fuer den Effekt, er veraendert die Auswirkungen.
+	 * Ein neuer Effekt wird erstellt mit einem Typ und einem Parameter.
+	 * @param typ Der Typ des Effekts.
+	 * @param parameter Der Parameter fuer den Effekt, er veraendert die Auswirkungen.
 	 */
 	public Effekt(byte typ, String parameter) {
 	    this.typ = typ;
 	    this.parameter = parameter;
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	  
 	/**
 	 * Gibt den Typ als byte-Wert zurueck.
 	 * @return Der Typ des Effekts.
 	 */
-	public byte getTyp(){
+	public byte getTyp() {
 	    return typ;
 	}
 	  

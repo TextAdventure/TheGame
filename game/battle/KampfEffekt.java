@@ -3,9 +3,13 @@ package game.battle;
 import game.entity.Effekt;
 
 /**
- *	Diese Klasse fuehrt einen Effekt im Kampf aus.
+ * Ein Effekt, der im Kampf ein Entity beeinflusst.
+ * @author Marvin
  */
 public class KampfEffekt {
+	
+	/* --- Variablen --- */
+	
 	// Der Effekt.
 	private Effekt effekt;
 	// Die Dauer des Effekts.
@@ -13,9 +17,11 @@ public class KampfEffekt {
 	private int aktuelleDauer;
 	// Der Bonus des Effekts.
 	private int bonus;
-	  
+	
+	/* --- Konstruktor --- */
+	
 	/**
-	 * Eine neue Statusveraenderung wird mit einem Effekt und einer Dauer erstellt.
+	 * Eine neue Statusveraenderung wird mit einem Effekt erstellt.
 	 * @param effekt Der Effekt der Statusveraenderung.
 	 */
 	public KampfEffekt(Effekt effekt) {
@@ -23,9 +29,11 @@ public class KampfEffekt {
 	    anfangsDauer = effekt.getDauer() + 1; // <-- Nach der ersten Auswertung wird der Wert dekrementiert.
 	    aktuelleDauer = anfangsDauer;
 	}
-	  
+	
+	/* --- Methoden --- */
+	
 	/**
-	 * Gibt den reinen Bonus des Effekts  zurueck.
+	 * Gibt den reinen Bonus des Effekts zurueck.
 	 * @param wert Der aktuelle Wert des Attributs.
 	 */
 	public int getBonus(int wert) {
@@ -57,14 +65,10 @@ public class KampfEffekt {
 	  
 	/**
 	 * Gibt den Typ des Effekts zurueck.
-	 * @return Den Effekt des Typs.
+	 * @return Den Typ des Effekts.
 	 */
 	public byte getTyp() {
 	    return effekt.getTyp();
 	}
-	  
-	// PROVISORIUM: Gibt die verbleibende Dauer zurueck. TODO
-	/*public int getDauer() {
-		return aktuelleDauer;
-	}*/
+
 }

@@ -119,7 +119,7 @@ public class Ort implements Serializable, IPrintable {
 	}
 	
 	/**
-	 * Aendert den Namen des Orts, dadurh wird er wieder unbesucht.
+	 * Aendert den Namen des Orts, dadurch wird er wieder unbesucht.
 	 * @param neuerName Der neue Name fuer diesen Ort.
 	 */
 	public void setName(String neuerName) {

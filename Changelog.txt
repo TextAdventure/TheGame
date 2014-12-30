@@ -63,3 +63,57 @@ UntersuchbaresObjekt.class:
 UntersuchbaresObjektEreignis.class:
  -formatiert und Autor hinzugefügt
  -Beschreibungen vervollständigt
+
+Kampf.class:
+ -formatiert und Autor hinzugefügt
+
+KampfAktion.class:
+ -formatiert und Autor hinzugefügt
+ -Methode umbenannt: boolean istGueltigeAktion() in isGueltigeAktion()
+
+KampfEffekt.class:
+ -formatiert und Autor hinzugefügt
+ -auskommentierte Methode gelöscht
+
+Attribut.class:
+ -formatiert und Autor hinzugefügt
+
+Effekt.class:
+ -formatiert und Autor hinzugefügt
+
+Entity.class:
+ -formatiert und Autor hinzugefügt
+
+EntityAttribut.class:
+ -formatiert und Autor hinzugefügt
+
+EntityDamageAmplifier.class:
+ -formatiert und Autor hinzugefügt
+
+EntityResistenz.class:
+ -formatiert und Autor hinzugefügt
+
+Faehigkeit.class:
+ -formatiert und Autor hinzugefügt
+
+Gegner.class:
+ -formatiert und Autor hinzugefügt
+
+Gegnerart.class:
+ -formatiert und Autor hinzugefügt
+ -gelöscht
+
+Level.class:
+ -formatiert und Autor hinzugefügt
+
+Resistenz.class:
+ -formatiert und Autor hinzugefügt
+ -auskommentierte Methode gelöscht
+
+Schadensart.class:
+ -formatiert und Autor hinzugefügt
+ -auskommentierte Methode gelöscht
+
+Spieler.class:
+ -formatiert und Autor hinzugefügt
+ -unnötige geschweifte Klammern entfernt

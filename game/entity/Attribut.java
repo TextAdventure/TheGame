@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Ein Attribut fuer alle Entities, die auch von Gegenstaenden verwendet werden muessen.
+ * @author Marvin
  */
 public class Attribut implements Serializable {
 
@@ -13,7 +14,7 @@ public class Attribut implements Serializable {
 	// Statisches Array mit allen Attributen, die ID ist der Index des Attributs.
 	public static Attribut[] ATTRIBUTE = new Attribut[Byte.MAX_VALUE];
 	
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Name(fuer den Spieler sichtbar) des Attributs.
 	private String name;	
@@ -22,10 +23,10 @@ public class Attribut implements Serializable {
 	// Die ID des Attributs, es kann maximal 128 Attribute geben.
 	private byte id;
 	
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
-	 * Ein neues Attribut wird einem Namen und einem internen Parameternamen versehen, die ID wird automatisch intern festgelegt.
+	 * Ein neues Attribut wird mit einem Namen und einem internen Parameternamen versehen, die ID wird automatisch intern festgelegt.
 	 * @param name Der Name des Attributs.
 	 * @param paramName Der Name in Parameterschreibweise.
 	 */
@@ -42,7 +43,7 @@ public class Attribut implements Serializable {
 		
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Namen des Attributs zurueck(fuer den Spieler).
@@ -68,7 +69,7 @@ public class Attribut implements Serializable {
 		return id;
 	}
 	
-	/* --- Die statischen Methoden --- */
+	/* --- statischen Methoden --- */
 	
 	/**
 	 * Gibt ein Attribut zurueck, basierend auf seinem Parameternamen.
@@ -81,6 +82,7 @@ public class Attribut implements Serializable {
 				return a;
 		return null;
 	}
+	
 	/**
 	 * Gibt ein Attribut zurueck, basierend auf seiner ID.
 	 * @param id Die ID des Attributs.
@@ -91,6 +93,7 @@ public class Attribut implements Serializable {
 			return null;
 		return ATTRIBUTE[id];
 	}
+	
 	/**
 	 * Gibt ein Array mit allen belegten Attributen zurueck.
 	 * @return Ein Array mit allen Attribute, die im Spiel verwendet werden.
@@ -101,6 +104,7 @@ public class Attribut implements Serializable {
 			a[i] = ATTRIBUTE[i];
 		return a;
 	}
+	
 	/**
 	 * Gibt den hoechsten belegten ID Platz zurueck.
 	 * @return Den hoechsten ID Wert, -1 falls alle Plaetze belegt sind.
