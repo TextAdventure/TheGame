@@ -1,0 +1,65 @@
+Ausgang.class:
+ -formatiert und Autor hinzugefügt
+ -Umlaute korrigiert
+ -Undefiniert(0) in Eigene umbennant, da es jetzt dafür verwendet wird eigene Richtungen zu erstellen
+ -neuer Konstruktor hinzugefügt: Ausgang(String richtungsName, String abkuerzung, byte richtung, Ort zielort)
+ -Methode entfernt: void setRichtungUnabhaengig(byte richtung)
+
+Behaelter.class:
+ -formatiert und Autor hinzugefügt
+ -unnötige geschweifte Klammern entfernt
+
+Drop.class:
+ -formatiert und Autor hinzugefügt
+ -Variable umbennant: Stapel[] loot in gegenstaende
+ -Methode umbennant: Stapel[] getLoot() in getGegenstaende()
+
+IEreignis.class:
+ -formatiert und Autor hinzugefügt
+ -Beschreibungen geändert
+
+KombinierungsEinrichtung.class:
+ -formatiert und Autor hinzugefügt
+ -Beschreibungen hinzugefügt
+
+Kommando.class:
+ -formatiert und Autor hinzugefügt
+ -Umlaute korrigiert
+ -Methode entfernt: static String getBefehl(Kommando kommando)
+ -Methode entfernt: String getBefehl()
+
+Ort.class:
+ -formatiert und Autor hinzugefügt
+ -Umlaute korrigiert
+ -kleinere Änderungen innerhalb der Methodenstruktur
+ -Parameter Methoden Inhalt auskommentiert
+ -Methode umbennant: boolean istBesucht() in isBesucht()
+ -Methode umbennant: boolean istNPCda() int isNPCda()
+
+RessourcenPunkt.class:
+ -formatiert und Autor hinzugefügt
+
+SpielTest.class:
+ -Klasse umbennant: SpielTest.class in Interpreter.class
+ -formatiert und Autor hinzugefügt
+ -Umlaute korrigiert
+ -unnötige geschweifte Klammern entfernt
+
+SpielWelt.class:
+ -formatiert und Autor hinzugefügt
+ -Methode umbennant: void updateGegenstandsListe() in updateListen()
+ -Methode umbennant: Ort aktuellePosition() in getAktuellePosition()
+ -auskommentierten Code entfernt
+ -spielerPosition ist jetzt private
+ -kleinere Änderungen bei der Ausgabe von manchen Methoden
+
+Tuer.class:
+ -formatiert und Autor hinzugefügt
+
+UntersuchbaresObjekt.class:
+ -formatiert und Autor hinzugefügt
+ -Parameter Methoden Inhalt auskommentiert
+
+UntersuchbaresObjektEreignis.class:
+ -formatiert und Autor hinzugefügt
+ -Beschreibungen vervollständigt

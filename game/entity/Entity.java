@@ -319,7 +319,7 @@ public abstract class Entity implements Serializable {
 		int nInt = SpielWelt.WELT.r.nextInt(sigmaChance + 1);
 		for(Drop d : loot) 
 			if(nInt >= sigmaChance - d.getChance() && nInt <= sigmaChance)
-				return d.getLoot();
+				return d.getGegenstaende();
 			else
 				sigmaChance -= d.getChance();
 		return new Stapel[0];

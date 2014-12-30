@@ -3,7 +3,9 @@ package game;
 import game.logic.Ereignis;
 
 /**
- * Diese Interface kann von Klassen implementiert werden, um die Moeglichkeiten von Bedingungen voll zu nutzen.
+ * Eine Klasse, die dieses Interface implementiert, hat die Moeglichkeit, das es vor
+ * etwas und nach etwas Ereignisse pruefen kann und gegebenenfalls Aktionen ausfuehrt.
+ * @author Marvin
  */
 public interface IEreignis {
 	
@@ -20,7 +22,7 @@ public interface IEreignis {
 	 * @return Sich selbst.
 	 */
 	public abstract IEreignis addNachBedingung(Ereignis... ereignisse);
-
+	
 	/**
 	 * Prueft alle Ereignisse, die VOR einer Untersuchung geprueft werden sollen.
 	 */

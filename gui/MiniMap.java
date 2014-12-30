@@ -77,7 +77,7 @@ public class MiniMap extends Canvas {
 	    if(position != null){
 	    	for(Ausgang a: position.getAusgaenge().toArray(new Ausgang[0])){
 	    		Point p = zeichneVerbindung(getWidth() / 2, getHeight() / 2, a, g2d);
-	    		if(a.getZielort().istBesucht() && p != null){
+	    		if(a.getZielort().isBesucht() && p != null){
 	    			int newX = (int)Math.round(p.getX() + Math.cos((9 - a.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    			int newY = (int)Math.round(p.getY() - Math.sin((9 - a.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    			for(Ausgang aus: a.getZielort().getAusgaenge().toArray(new Ausgang[0])){
@@ -87,7 +87,7 @@ public class MiniMap extends Canvas {
 	    				if(aus.getRichtung() != alteRichtung){
 	    					// Es wird die zweite Stufe ueberprueft und gezeichnet.
 	    					Point p2 = zeichneVerbindung(newX, newY, aus, g2d);
-	    					if(aus.getZielort().istBesucht() && p2 != null){
+	    					if(aus.getZielort().isBesucht() && p2 != null){
 	    						int secX = (int)Math.round(p2.getX() + Math.cos((9 - aus.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    						int secY = (int)Math.round(p2.getY() - Math.sin((9 - aus.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    						zeichnePunkt(Color.BLUE, secX, secY, g2d);
@@ -121,7 +121,7 @@ public class MiniMap extends Canvas {
 
 	private Point zeichneVerbindung(int xstart, int ystart, Ausgang richtung, Graphics2D g2d){
 		BufferedImage img = linieFull;
-	    if(!richtung.getZielort().istBesucht()) img = linieFade;
+	    if(!richtung.getZielort().isBesucht()) img = linieFade;
 	    if(richtung.getRichtung() > 8 || richtung.getRichtung() == 0) {
 	    	return null;
 	    }

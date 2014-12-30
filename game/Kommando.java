@@ -5,66 +5,62 @@ import java.io.Serializable;
 import game.logic.Ereignis;
 
 /**
- *  Diese Klasse ist ein Kommando, welches bei der Eingabe ausgefuehrt wird.
+ *  Es gibt zwei Arten von Kommandos, erstens die, die ueberall verwendet werden koennen, wie untersuchen,
+ *  und dann gibt es noch solche, die nur an bestimmten Orten und Abenteuern gelten. Diese werden mit
+ *  einem separaten Konstruktor erstellt und sind nich in dieser Klasse gespeichert.
+ *  @author Marvin
  */
 public class Kommando implements Serializable {
-
+	
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
-
+	
+	/* --- statische Variable --- */
+	
+	// Der Rest der Eingabe, der uebrig bleibt, dieser kann dann ausgelesen werden und ermoeglicht dadurch Gegenstaende mit Leerzeichen.
+	private static String eingabe = "";
+	
+	/* --- Variablen --- */
+	
 	// Der Befehl, der eingegeben werden muss.
 	private String[] befehle;
-	// Alle Synonyme, die fuer den Befehl verwendet werden koennen.
+	// Alle Praefixe fuer diesen Befehl.
 	private String[] praefix;
 	// Alle Suffixe fuer diesen Befehl.
 	private String[] suffix;
 
-	// Das Ereignis, das ausgefuehrt wird, wenn das Kommando eingegeben wurde.
+	// Das Ereignis, das ausgefuehrt wird, wenn das Kommando eingegeben wurde. Wird fuer eigene Kommandos benoetigt.
 	private Ereignis ereignis;
-
-	// Der Rest der Eingabe, der uebrig bleibt, dieser kann dann ausgelesen werden und ermoeglicht dadurch Gegenstaende mit Leerzeichen
-	private static String eingabe = "";
-
+	
+	/* --- Konstruktor --- */
+	
 	/**
-	 * Ein neues Kommando wird lediglich mit mit einem Befehlswort initialisiiert.
-	 * verSynonyme: eines dieser kann eingegeben werden, um den Befehl zu verwenden.
-	 * suffixe: die Suffixe fuer die Befehle.
+	 * Ein neues Kommando, welches fuer alle erstellen Spiele gilt, so ein Kommando
+	 * muss in dieser Klasse statisch erstellt werden und wird auch hier verwaltet.
+	 * @param praefix Die Praefixe fuer dieses Kommando.
+	 * @param suffix Die Suffixe fuer dieses Kommando.
 	 */
-	private Kommando(String[] praefix, String[] suffix){
+	private Kommando(String[] praefix, String[] suffix) {
 	    this.praefix = praefix;
 	    this.suffix  = suffix;
 	}
-
-
+	
 	/**
-	 * Dieser public-Konstruktor erstellt ein unabhaengiges Kommando, das nur an bestimmten Stellen funktioniert und nicht global gilt.
-	 * @param ereignis Das Ereignis, das ausgefuehrt wird.
+	 * Dieser public-Konstruktor erstellt ein Kommando, das nur in bestimmten Abenteuern funktioniert.
+	 * @param ereignis Das Ereignis, welches ausgefuehrt wird, sobald es eingegeben wird.
 	 * @param befehl Die Befehle, die verwendet werden koennen um das Kommando auszuloesen.
 	 */
-	public Kommando(Ereignis ereignis, String... befehl){
+	public Kommando(Ereignis ereignis, String... befehl) {
 	    this.befehle = befehl;
 	    this.ereignis = ereignis;
 	}
-
-	/**
-	 *  Diese Methode ueberprueft das Kommando und gibt den entsprechenden Befehl zurueck.
-	 *  kommando: das Kommando, von welchem man den Befehl will.
-	 *
-	public static String getBefehl(Kommando kommando){
-	    return kommando.befehl;
-	}*/
-
-	/**
-	 *  Diese Methode gibt den entsprechenden Befehl zurueck.
-	 *
-	public String getBefehl(){
-	    return this.befehl;
-	}*/
-
+	
+	/* --- Methoden --- */
+	
 	/**
 	 * Ueberprueft, ob es sich bei der Eingabe um ein gueltiges Kommando handelt oder nicht.
 	 * @param eingabe Die Eingabe, die getaetig wurde.
-	 * @return true, wenn es ein Befehl ist, ansonsten false.
+	 * @return True, wenn es ein Befehl ist, ansonsten false.
 	 */
 	public boolean istBefehl(String eingabe) {
 		for(String s : befehle)
@@ -72,8 +68,7 @@ public class Kommando implements Serializable {
 				return true;
 		return false;
 	}
-
-
+	
 	/**
 	 * Gibt alle moeglichen Praefixe zurueck.
 	 * @return Alle Praefixe dieses Kommandos.
@@ -81,16 +76,16 @@ public class Kommando implements Serializable {
 	public String[] getPraefixe() {
 	    return praefix.clone();
 	}
-
+	
 	/**
-	 * Diese Methode gibt das Suffix fuer einen Befehl zurueck.
-	 * @param index Die Position des Befehls.
-	 * @return Das entsprechened Suffix fuer diesen Befehl.
+	 * Gibt das Suffix fuer ein Praefix zurueck.
+	 * @param index Die Position des Praefixes.
+	 * @return Das entsprechened Suffix fuer dieses Praefix.
 	 */
 	public String getSuffix(int index) {
 	    return suffix[index];
 	}
-
+	
 	/**
 	 * Gibt das Ereignis zurueck.
 	 * @return Das Ereginis.
@@ -98,7 +93,9 @@ public class Kommando implements Serializable {
 	public Ereignis getEreignis() {
 	    return ereignis;
 	}
-
+	
+	/* --- statische Methoden --- */
+	
 	/**
 	 * Gibt den Rest der Eingabe zuruck, nachdem die Schluesselwoerter entfernt wurden und setzt sie zurueck.
 	 * @param Die restliche Eingabe.
@@ -108,8 +105,7 @@ public class Kommando implements Serializable {
 	    eingabe = "";
 	    return e;
 	}
-
-
+	
 	/**
 	 * Man uebergibt die Eingabe des Spielers und hier wird ueberprueft, ob es sich um ein globales Kommando handelt und
 	 * gibt es in diesem Fall zurueck. Die restliche Eingabe kann mit getEingabe() ausgelesen werden.
@@ -120,14 +116,14 @@ public class Kommando implements Serializable {
 	 */
 	public static Kommando getKommando(String befehl) throws StringIndexOutOfBoundsException {
 	    boolean beginnt = false;
-
+	    
 	    for(String s: UNTERSUCHEN.getPraefixe()) {
 	    	if(befehl.toLowerCase().startsWith(s)) {
 	    		eingabe = befehl.substring(Math.max(befehl.indexOf(' '), 0)).trim();
 	    		return UNTERSUCHEN;
 	    	}
 	    }
-
+	    
 	    for(int i = 0; i < ABLEGEN.getPraefixe().length; i++) {
 	    	String praefix = ABLEGEN.getPraefixe()[i];
 	    	String suffix = ABLEGEN.getSuffix(i);
@@ -142,7 +138,7 @@ public class Kommando implements Serializable {
 	    	}
 	    	beginnt = false;
 	    }
-
+	    
 	    for(int i = 0; i < NEHMEN.getPraefixe().length; i++) {
 	    	String praefix = NEHMEN.getPraefixe()[i];
 	    	String suffix = NEHMEN.getSuffix(i);
@@ -157,7 +153,7 @@ public class Kommando implements Serializable {
 	    	}
 	    	beginnt = false;
 	    }
-
+	    
 	    for(int i = 0; i < VERWENDEN.getPraefixe().length; i++) {
 	    	String praefix = VERWENDEN.getPraefixe()[i];
 	    	String suffix = VERWENDEN.getSuffix(i);
@@ -172,13 +168,14 @@ public class Kommando implements Serializable {
 	    	}
 	    	beginnt = false;
 	    }
-
+	    
 	    for(String s : KOMBINIEREN.getPraefixe()) {
 	    	if(befehl.toLowerCase().startsWith(s)) {
 	    		// man braucht das Kommando sowieso nicht
 	    		return KOMBINIEREN;
 	    	}
 	    }
+	    
 	    for(int i = 0; i < AUSRUESTEN.getPraefixe().length; i++) {
 	    	String praefix = AUSRUESTEN.getPraefixe()[i];
 	    	String suffix = AUSRUESTEN.getSuffix(i);
@@ -193,28 +190,28 @@ public class Kommando implements Serializable {
 	    	}
 	    	beginnt = false;
 	    }
-
+	    
 	    for(String s : AUSRUESTUNG.getPraefixe()) {
 	    	if(befehl.toLowerCase().startsWith(s)) {
 	    		// man braucht das Kommando sowieso nicht
 	    		return AUSRUESTUNG;
 	    	}
 	    }
-
+	    
 	    for(String s : STATUS.getPraefixe()) {
 	    	if(befehl.toLowerCase().startsWith(s)) {
 	    		// man braucht das Kommando sowieso nicht
 	    		return STATUS;
 	    	}
 	    }
-
+	    
 	    for(String s : INFO.getPraefixe()) {
 	    	if(befehl.toLowerCase().startsWith(s)) {
 	    		eingabe = befehl.substring(Math.max(befehl.indexOf(' '), 0)).trim();
 	    		return INFO;
 	    	}
 	    }
-
+	    
 	    for(String s : OEFFNEN.getPraefixe()) {
 	    	if(befehl.toLowerCase().startsWith(s)) {
 	    		eingabe = befehl.substring(Math.max(befehl.indexOf(' '), 0)).trim();
@@ -223,29 +220,30 @@ public class Kommando implements Serializable {
 	    }
 	    return INVALID;
 	}
-
+	
 	// Statische Variablen, die alle Kommandos repraesentieren, die ueberall verwendet werden koennen.
-
+	
 	// Der Wert fuer ein ungueltiges Kommando.
 	public static final Kommando INVALID = new Kommando(new String[]{"invalid"}, new String[]{""});
 	// Der Wert fuer den Untersuchen Befehl.
-	public static final Kommando UNTERSUCHEN = new Kommando(new String[]{"untersuche", "erforsche", "ï¿½berprï¿½fe", "betrachte"}, new String[]{"", "", "", ""});
+	public static final Kommando UNTERSUCHEN = new Kommando(new String[]{"untersuche", "erforsche", "überprüfe", "betrachte"}, new String[]{"", "", "", ""});
 	// Der Wert fuer den Nehmen Befehl.
-	public static final Kommando NEHMEN = new Kommando(new String[]{"nimm", "nimm", "nimm", "hebe", "stecke", "pflï¿½cke", "ernte"}, new String[]{"mit", "auf", "", "auf", "ein", "", ""});
+	public static final Kommando NEHMEN = new Kommando(new String[]{"nimm", "nimm", "nimm", "hebe", "stecke", "pflücke", "ernte"}, new String[]{"mit", "auf", "", "auf", "ein", "", ""});
 	// Der Wert fuer den Verwenden Befehl.
 	public static final Kommando VERWENDEN = new Kommando(new String[]{"verwende", "benutze", "setze"}, new String[]{"", "", "ein"});
 	// Der Wert fuer den Kombinieren Befehl.
 	public static final Kommando KOMBINIEREN = new Kommando(new String[]{"kombiniere", "vereinige", "benutze"}, new String[]{"", "", ""});
 	// Der Wert fuer das Ausruesten Befehl.
-	public static final Kommando AUSRUESTEN = new Kommando(new String[]{"rï¿½ste", "setze", "ziehe", "lege"}, new String[]{"aus", "auf", "an", "an"});
+	public static final Kommando AUSRUESTEN = new Kommando(new String[]{"rüste", "setze", "ziehe", "lege"}, new String[]{"aus", "auf", "an", "an"});
 	// Der Wert fuer das Ablegen Befehl.
 	public static final Kommando ABLEGEN = new Kommando(new String[]{"lege", "nimm", "ziehe"}, new String[]{"ab", "ab", "aus"});
 	// Der Wert fuer das Ausruestung Befehl.
-	public static final Kommando AUSRUESTUNG = new Kommando(new String[]{"ausrï¿½stung"}, new String[]{""});
+	public static final Kommando AUSRUESTUNG = new Kommando(new String[]{"ausrüstung"}, new String[]{""});
 	// Der Wert fuer das Status Kommando.
 	public static final Kommando STATUS = new Kommando(new String[]{"status", "statistik", "stats"}, new String[]{"", "", ""});
 	// Der Wert fuer das Info(Gegenstand) Kommando.
 	public static final Kommando INFO = new Kommando(new String[]{"info"}, new String[]{""});
 	// Der Wert fuer das Oeffnen Kommando.
-	public static final Kommando OEFFNEN = new Kommando(new String[]{"ï¿½ffne", "plï¿½ndere", "leere"}, new String[]{"", "", ""});
+	public static final Kommando OEFFNEN = new Kommando(new String[]{"öffne", "plündere", "leere"}, new String[]{"", "", ""});
+
 }

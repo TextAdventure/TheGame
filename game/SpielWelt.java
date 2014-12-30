@@ -36,22 +36,31 @@ import util.NumerusGenus;
 import util.StringEvent;
 import util.StringListener;
 
+/**
+ * In der SpielWelt findet das gesamte Spielgeschehen statt, in dieser Klasse werden ausserdem alle wichtigen Informationen gespeichert.
+ * @author Marvin
+ */
 public class SpielWelt implements Serializable, StringListener {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
 
+	//--------------------------------------------------------------------------------------------//
 	// DIE SPIELWELT ALS STATISCHE VARIABLE, DIE IMMER AUF DAS EINZIGE SPIELWELT-OBJEKT VERWEIST! //
 	transient public static SpielWelt WELT;
 
-	private static void setWelt(SpielWelt neueWelt) { WELT = neueWelt; }
-	//------------------------------------------------------------------------------------------//
+	/**
+	 * Legt das aktuelle SpielWelt Objekt fest, wird immer im Konstruktor aufgerufen.
+	 * @param neueWelt Die aktuelle SpielWelt.
+	 */
+	private static void setWelt(SpielWelt neueWelt) {
+		WELT = neueWelt;
+	}
+	//--------------------------------------------------------------------------------------------//
 
+	/* --- Variablen --- */
 
-
-
-	// Die Position des Spielers in der Welt.
-	public Ort spielerPosition;
+	// Dieses Variabeln werden NICHT gespeichert
 	// Die Anzeige, die alle auszugebende Dinge ausgibt.
 	transient private Anzeige ausgabe;
 	// Die Map fuer den Spieler.
@@ -69,8 +78,11 @@ public class SpielWelt implements Serializable, StringListener {
 	// Alle Statusveraenderungen, die im Kampf aktiv sind.
 	transient private Vector<KampfEffekt> kampfEffekte;
 
+	// Diese Variablen werden gespeichert
 	// Der Spieler
 	private Spieler spieler;
+	// Die Position des Spielers in der Welt.
+	private Ort spielerPosition;
 	// Alle global geltenden Kommandos.
 	private Vector<Kommando> globaleKommandos;
 	// Alle Gegenstaende im Spiel(wird benoetigt, um die Gegenstandsliste zu speichern und laden)
@@ -91,8 +103,10 @@ public class SpielWelt implements Serializable, StringListener {
 	// Das Random-Objekt, das alle Zufallszahlen ausgibt.
 	public Random r;
 
+	/* --- Konstruktor --- */
+	
 	/**
-	 * Eine neue SpielWelt braucht keine Parameter, sie initialisiert nur alle Variabeln.
+	 * Eine neue SpielWelt braucht keine Parameter, sie initialisiert nur alle Variabeln und laedt alle Listen.
 	 */
 	public SpielWelt() {
 		this.ausgabe = null;
@@ -118,35 +132,35 @@ public class SpielWelt implements Serializable, StringListener {
 	    setWelt(this);
 	}
 
-
+	/* --- Methoden --- */
 
 	/**
-	 *  Diese Methode gibt den String auf dem Standardausgabeweg aus.
-	 *  text: der auszugebenede Text.
+	 * Gibt den String auf der Anzeige aus.
+	 * @param text Der auszugebenede Text.
 	 */
-	public void print(String text){
+	public void print(String text) {
 	    ausgabe.print(text);
 	}
 
 	/**
-	 *  Diese Methode gibt den String auf dem Standardausgabeweg aus mit einem Zeilenumbruch.
-	 *  text: der auszugebenede Text.
+	 * Gibt den String auf der Anzeige aus mit einem Zeilenumbruch.
+	 * @param text Der auszugebenede Text mit einem Zeilenumbruch davor.
 	 */
-	public void println(String text){
+	public void println(String text) {
 	    ausgabe.println(text);
 	}
 
 	/**
-	 *  Diese Methode gibt einen Zeilenumbruch aus.
+	 * Erzeugt einen Zeilenumbruch in der Ausgabe.
 	 */
-	public void println(){
+	public void println() {
 	    ausgabe.println();
 	}
 
 	/**
-	 *  Diese Methode aktualisiert die Liste aller Gegenstaende im Spiel, sie wird nach dem Laden des Spielstands aufgerufen.
+	 * Aktualisiert die Listen aller Dinge im Spiel, sie wird nach dem Laden des Spielstands aufgerufen.
 	 */
-	public void updateGegenstandsListe() {
+	public void updateListen() {
 		setWelt(this);
 
 	    Gegenstand.GEGENSTAENDE = gegenstaende;
@@ -157,10 +171,10 @@ public class SpielWelt implements Serializable, StringListener {
 	    Farbe.setAlleFarben(farben);
 	    Gegnerart.GEGNERARTEN = gegnerarten;
 	}
-
+	
 	/**
-	 *  Diese Methode aktualisiert die Anzeige der SpielWelt mit einer neuen.
-	 *  neueAnzeige: die neue Anzeige
+	 * Legt die GUI fest, die diese SpielWelt ausgibt und aktualisiert die Referenzen auf die Anzeige und MiniMap.
+	 * @param gui Die aktuelle GUI.
 	 */
 	public void setGUI(GUI gui) {
 	    this.ausgabe = gui.getAnzeige();
@@ -177,42 +191,32 @@ public class SpielWelt implements Serializable, StringListener {
 	}
 
 	/**
-	 *  Diese Methode gibt die aktuelle Position des Spielers zurueck.
+	 * Gibt die aktuelle Position des Spielers zurueck.
+	 * @return Den Ort, an dem sich der Spieler befindet.
 	 */
-	public Ort aktuellePosition() {
+	public Ort getAktuellePosition() {
 		return spielerPosition;
 	}
-
+	
 	/**
-	 *  Diese Methode setzt die aktuelle Position auf den gegebenen Ort.
-	 *  zielort: der neue Ort, an dem sich der Spieler befindet.
+	 * Aendert die aktuelle Position des Spielers, dabei wird geprueft, ob ein Kampf stattfindet und aktualisiert die MiniMap.
+	 * @param zielort Der Ort an den sich der Spieler bewegt.
 	 */
 	public void setAktuellePositon(Ort zielort) {
 	    spielerPosition = zielort;
-	    if(map != null) map.updateMiniMap(spielerPosition);
+	    if(map != null)
+	    	map.updateMiniMap(spielerPosition);
 	    Kampf k = spielerPosition.findetKampfStatt();
-	    if(k != null) this.initKampf(k);
+	    if(k != null)
+	    	this.initKampf(k);
 	}
-
+	
 	/**
-	 *  Diese Methode gibt eine Instanz des Inventars zurueck.
+	 * Gibt das Inventar des Spielers zurueck.
+	 * @return Das Spielerinventar.
 	 */
 	public Inventar getInventar() {
 	    return spieler.getInventar();
-	}
-
-	/** TODO
-	 *  Diese Methode fuegt einen neuen Gegenstand dem Inventar des Spielers hinzu.
-	 *
-	public void addGegenstand(Gegenstand gegenstand, int anzahl) {
-		spieler.getInventar().addGegenstand(gegenstand, anzahl);
-	}
-
-	/** TODO
-	 *  Diese Methode entfernt einen Gegenstand aus dem Inventar des Spielers.
-	 *
-	public void removeGegenstand(Gegenstand gegenstand, int anzahl){
-	    spieler.getInventar().removeGegenstand(gegenstand, anzahl);
 	}
 
 	/**
@@ -225,7 +229,7 @@ public class SpielWelt implements Serializable, StringListener {
 	    if(!globaleKommandos.contains(k))
 	    	globaleKommandos.add(k);
 	}
-
+	
 	/**
 	 * Gibt den Spieler zurueck.
 	 * @return Den Spieler.
@@ -247,202 +251,36 @@ public class SpielWelt implements Serializable, StringListener {
 	}
 
 	/**
-	 *  Diese Methode gibt zurueck, ob sich der Spieler im Kampf befindet.
+	 * Gibt zurueck, ob der Spieler kaempft.
+	 * @return True, falls er kaempft, ansonsten false.
 	 */
 	public boolean spielerKaempft() {
 	    return kaempft;
 	}
 
 	/**
-	 *  Diese Methode startet einen Kampf mit dem uebergebenen Gegner.
-	 *  gegner: gegen den gekaempft wird
+	 * Startet den uebergebenen Kampf.
+	 * @param kampf Der Kampf, der gestartet werden soll.
 	 */
 	private void initKampf(Kampf kampf) {
 		this.kampf = kampf;
 	    spieler.resetTemp();
 	    kaempft = true;
 	    loot = new Inventar();
+	    
 	    ausgabe.clear();
 	    ausgabe.print("Eine Gruppe von Feinden greift dich an!");
 	    for(Entity e : kampf.getKampfGegner())
 	    	ausgabe.println(e.getNumGen().getUnbest(0) + e.getName() + " nähert sich.");
 	    ausgabe.println();
 	}
-
+	
 	/**
-	 *  Diese Methode wird aufgerufen, wenn ein neues CombatEvent gefunden wurde.
+	 * Wenn der Spieler sich im Kampf befindet wird anstelle der normalen Abfrage die Eingabe
+	 * direkt an diese Methode uebergeben, die sich nur auf den Kampf konzentriert.
+	 * @param evt Die Eingabe des Spielers als StringEvent.
 	 */
 	private void kampf(StringEvent evt) {
-		/*Vector<Entity> enti = new Vector<Entity>();
-		enti.add(spieler);
-		enti.add(enemy);
-
-		Vector<Double> flks = new Vector<Double>();
-		Vector<Faehigkeit> abilities = new Vector<Faehigkeit>();
-		Vector<String> ausgaben = new Vector<String>();
-		Vector<Integer> schaden = new Vector<Integer>();
-
-		for(Entity e : enti) {
-			int index = enti.indexOf(e);
-			flks.add(index, new Double(e.getTemp("flk") * (double)(r.nextInt(21) - 10) / 100.0 + 1.0));
-			abilities.add(index, e.getFaehigkeit(evt.getCommand()));
-
-			if(abilities.get(index) != null) {
-
-				// Der Schaden der Entities
-				double angriff = abilities.get(index).getBonus(e) * (r.nextInt(31) + 85) / 100.0;
-	    		if(enti.indexOf(e) > 0)
-	    			schaden.add(index, (int)(Math.pow(1.6, Math.log(angriff / Math.max(enti.get(0).getTemp("def"), 1))) * angriff / 4));
-	    		else
-	    			schaden.add(index, (int)(Math.pow(1.6, Math.log(angriff / Math.max(enti.get(1).getTemp("def"), 1))) * angriff / 4));
-
-				// Alle Schaden ersetzten
-				String ausgabe = abilities.get(index).getAusgabe();
-				ausgabe = ausgabe.replaceAll("#", Integer.toString(schaden.get(index)));
-
-				for(char c : ausgabe.toCharArray()) {
-		    		if(c == '§') {
-		    			int fall = Integer.valueOf(ausgabe.substring(ausgabe.indexOf(c) + 1, ausgabe.indexOf(c) + 2));
-		    			ausgabe = ausgabe.replaceFirst(String.valueOf(fall), "");
-
-		    			if(ausgabe.startsWith("§"))
-		    				ausgabe = ausgabe.replaceFirst("§", e.getNumGen().getBest(fall) + e.getName());
-		    			else
-		    				ausgabe = ausgabe.replaceFirst("§", e.getNumGen().getBest(fall).toLowerCase() + e.getName());
-		    		}
-		    		if(c == '&') {
-		    			int fall = Integer.valueOf(ausgabe.substring(ausgabe.indexOf(c) + 1, ausgabe.indexOf(c) + 2));
-		    			ausgabe = ausgabe.replaceFirst(String.valueOf(fall), "");
-
-		    			int indexAnderer = 0;
-		    			if(enti.indexOf(e) == 0)
-		    				indexAnderer = 1;
-		    			if(ausgabe.startsWith("&"))
-		    				ausgabe = ausgabe.replaceFirst("&", enti.get(indexAnderer).getNumGen().getBest(fall) + enti.get(indexAnderer).getName());
-		    			else
-		    				ausgabe = ausgabe.replaceFirst("&", enti.get(indexAnderer).getNumGen().getBest(fall).toLowerCase() + enti.get(indexAnderer).getName());
-		    		}
-		    	}
-				ausgaben.add(index, ausgabe);
-			} else {
-				ausgaben.add(index, "");
-				schaden.add(index, 0);
-			}
-		}*/
-
-
-		//double flkGegner = enemy.getFlk() * (double)(r.nextInt(21) - 10) / 100.0 + 1.0;
-	    //double flkSpieler = spieler.getTempFlk() * (double)(r.nextInt(21) - 10) / 100.0 + 1.0;
-
-	    /*Faehigkeit fSpieler = null;
-	    for(Faehigkeit f : spieler.getFaehigkeiten()){
-	    	if(f.getName().equalsIgnoreCase(evt.getCommand())) fSpieler = f;
-	    }
-	    Faehigkeit fGegner = enemy.getFaehigkeit();
-	    */
-	    /*Kommando kommando = Kommando.getKommando(evt.getCommand());
-
-	    // Bei einer ungueltigen Eingabe wird die Auswertung abgebrochen.
-	    if(kommando == Kommando.INVALID && abilities.get(0) == null) return;
-
-	    // Wenn der Gegenstand eine Faehigkeit bei der Benutzung ausloest, dann wird diese nun uebergeben.
-	    VerwendbarerGegenstand g = null;
-	    if(Gegenstand.getGegenstand(Kommando.getEingabe()) instanceof VerwendbarerGegenstand) {
-	    	g = (VerwendbarerGegenstand)Gegenstand.getGegenstand(Kommando.getEingabe());
-		    if(g != null){
-		    	if(!g.hasEffekt()){
-		    		abilities.set(0, g.getFaehigkeit());
-		    		kommando = Kommando.INVALID;
-		    	}
-		    }
-	    }*/
-
-	    /*for(int i = 0; i < ausgaben.size(); i++) {
-	    	if(ausgaben.get(i) != "") {
-	    		if(enti.get(i) instanceof Spieler && !abilities.get(i).gueltigeWaffe(((Spieler)enti.get(i)).getWaffenarten())) {
-	    			ausgabe.println("Du hast nicht die richtige Waffe für diese Fähigkeit ausgerüstet, du kannst diese Fähigkeit nur einsetzen wenn du");
-		    		for(byte b : abilities.get(0).getGueltigeWaffen()) {
-		    			ausgabe.print(" " + Waffe.getWaffenartNamen(b));
-		    		}
-		    		ausgabe.print(" ausgerüstet hast.");
-		    		return;
-	    		}
-
-	    		double angriff = abilities.get(0).getBonus(enti.get(i).getTempAng()) * (r.nextInt(31) + 85) / 100.0;
-	    		if(i > 0)
-	    			schaden.add(i, (int)(Math.pow(1.6, Math.log(angriff / Math.max(enti.get(0).getDef(), 1))) * angriff / 4));
-	    		else
-	    			schaden.add(i, (int)(Math.pow(1.6, Math.log(angriff / Math.max(enti.get(1).getDef(), 1))) * angriff / 4));
-
-		    	String ausgabe = abilities.get(i).getAusgabe().replaceAll("#", String.valueOf(schaden.get(i)));
-
-	    		for(int j = 0; i < ausgabe.length(); i++) {
-		    		char c = ausgabe.charAt(j);
-		    		if(c == '§') {
-		    			int fall = Integer.valueOf(ausgabe.substring(j + 1, j + 2));
-		    			ausgabe = ausgabe.replaceFirst(String.valueOf(fall), "");
-		    			if(ausgabe.startsWith("§"))
-		    				ausgabe = ausgabe.replaceFirst("§", enti.get(i).getNumGen().getBest(fall) + enti.get(i).getName());
-		    			else
-		    				ausgabe = ausgabe.replaceFirst("§", enti.get(i).getNumGen().getBest(fall).toLowerCase() + enti.get(i).getName());
-		    		}
-		    	}
-	    	}
-	    }*/
-
-	    /*
-	    // Spieler
-	    if(abilities.get(0) != null){
-	    	// Es wird ueberprueft, ob der Spieler die richtige Waffe fuer die Faehigkeit ausgeruestet hat.
-	    	if(!abilities.get(0).gueltigeWaffe(spieler.getWaffenarten())){
-	    		// Der Spieler hat die falsche Waffe ausgeruestet.
-	    		ausgabe.println("Du hast nicht die richtige Waffe für diese Fähigkeit ausgerüstet, du kannst diese Fähigkeit nur einsetzen wenn du");
-	    		for(byte b: abilities.get(0).getGueltigeWaffen()){
-	    			ausgabe.print(" " + Waffe.getWaffenartNamen(b));
-	    		}
-	    		ausgabe.print(" ausgerüstet hast.");
-	    		return;
-	    	}
-
-	    	// Der Schaden des Spielers und des Gegners werden berechnet.
-	    	double angriffS = abilities.get(0).getBonus(spieler.getTempAng()) * (r.nextInt(31) + 85) / 100.0;
-	    	schadenS = (int)(Math.pow(1.6, Math.log(angriffS / Math.max(enemy.getDef(), 1))) * angriffS / 4);
-	    	// Ausgaben erstellen
-	    	ausgabeS = abilities.get(0).getAusgabe().replaceAll("#", String.valueOf(schadenS));
-	    	for(int i = 0; i < ausgabeS.length(); i++){
-	    		char c = ausgabeS.charAt(i);
-	    		if(c == '§'){
-	    			int fall = Integer.valueOf(ausgabeS.substring(i + 1, i + 2));
-	    			ausgabeS = ausgabeS.replaceFirst(String.valueOf(fall), "");
-	    			if(ausgabeS.startsWith("§")){
-	    				ausgabeS = ausgabeS.replaceFirst("§", enemy.getNumGen().getBest(fall) + enemy.getName());
-	    			}else{
-	    				ausgabeS = ausgabeS.replaceFirst("§", enemy.getNumGen().getBest(fall).toLowerCase() + enemy.getName());
-	    			}
-	    		}
-	    	}
-	    }
-
-	    // Gegner
-	    double angriffG = abilities.get(1).getBonus(enemy.getAng()) * (r.nextInt(31) + 85) / 100.0;
-	    int schadenG = (int)(Math.pow(1.6, Math.log(angriffG / Math.max(spieler.getTempDef(), 1))) * angriffG / 4);
-
-	    String ausgabeG = abilities.get(1).getAusgabe();
-	    for(int i = 0; i < ausgabeG.length(); i++){
-	    	char c = ausgabeG.charAt(i);
-	    	if(c == '§'){
-	    		int fall = Integer.valueOf(ausgabeG.substring(i + 1, i + 2));
-	    		ausgabeG = ausgabeG.replaceFirst(String.valueOf(fall), "");
-	    		if(ausgabeG.startsWith("§")){
-	    			ausgabeG = ausgabeG.replaceFirst("§", enemy.getNumGen().getBest(fall) + enemy.getName());
-	    		}else{
-	    			ausgabeG = ausgabeG.replaceFirst("§", enemy.getNumGen().getBest(fall).toLowerCase() + enemy.getName());
-	    		}
-	    	}
-	    }
-	    ausgabeG = ausgabeG.replaceAll("#", String.valueOf(schadenG));
-	    */
-
 		// TODO neue Idee
 		Vector<KampfAktion> aktionen = new Vector<KampfAktion>();
 
@@ -471,7 +309,7 @@ public class SpielWelt implements Serializable, StringListener {
 
 		// Ueberprueft, ob der Spieler Mist bei der Eingabe gebaut hat.
 		if(!spielerAktion.istGueltigeAktion()) {
-			ausgabe.println("Das ist keine gueltige Aktion!\n");
+			ausgabe.println("Das ist keine gültige Aktion!\n");
 			return;
 		} else
 			aktionen.add(spielerAktion);
@@ -501,75 +339,42 @@ public class SpielWelt implements Serializable, StringListener {
 				}
 			}
 		}
-
-
-	    // Die eigentlichen Angriffe
-	    /*if(flks.get(0) > flks.get(1)) {
-	    	if(kommando == Kommando.VERWENDEN) {
-	    		verwendeGegenstand(g);
-	    	} else if(abilities.get(0) != null) {
-	    		ausgabe.println(ausgaben.get(0));
-	    		if(enemy.getLp() - schaden.get(0) <= 0){
-	    			kampfEndet(true);
-	    			return;
-	    		}else{
-	    			enemy.addLp(-schaden.get(0));
-	    		}
-	    	}
-	    	ausgabe.println(ausgaben.get(1));
-	    	if(spieler.getLp() - schaden.get(1) <= 0){
-	    		kampfEndet(false);
-	    		return;
-	    	}else{
-	    		spieler.addLp(-schaden.get(1));
-	    	}
-
-	   	}else{
-	   		ausgabe.println(ausgaben.get(1));
-	   		if(spieler.getLp() - schaden.get(1) <= 0){
-	   			kampfEndet(false);
-	   			return;
-	   		}else{
-	   			spieler.addLp(-schaden.get(1));
-	   		}
-	   		if(kommando == Kommando.VERWENDEN){
-	   			verwendeGegenstand(g);
-	   		}else if(abilities.get(0) != null){
-	   			ausgabe.println(ausgaben.get(0));
-	   			if(enemy.getLp() - schaden.get(0) <= 0){
-	   				kampfEndet(true);
-	   				return;
-	   			}else{
-	   				enemy.addLp(-schaden.get(0));
-	   			}
-	   		}
-	   	}*/
-
+		
 	    // Alle KampfEffekte werden ueberprueft.
 	    for(KampfEffekt ke : kampfEffekte.toArray(new KampfEffekt[0])) {
-	    	switch(ke.getTyp()){
-	    		case(Effekt.HEILEN): int lp = ke.getBonusLpMp(spieler.getMaxLp()); if(lp == 0) kampfEffekte.remove(ke); else ausgabe.println("Du stellst " + lp + " LP wieder her."); spieler.addLp(lp); break;
-	    		case(Effekt.MPREGENERATION): int mp = ke.getBonusLpMp(spieler.getMaxMp()); if(mp == 0) kampfEffekte.remove(ke); else ausgabe.println("Du stellst " + mp + " MP wieder her."); spieler.addMp(mp); break;
-	    		case(Effekt.ANGBONUS): int ang = ke.getBonus(spieler.getTempAttribut("ang")); if(ang < 0) kampfEffekte.remove(ke); spieler.addTempAttribut(ang, "ang"); break;
-	    		case(Effekt.DEFBONUS): int def = ke.getBonus(spieler.getTempAttribut("def")); if(def < 0) kampfEffekte.remove(ke); spieler.addTempAttribut(def, "def"); break;
-	    		case(Effekt.MAGANGBONUS): int magAng = ke.getBonus(spieler.getTempAttribut("magAng")); if(magAng < 0) kampfEffekte.remove(ke); spieler.addTempAttribut(magAng, "magAng"); break;
-	    		case(Effekt.MAGDEFBONUS): int magDef = ke.getBonus(spieler.getTempAttribut("magDef")); if(magDef < 0) kampfEffekte.remove(ke); spieler.addTempAttribut(magDef, "magDef"); break;
-	    		case(Effekt.PRZBONUS): int prz = ke.getBonus(spieler.getTempAttribut("prz")); if(prz < 0) kampfEffekte.remove(ke); spieler.addTempAttribut(prz, "prz"); break;
-	    		case(Effekt.FLKBONUS): int flk = ke.getBonus(spieler.getTempAttribut("flk")); if(flk < 0) kampfEffekte.remove(ke); spieler.addTempAttribut(flk, "flk"); break;
+	    	switch(ke.getTyp()) {
+	    		case(Effekt.HEILEN):
+	    			int lp = ke.getBonusLpMp(spieler.getMaxLp());
+	    			if(lp == 0)
+	    				kampfEffekte.remove(ke);
+	    			else
+	    				ausgabe.println("Du stellst " + lp + " LP wieder her.");
+	    			spieler.addLp(lp);
+	    		break;
+	    			
+	    		case(Effekt.MPREGENERATION):
+	    			int mp = ke.getBonusLpMp(spieler.getMaxMp());
+	    			if(mp == 0)
+	    				kampfEffekte.remove(ke);
+	    			else
+	    				ausgabe.println("Du stellst " + mp + " MP wieder her.");
+	    			spieler.addMp(mp);
+	    		break;
 	    	}
 	    }
 	    ausgabe.println();
 	}
-
-	// Dieser Methode wird uebergeben, ob der Spieler den kampf gewonnen hat oder nicht.
+	
+	/**
+	 * Mit dieser Methode wird dem Spiel gesagt, dass der Kampf endet.
+	 * @param sieg True bedeutet Sieg, false Niederlage.
+	 */
 	private void kampfEndet(boolean sieg) {
 		kaempft = false;
 	    spieler.resetTemp();
 	    kampfEffekte = new Vector<KampfEffekt>();
 	    ausgabe.println();
 	    if(sieg) {
-	    	//if(enemy.getNumGen().isPlural()) ausgabe.println(enemy.getNumGen().getBest(0) + enemy.getName() + " wurden besiegt, du hast gewonnen!");
-	    	//else ausgabe.println(enemy.getNumGen().getBest(0) + enemy.getName() + " wurde besiegt, du hast gewonnen!");
 	    	ausgabe.println("Du hast die Feinde besiegt, du hast gewonnen!");
 	    	// XP, GOLD UND LOOT WERDEN HIER VERTEILT
 	    	int xp = 0;
@@ -597,19 +402,19 @@ public class SpielWelt implements Serializable, StringListener {
 	    }
 	}
 
-	// - - - Gesprächs-Methoden - - -
+	/* --- Gesprächs-Methoden --- */
 
 	/**
-	 * Diese Methode gibt zurueck, ob sich der Spieler im Gespräch mit einem NPC befindet.
-	 * @return Wahr, wenn er sich im Gespraech befindet, ansonsten falsch.
+	 * Gibt zurueck, ob sich der Spieler im Gespraech mit einem NPC befindet.
+	 * @return True, wenn er sich im Gespraech befindet, ansonsten false.
 	 */
 	public boolean spielerSpricht() {
 		return spricht;
 	}
 
 	/**
-	 * Startet ein Gespräch.
-	 * @param npc Der neue Gesprächspartner.
+	 * Startet ein Gespraech.
+	 * @param npc Der neue Gespraechspartner.
 	 */
 	public void initGespraech(NPC npc) {
 		gespraechspartner = npc;
@@ -617,21 +422,26 @@ public class SpielWelt implements Serializable, StringListener {
 		ausgabe.println();
 	}
 
+	/**
+	 * Wenn der Spieler sich im Gespraech befindet wird anstelle der normalen Abfrage die Eingabe
+	 * direkt an diese Methode uebergeben, die sich nur auf das Gespraech konzentriert.
+	 * @param evt Die Eingabe des Spielers als StringEvent.
+	 */
 	private void gespraech(StringEvent evt) {
 		if(!gespraechspartner.ansprechen(evt.getCommand()))
 			spricht = false;
 	}
 
 
-	// =================================================== //
-	// ALLE METHODEN, DIE VON SPIELTEST AUFGERUFEN WERDEN. //
-	// =================================================== //
+	// ===================================================== //
+	// ALLE METHODEN, DIE VON INTERPRETER AUFGERUFEN WERDEN. //
+	// ===================================================== //
 
 	/**
-	 *  Diese Methode gibt alle Informationen ueber die Spielerposition aus.
+	 * Gibt alle Informationen ueber die Spielerposition auf der Anzeige aus.
 	 */
 	public void spielerPositionAnzeigen() {
-		// Zuerst wird die Anzeige gecleart.
+		// Zuerst wird die Anzeige gereinigt.
 		ausgabe.clear();
 
 		if(spielerPosition instanceof IEreignis)
@@ -640,32 +450,31 @@ public class SpielWelt implements Serializable, StringListener {
 		ausgabe.printPrintable(spielerPosition);
 		ausgabe.println();
 
-	    if(spielerPosition.getAusgaenge().isEmpty())
-	    	return;
-
-	    // Alle verfuegbaren Ausgaenge werden angezeigt.
-	    ausgabe.println("Verfügbare Ausgänge:");
-
-	    // Es wird eine Kopie des Vectors aller Ausgaenge angefordert.
-	    Vector<Ausgang> aktuelleAusgaenge = spielerPosition.getAusgaenge();
-
-	    // Es werden die Ausgaenge ueberprueft und ausgegeben.
-	    for(Ausgang a : aktuelleAusgaenge) {
-	    	// Der Ausgang wird ausgegeben.
-	    	ausgabe.println(a.getRichtungsName() + "(" + a.getAbkuerzung() + ")");
-	    	if(a.getZielort().istBesucht())
-	    		ausgabe.print(" - " + a.getZielort().getName());
-	    	else
-	    		ausgabe.print(" - ???");
+	    if(!spielerPosition.getAusgaenge().isEmpty()) {
+	    	// Alle verfuegbaren Ausgaenge werden angezeigt.
+	    	ausgabe.println("Verfügbare Ausgänge:");
+	    	
+	    	// Es wird eine Kopie des Vectors aller Ausgaenge angefordert.
+	    	Vector<Ausgang> aktuelleAusgaenge = spielerPosition.getAusgaenge();
+	    	
+	    	// Es werden die Ausgaenge ueberprueft und ausgegeben.
+	    	for(Ausgang a : aktuelleAusgaenge) {
+	    		// Der Ausgang wird ausgegeben.
+	    		ausgabe.println(a.getRichtungsName() + "(" + a.getAbkuerzung() + ")");
+	    		if(a.getZielort().isBesucht())
+	    			ausgabe.print(" - " + a.getZielort().getName());
+	    		else
+	    			ausgabe.print(" - ???");
+	    	}
+	    	ausgabe.println("\n");
 	    }
-	    ausgabe.println("\n");
-
+	    
 	    if(spielerPosition instanceof IEreignis)
 			((OrtEreignis)spielerPosition).nachUntersuchung();
 	}
 
 	/**
-	 * Ueberprueft, ob es ein entsprechendes UntersuchbaresObjekt am aktuellen Ort gibt und gibt die Beschreibung aus.
+	 * Ueberprueft, ob es ein entsprechendes UntersuchbaresObjekt am aktuellen Ort gibt und gibt das Objekt aus.
 	 * @param objektName Der Name des Objekts.
 	 */
 	public void sucheUntersuchbaresObjekt(String objektName) {
@@ -723,10 +532,13 @@ public class SpielWelt implements Serializable, StringListener {
 	    		ausgabe.println("Du konntest nichts ernten.");
 	    		return;
 	    	}
-	    	ausgabe.println("Du findest " + rp.getNumGen().getBest(3).toLowerCase() + rp.getName() + " und du erntest ");
+	    	ausgabe.println("Du findest " + rp.getNumGen().getUnbest(3).toLowerCase() + rp.getName() + " und du erntest ");
 	    	for(Stapel stapel : loot) {
 	    		spieler.getInventar().addGegenstand(stapel);
-	    		ausgabe.print(stapel.getAnzahl() + " x " + stapel.getName() + ", ");
+	    		if(stapel.getAnzahl() > 1)
+	    			ausgabe.print(stapel.getAnzahl() + " " + stapel.getGegenstand().getPlural() + ", ");
+	    		else
+	    			ausgabe.print(stapel.getName() + ", ");
 	    	}
 	    	ausgabe.print("du nimmst die Gegenstände an dich.");
 
@@ -753,7 +565,7 @@ public class SpielWelt implements Serializable, StringListener {
 	/**
 	 * Gibt den aktuellen Status des Spielers aus.
 	 */
-	public void zeigeStatusAn(){
+	public void zeigeStatusAn() {
 		spieler.zeigeStatusAn(this);
 	}
 
@@ -860,13 +672,16 @@ public class SpielWelt implements Serializable, StringListener {
 	/**
 	 *  Sucht an der aktuellen Spielerposition nach Custom Commands.
 	 *  @param befehl Der Befehl, nach dem gesucht wird.
+	 *  @return True, wenn ein Befehl gefunden wird, ansonsten false.
 	 */
-	public boolean sucheKommando(String befehl){
+	public boolean sucheKommando(String befehl) {
 	    return spielerPosition.kommandoEingegeben(befehl);
 	}
+	
 	/**
 	 * Ueberprueft, ob es sich bei diesem Befehl um ein globales Kommando handelt.
 	 * @param befehl Der Befehl, der ueberprueft werden soll.
+	 * @return True, wenn ein Befehl gefunden wird, ansonsten false.
 	 */
 	public boolean ueberpruefeKommandos(String befehl) {
 	    for(Kommando k : globaleKommandos)
@@ -898,7 +713,10 @@ public class SpielWelt implements Serializable, StringListener {
 	    			}
 
 	    			for(Stapel s: gegenstaende) {
-	    				ausgabe.print(s.getAnzahl() + " x " + s.getName() + ", ");
+	    				if(s.getAnzahl() > 1)
+	    					ausgabe.print(s.getAnzahl() + " " + s.getGegenstand().getPlural() + ", ");
+	    				else
+	    					ausgabe.print(s.getName() + ", ");
 	    				spieler.getInventar().addGegenstand(s);
 	    			}
 	    			ausgabe.print("du nimmst die Gegenstände an dich.");
@@ -921,4 +739,5 @@ public class SpielWelt implements Serializable, StringListener {
 	    	}
 	    }
 	}
+	
 }

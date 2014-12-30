@@ -3,18 +3,20 @@ package game;
 import java.io.Serializable;
 
 /**
- * Diese Klasse repraesentiert den Ausgang von einem Ort zu einem anderen.
+ * Diese Klasse repraesentiert den Ausgang von einem Ort zu einem anderen. Dieser hat einen Namen fuer die Richtung
+ * und eine Abkuerzung des Namen. Es gibt aber auch vordefinierte Richtungen, die als Konstanten gespeichert sind.
+ * @author Marvin
  */
 public class Ausgang implements Serializable {
-
+	
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
-
-	/* --- Die statischen Konstanten --- */
-
+	
+	/* --- statischen Konstanten --- */
+	
 	// Der byte-Wert fuer einen Ausgang, der keine Richtung hat, er wird auf der Karte nicht angezeigt.
 	public static final byte EIGENE = 0;
-
+	
 	// Der byte-Wert fuer einen Ausgang in Richtung Osten.
 	public static final byte OSTEN = 1;
 	// Der byte-Wert fuer einen Ausgang in Richtung Suedosten.
@@ -31,7 +33,7 @@ public class Ausgang implements Serializable {
 	public static final byte NORDEN = 7;
 	// Der byte-Wert fuer einen Ausgang in Richtung Nordosten.
 	public static final byte NORDOSTEN = 8;
-
+	
 	// Der byte-Wert fuer einen Ausgang, der nach unten fuehrt.
 	public static final byte RUNTER = 9;
 	// Der byte-Wert fuer einen Ausgang, der nach oben fuehrt.
@@ -40,30 +42,30 @@ public class Ausgang implements Serializable {
 	public static final byte BETRETEN = 11;
 	// Der byte-Wert fuer einen Ausgang, der aus etwas herausfuehrt.
 	public static final byte VERLASSEN = 12;
-
+	
 	// Die Woerter der Richtungen als String, in einem Array (normal geschrieben).
 	public static final String[] richtungen = {
-		"Undefiniert",
-
+		"Eigene",
+		
 	    "Osten",
-	    "Sï¿½dosten",
-	    "Sï¿½den",
-	    "Sï¿½dwesten",
+	    "Südosten",
+	    "Süden",
+	    "Südwesten",
 	    "Westen",
 	    "Nordwesten",
 	    "Norden",
 	    "Nordosten",
-
+	    
 	    "Runter",
 	    "Hoch",
 	    "Betreten",
 	    "Verlassen"
 	};
-
+	
 	// Die Abkuerzungen der Richtungen, in einem Array (in Grossbuchstaben).
 	public static final String[] abkuerzungen = {
-		"UNDEF",
-
+		"EIGEN",
+		
 	    "O",
 	    "SO",
 	    "S",
@@ -72,16 +74,15 @@ public class Ausgang implements Serializable {
 	    "NW",
 	    "N",
 	    "NO",
-
+	    
 	    "R",
 	    "H",
 	    "B",
 	    "V"
 	};
-
-
-	/* --- Die Variablen --- */
-
+	
+	/* --- Variablen --- */
+	
 	// Der Ort, zu dem dieser Ausgang fuehrt.
 	private Ort zielort;
 	// Die Richtung, in der der Zielort liegt.
@@ -90,27 +91,46 @@ public class Ausgang implements Serializable {
 	private String richtungsName;
 	// Die Abkuerzung fuer den Richtungsname.
 	private String abkuerzung;
-
-
-	/* --- Der Konstruktor --- */
-
+	
+	/* --- Konstruktor --- */
+	
 	/**
-	 * Dieser Konstruktor erzeugt einen Ausgang mit einem Zielort und einer Richtung.
+	 * Erstellt einen Ausgang mit einem Zielort und einer Richtung.
 	 * @param richtung Die Richtung, in die der Ausgang fuehrt.
-	 * @param zielort Der Ort, zu dem der Ausgang fuehrt.
+	 * @param zielort Der Ort zu dem der Ausgang fuehrt.
 	 */
 	public Ausgang(byte richtung, Ort zielort) {
   		this.zielort = zielort;
-	    this.richtung = richtung;
 	    // Werte werden nicht ueberprueft, da sie eigentlich von den statics sein sollten.
-	    richtungsName = richtungen[richtung];
-	    abkuerzung = abkuerzungen[richtung];
+  		this.setRichtung(richtung);
 	}
-
-
-
-	/* --- Die Methoden --- */
-
+	
+	/**
+	 * Erstellt einen Ausgang, der einen bestimmten Namen und Abkuerzung hat und gleichzeitig
+	 * eine unabhaengige Richtung, damit koennen eigene Ausgaenge erstellt werden.
+	 * @param richtungsName Der Name der Richtung.
+	 * @param abkuerzung Die Abkuerzung der Richtung.
+	 * @param richtung Die Richtung ausgewaehlt aus den Konstanten.
+	 * @param zielort Der Ort zu dem der Ausgang fuehrt.
+	 */
+	public Ausgang(String richtungsName, String abkuerzung, byte richtung, Ort zielort) {
+		this.zielort = zielort;
+		// Eigene Werte werden hier verwendet.
+		this.richtungsName = richtungsName;
+		this.abkuerzung = abkuerzung;
+		this.richtung = richtung;
+	}
+	
+	/* --- Methoden --- */
+	
+	/**
+	 * Gibt den Richtungswert als byte zurueck.
+	 * @return Den byte-Wert der Richtung des Ausgangs.
+	 */
+	public byte getRichtung() {
+	    return richtung;
+	}
+	
 	/**
 	 * Gibt dem Ausgang eine neue Richtung und aendert auch den Namen der Richtung und die Abkuerzung.
 	 * @param neueRichtung Die neue Richtung des Ausgangs
@@ -120,36 +140,15 @@ public class Ausgang implements Serializable {
 	    richtungsName = richtungen[richtung];
 	    abkuerzung = abkuerzungen[richtung];
 	}
-
-
-
-	/**
-	 * Aendert die Richtung unabhaengig von den Standard Parameter, wird verwendet, um eigene Ausgaenge zu kreieren.
-	 * @param neueRichtung Die neue Richtung, dadurch werden die anderen Parameter nicht veraendert.
-	 * @return Sich selbst.
-	 */
-	public Ausgang setRichtungUnabhaengig(byte neueRichtung) {
-		richtung = neueRichtung;
-		return this;
-	}
-
-	/**
-	 * Gibt den Richtungswert als byte zurueck.
-	 * @return Den byte-Wert der Richtung des Ausgangs.
-	 */
-	public byte getRichtung() {
-	    return richtung;
-	}
-
-
+	
 	/**
 	 * Gibt die Richtung zurueck, in die der Ausgang fuehrt, als Wort(normal geschrieben).
-	 * @return Den Name der Richtung, in die der Ausgang fuehrt.
+	 * @return Den Namen der Richtung, in die der Ausgang fuehrt.
 	 */
 	public String getRichtungsName() {
 	    return richtungsName;
 	}
-
+	
 	/**
 	 * Aendert die Richtung des Ausgangs (nur den String).
 	 * @param neueRichtung Der neue Name fuer die Richtung in die der Ausgang fuehrt.
@@ -159,7 +158,7 @@ public class Ausgang implements Serializable {
 	    richtungsName = neueRichtung;
 	    return this;
 	}
-
+	
 	/**
 	 * Gibt die Richtung zurueck als Abkuerzung.
 	 * @return Die Abkuerzung fuer den Richtungsnamen.
@@ -167,7 +166,7 @@ public class Ausgang implements Serializable {
 	public String getAbkuerzung() {
 	    return abkuerzung;
 	}
-
+	
 	/**
 	 * Aendert die Abkuerzung des Ausgangs.
 	 * @param neueAbkuerzung Der neue Name der Abkuerzung fuer den Ausgang.
@@ -177,17 +176,17 @@ public class Ausgang implements Serializable {
 		abkuerzung = neueAbkuerzung;
 		return this;
 	}
-
+	
 	/**
 	 * Gibt den Zielort des Ausgangs zurueck.
-	 * @return Der Zielort des Ausgangs.
+	 * @return Den Zielort des Ausgangs.
 	 */
 	public Ort getZielort() {
 	    return zielort;
 	}
-
+	
 	/**
-	 *  Aendert das Ziel des Ausgangs und gibt ihm einen neuen Zielort.
+	 *  Aendert den Zielort des Ausgangs.
 	 *  @param zielort Der neue Ort, zu dem der Ausgang fuehrt.
 	 */
 	public void setZielort(Ort zielort) {

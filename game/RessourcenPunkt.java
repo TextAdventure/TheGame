@@ -6,13 +6,16 @@ import java.io.Serializable;
 import util.NumerusGenus;
 
 /**
- * Ein Ressourcenpunkt, an dem man Ressourcen abbauen kann.
+ * Ein Ressourcenpunkt, an dem man Ressourcen abbauen kann. Zwischen dem mehrmaligen Abbauen muss eine gewisse Zeit versteichen.
+ * @author Marvin
  */
 public class RessourcenPunkt implements Serializable {
-
+	
 	// Die serielle versionsnummer.
 	private static final long serialVersionUID = 1L;
-
+	
+	/* --- Variablen --- */
+	
 	// Der Name des Ressourcen Punkts.
 	private String name;
 	// Der Numerus und der Genus des Ressourcen Punkts.
@@ -28,11 +31,14 @@ public class RessourcenPunkt implements Serializable {
 	// Die Drops, die moeglich sind.
 	private Drop[] drops;
 	
+	/* --- Konstruktor --- */
+	
 	/**
 	 * Erstellt einen neuen Ressourcen Punkt, an dem Ressourcen abgebaut werden koennen.
 	 * @param name Der Name des Ressourcen Punkts.
+	 * @param numGen Der Numerus und Genus der Ressourcen Punkts.
 	 * @param wiederherstellungszeit Die Zeit, bis der Ressourcen Punkt wieder verwendet werden kann in Sekunden.
-	 * @param maxAnzahl Die maximale Anzahl, die der Ressourcen Punkt abgebaut werden kann hintereinander(-1 beduetet unedlich oft).
+	 * @param maxAnzahl Die maximale Anzahl, die der Ressourcen Punkt hintereinander abgebaut werden kann(-1 beduetet unendlich oft).
 	 * @param drops Die moeglichen Drops von diesem Ressourcen Punkt.
 	 */
 	public RessourcenPunkt(String name, NumerusGenus numGen, int wiederherstellungszeit, int maxAnzahl, Drop... drops) {
@@ -45,6 +51,8 @@ public class RessourcenPunkt implements Serializable {
 		this.drops = drops;
 	}
 	
+	/* --- Methoden --- */
+	
 	/**
 	 * "Erntet" die Ressourcen des Punkts und gibt diese zurueck.
 	 * @return Die geernteten Ressourcen oder ein leeres Array, wenn es nichts zu ernten gibt.
@@ -55,6 +63,7 @@ public class RessourcenPunkt implements Serializable {
 			letzteErnte = System.currentTimeMillis();
 			if(aktuelleAnzahl > 0)
 				aktuelleAnzahl--;
+			
 			int sigmaChance = 0;
 			for(Drop d : drops)
 				sigmaChance += d.getChance();
@@ -62,7 +71,7 @@ public class RessourcenPunkt implements Serializable {
 			int nInt = SpielWelt.WELT.r.nextInt(sigmaChance + 1);
 			for(int i = drops.length - 1; i >= 0; i--) 
 				if(nInt > sigmaChance - drops[i].getChance() && nInt <= sigmaChance)
-					return drops[i].getLoot();
+					return drops[i].getGegenstaende();
 				else
 					sigmaChance -= drops[i].getChance();
 		}
@@ -84,4 +93,5 @@ public class RessourcenPunkt implements Serializable {
 	public NumerusGenus getNumGen() {
 		return numGen;
 	}
+	
 }
