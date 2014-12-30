@@ -39,8 +39,10 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 	private JCheckBox von2nach1Bool;
 	private JButton ok;
 	
-	AusgangDialog(JFrame owner, AusgangErweitert ausgang ) {
-		super(owner, "Ausgang", false);
+	AusgangDialog(AusgangErweitert ausgang ) {
+		//super(owner, "Ausgang", false);
+		setTitle("Ausgang");
+		setModal(false);
 		this.ausgang = ausgang;
 		setSize(300, 250);
 		setLayout(new BorderLayout());
@@ -120,7 +122,7 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		AusgangErweitert ae = new AusgangErweitert();
 		ae.ort1 = ort1;
 		ae.ort2 = ort2;
-		new AusgangDialog(f, ae).setVisible(true);
+		new AusgangDialog(ae).setVisible(true);
 	}
 
 	@Override

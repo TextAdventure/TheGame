@@ -1,6 +1,7 @@
 package editor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +10,6 @@ import game.Ort;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -32,18 +32,20 @@ public class OrtDialog extends JDialog implements ActionListener {
 	private OrtAllgemeinPanel allgemein;
 	private NPCPanel npcs;
 	private EffektePanel effekte;
+	private GegenstandPanel gegenstaende;
 	
 	private Ort ort;
 	private JButton ok;
-	private JFrame owner;
+	private Component parent;
 	
-	OrtDialog(JFrame owner, WeltObjekt welt, Ort ort) {
+	OrtDialog(Component parent, WeltObjekt welt, Ort ort) {
 		//General Frame stuff
-		super(owner, ort.getName(), false);
+		setTitle(ort.getName());
+		setModal(false);
 		setSize(300, 350);
 		setLayout(new BorderLayout());
 		this.ort = ort;
-		this.owner = owner;
+		this.parent = parent;
 		
 		//create gui	
 		//allgemeines Panel
@@ -54,22 +56,12 @@ public class OrtDialog extends JDialog implements ActionListener {
 		
 		
 		//untersuchbare Obj Panel
-		/*String[] objekteNamen = ort.getUntersuchbareObjekteNamen();
-		if(objekteNamen.length == 1 && objekteNamen[0] == "NICHTS") {
-			objekteNamen = new String[0];
-			System.out.println("NICHTS");
-		}
-		UntersuchbaresObjekt[] objekte = new UntersuchbaresObjekt[objekteNamen.length];
-		for(int i = 0; i < objekte.length; i++) {
-			objekte[i] = ort.getUntersuchbaresObjekt(objekteNamen[i]);
-			System.out.println(objekteNamen[i]);
-		}
-		untersuchObj = new UntersuchObjPanel(objekte, ort);*/
-		untersuchObj = new UntersuchObjPanel(ort.getUnteruschbareObjekte(), ort);
-		p = new JPanel(new BorderLayout());
-		p.add(untersuchObj);
-		tabs.addTab("Untersuchb. Obj.", p);
+		untersuchObj = new UntersuchObjPanel(ort);
+		tabs.addTab("Untersuchb. Obj.", untersuchObj);
 		
+		//gegenstand Panel
+		gegenstaende = new GegenstandPanel(welt, ort);
+		tabs.addTab("Gegenstände", gegenstaende);
 		
 		//NPC panel
 		npcs = new NPCPanel(ort.getNPCs(), ort);
@@ -102,7 +94,7 @@ public class OrtDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		ort.setName(allgemein.getOrtName());
 		ort.setBeschreibung(allgemein.getBeschreibung());
-		//TODO owner.repaint();
+		parent.repaint();
 		dispose();
 	}
 

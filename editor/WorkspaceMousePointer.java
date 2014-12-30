@@ -5,8 +5,6 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JFrame;
-
 /**
  * Unterklasse von MouseAdapter, die die Funktionalitäten des Zeiger-Tools realisert. Jeder Workspace sollte einen
  * WorkspaceMousePointer sowohl als MouseListener, als auch als MouseMotionListener adden, sonst hat das Zeiger-
@@ -21,13 +19,11 @@ import javax.swing.JFrame;
 public class WorkspaceMousePointer extends MouseAdapter {
 
 	private WeltObjekt welt;
-	private JFrame frame;
 	private Component parent;
 	private IDE ide;
 	
-	WorkspaceMousePointer(WeltObjekt welt, JFrame frame, Component parent, IDE ide) {
+	WorkspaceMousePointer(WeltObjekt welt, Component parent, IDE ide) {
 		this.welt = welt;
-		this.frame = frame;
 		this.parent = parent;
 		this.ide = ide;
 	}
@@ -44,12 +40,12 @@ public class WorkspaceMousePointer extends MouseAdapter {
 		 */
 		OrtErweitert ort = welt.ortAt(e.getX(), e.getY());
 		if(ort != null) {
-			new OrtDialog(frame, welt, ort.ort).setVisible(true);
+			new OrtDialog(parent, welt, ort.ort).setVisible(true);
 			
 		} else {
 			AusgangErweitert ausgang = welt.ausgangAt(e.getX(), e.getY());
 			if(ausgang != null) {
-				new AusgangDialog(frame, ausgang).setVisible(true);;
+				new AusgangDialog(ausgang).setVisible(true);;
 			}
 		}
 		

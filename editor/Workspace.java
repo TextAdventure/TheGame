@@ -36,7 +36,7 @@ public class Workspace extends JPanel{
 		MouseAdapter ausgang = new WorkspaceMouseAusgang(welt, this, ide);
 		MouseAdapter eraser = new WorkspaceMouseEraser(welt, this, ide);
 		MouseAdapter ort = new WorkspaceMouseOrt(welt, this, ide); 
-		MouseAdapter pointer = new WorkspaceMousePointer(welt, (JFrame)SwingUtilities.getRoot(this), this, ide);
+		MouseAdapter pointer = new WorkspaceMousePointer(welt, this, ide);
 		MouseAdapter world = new WorkspaceMouseStart(welt, this, ide);
 		
 		addMouseListener(ausgang);

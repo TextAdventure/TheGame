@@ -120,20 +120,13 @@ public class BFTabbedPane extends JTabbedPane {
 	}
 	
 	public File getCurrentFile() {
-		Component c = getSelectedComponent();
-		if(c instanceof Workspace)
-			return ((Workspace)c).getFile();
-		else 
-			return null;
+		if(getCurrentWorkspace() == null) return null;
+		return getCurrentWorkspace().getFile();
 	}
 	
-	public boolean setCurrentFile(File file) {
-		Component c = getSelectedComponent();
-		if(c instanceof Workspace) {
-			((Workspace)c).setFile(file);
-			return true;
-		} else
-			return false;
+	public void setCurrentFile(File file) {
+		if(getCurrentWorkspace() == null) return;
+		getCurrentWorkspace().setFile(file);
 	}
 	
 	public Workspace getCurrentWorkspace() {
@@ -145,9 +138,9 @@ public class BFTabbedPane extends JTabbedPane {
 	}
 	
 	public void updateCurrentTitle() {
-		Component c = getSelectedComponent();
-		if(c instanceof Workspace) 
-			setTitleAt(getSelectedIndex(), ((Workspace)c).getName());
+		if(getCurrentFile() == null) return;
+		setTitleAt(getSelectedIndex(), getCurrentFile().getName());
+		revalidate();
 	}
 	
 }

@@ -52,6 +52,7 @@ public class OrtAllgemeinPanel extends JPanel {
 		this.beschreibung = new JTextArea(ort.getDescription());
 		beschreibung.setSize(beschreibung.getMaximumSize());
 		beschreibung.setLineWrap(true);
+		beschreibung.setWrapStyleWord(true);
 		scroll = new JScrollPane(this.beschreibung);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);

@@ -24,6 +24,8 @@ public class GegenstandTabelleDialog extends JDialog implements ActionListener {
 	private JButton neu, loeschen;
 	
 	GegenstandTabelleDialog(WeltObjekt welt) {
+		this.welt = welt;
+		setTitle("Alle Gegenstände");
 		setLayout(new BorderLayout());
 		setSize(800, 400);
 		
@@ -46,7 +48,7 @@ public class GegenstandTabelleDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		Object src = arg0.getSource();
 		if(src == neu) {
-			new GegenstandDialog(welt).setVisible(true);
+			new GegenstandDialog(this, welt).setVisible(true);
 			
 		} else if(src == loeschen) {
 			tabelle.removeSelectedRows();

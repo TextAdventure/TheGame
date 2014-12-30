@@ -49,6 +49,22 @@ public class NumerusGenus implements Serializable {
 	    if(numGen == 3) return true;
 	    else return false;
 	}
+	
+	/**
+	 * Überprüft dieses Objekt auf Gleichheit mit obj. Falls obj auch vom Typ NumerusGenus, so ist Gleichheit dadurch defineirt,
+	 * dass das repräsentierte grammatikalsiche Geschlecht der beiden übereinstimmt.
+	 * @param obj Das Objekt, mit dem verglichen werden soll.
+	 * @return true genau dann wenn obj von Typ NumerusGenus ist und das gleiche grammatikalische Geschlecht wie dieses Objekt 
+	 * repräsentiert, oder Object.equals(Object) dieses Ergebnis geliefert hat.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(super.equals(obj)) return true;
+		if(obj instanceof NumerusGenus) {
+			return (((NumerusGenus)obj).numGen == this.numGen);
+		}
+		else return false;
+	}
 
 	/**
 	 * Gibt das passende Adjektiv zu dem Geschlecht zurueck.

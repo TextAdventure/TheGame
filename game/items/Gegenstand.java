@@ -337,4 +337,13 @@ public class Gegenstand implements Serializable, IPrintable {
 		return "Gegenstand";
 	}
 	
+	/**
+	 * Die toString()-Methode eines Gegenstands liefert dessen Namen als String.
+	 * @return Der Name dieses Gegenstands.
+	 */
+	@Override
+	public String toString() {
+		return getName();
+	}
+	
 }

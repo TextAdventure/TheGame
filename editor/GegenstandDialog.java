@@ -1,7 +1,10 @@
 package editor;
 
+import game.items.Gegenstand;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -20,6 +23,7 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 
 	private static final String[] typen = {"Gegenstand", "KommandoGegenstand", "VerwendbarerGegenstand", "Waffe", "Rüstung", "Accesoire"};
 	private WeltObjekt welt;
+	private Component parent;
 	
 	private JTextField namen;
 	private JComboBox<NumerusGenus> numGen;
@@ -28,10 +32,9 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 	private JComboBox<String> typ;
 	
 	private JPanel eigenschaften;
-
 	
-	
-	GegenstandDialog(WeltObjekt welt) {
+	GegenstandDialog(Component parent, WeltObjekt welt) {
+		this.parent = parent;		
 		this.welt = welt;
 		setModal(false);
 		setTitle("neuer Gegenstand");
@@ -113,11 +116,15 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 		allgemein.add(p, c);	
 		
 		beschreibung = new JTextArea();
+		beschreibung.setWrapStyleWord(true);
+		beschreibung.setLineWrap(true);
 		beschreibung.setPreferredSize(new Dimension(beschreibung.getPreferredSize().width, 50));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 3;
-		allgemein.add(new JScrollPane(beschreibung), c);
+		JScrollPane scroll = new JScrollPane(beschreibung);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		allgemein.add(scroll, c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
@@ -180,7 +187,9 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 	public void actionPerformed(ActionEvent arg0) {
 		switch(typ.getSelectedIndex()) {
 		case 0:
-			//Gegenstand g = new Gegenstand(namen.getText().split(";"), numGen.getSelectedItem(), beschreibung.getText());
+			Gegenstand g = new Gegenstand(namen.getText().split(";"), plural.getText(), (NumerusGenus)numGen.getSelectedItem(), beschreibung.getText());
+			welt.addGegenstand(g);
+			
 			break;
 		
 		case 1:
@@ -196,6 +205,9 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 		default:
 			
 		}
+		
+		parent.revalidate();
+		dispose();
 		
 	}
 	

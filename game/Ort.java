@@ -367,6 +367,22 @@ public class Ort implements Serializable, IPrintable {
 		else
 			return false;
 	}
+	/**
+	 * Gibt ein Array aller Gegenstände zurück, die es an diesem Ort gibt.
+	 * @return
+	 */
+	public Gegenstand[] getGegenstaende() {
+		return gegenstaende.getAlleGegenstaende();
+	}
+	/**
+	 * Gibt die Anzahl der Instanzen von g zurück, die es an diesem Ort gibt. 
+	 * @param g
+	 * @return Die Anzahl der Instanzen von g, die es an diesem Ort gibt. Falls g diesem Ort nicht bekannt ist, wird 0 zurück gegeben.
+	 */
+	public int getGegenstandAnzahl(Gegenstand g) {
+		if(gegenstaende.getStapel(g) == null) return 0;
+		return gegenstaende.getStapel(g).getAnzahl();
+	}
 
 	/* KommandoGegenstaende & Tuer */
 	/**

@@ -36,6 +36,7 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 	private JTree tree;
 	private Component center;
 	private File currDir;
+	private IDE ide;
 	
 	/**
 	 * Helper class. Allows sorting an array of Files s.t. directories come before files, and both types are sortet
@@ -63,8 +64,9 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 	}
 	
 	
-	FileTree(File currDir) {
+	FileTree(IDE ide, File currDir) {
 		super(new BorderLayout());
+		this.ide = ide;
 		this.currDir = currDir;
 		
 		JPanel button = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -124,8 +126,7 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 				File f = new File(currDir.getAbsolutePath() + "/" + p);
 				//System.out.println(f.getAbsolutePath());
 				if(f.isFile()) {
-					System.out.println(f.getName() + " selected");
-					//TODO: open f.
+					ide.load(f);
 				}
 			}
 		}
@@ -146,30 +147,30 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 		Object src = arg0.getSource();
 		if(src == levelUp) {			
 			if(currDir.getParent() != null) {
-				remove(center);
 				currDir = currDir.getParentFile();
-				
-				tree = new JTree(addNodes(null, currDir));
-				tree.addMouseListener(this);
-				center = new JScrollPane(tree);
-				add(center, BorderLayout.CENTER);
-				revalidate();
 			}
 			
 		} else if(src == browse) {
 			JFileChooser fileChooser = new JFileChooser(currDir);
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				remove(center);
 				currDir = fileChooser.getSelectedFile();
-				tree = new JTree(addNodes(null, currDir));
-				tree.addMouseListener(this);
-				center = new JScrollPane(tree);
-				add(center, BorderLayout.CENTER);
-				revalidate();
 			}
 			
 		}
 		
+	}
+	
+	/**
+	 * Berechnet den angezeigten FileTree neu. Dadurch werden neu hinzugefüte Dateien auch angezeigt und falls zu einem
+	 * neuen Verzeichnis gewechselt wurde, wird dieses geladen. 
+	 */
+	void update() {
+		remove(center);				
+		tree = new JTree(addNodes(null, currDir));
+		tree.addMouseListener(this);
+		center = new JScrollPane(tree);
+		add(center, BorderLayout.CENTER);
+		revalidate();
 	}
 }

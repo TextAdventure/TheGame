@@ -29,6 +29,7 @@ public class IDE extends JFrame implements ChangeListener {
 
 	private BFTabbedPane tabbedPane;
 	private WorldToolbar tools;
+	private FileTree tree;
 	
 	//io stuff
 	private JFileChooser fileDialog = new JFileChooser(System.getProperty("user.dir"));
@@ -75,10 +76,8 @@ public class IDE extends JFrame implements ChangeListener {
 		add(p, BorderLayout.CENTER);
 		
 		//FileTree
-		add(new FileTree(new File(System.getProperty("user.dir"))), BorderLayout.WEST);
-		
-		
-		
+		tree = new FileTree(this, new File(System.getProperty("user.dir")));
+		add(tree, BorderLayout.WEST);
 		
 		
 	}
@@ -197,76 +196,109 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	
 	/* * * IO-Methods * * */	
+	/**
+	 * Öffnet einen neuen Tab mit einem neuen, leeren Workspace.
+	 */
 	private void newFile() {
 		JScrollPane bfComp = new JScrollPane(new Workspace(this, new WeltObjekt()));
 		/*KeyStroke altLeft = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK);
 		bfComp.textPane.getInputMap().put(altLeft, tabbedPane.getPreviousTabAction());
 		KeyStroke altRight = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK);
 		bfComp.textPane.getInputMap().put(altRight, tabbedPane.getNextTabAction());*/
-		tabbedPane.addTab("unnamed", bfComp);
+		tabbedPane.addTab("unbennant", bfComp);
 		updateTitle();
 	}
 	
+	/**
+	 * Speichert den aktuellen Workspace in dessen Datei. Falls der aktuelle Workspace noch keine zugehörige Datei hat,
+	 * d.h. der Workspace wurde noch nie gespeichert, dann wird saveAs() aufgerufen.
+	 */
 	private void save() {
 		File file = tabbedPane.getCurrentFile();
 		if(file == null) {
+			System.out.println("saveas");
 			saveAs();
 			return;
 		}
-		WeltObjekt welt = tabbedPane.getCurrentWorkspace().getWorld();
+		save(tabbedPane.getCurrentWorkspace(), file);		
+	}
+	
+	/**
+	 * Speichert den übergebenen Workspace in die Datei file.
+	 * @param workspace
+	 * @param file
+	 */
+	private void save(Workspace workspace, File file) {
+		WeltObjekt welt = workspace.getWorld();
 		ObjectOutputStream oos;
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream(file));
 			oos.writeObject(welt);
+			oos.close();
+			
+			tree.update();
+			
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Beim Schreiben der Datei ist ein Fehler aufgetreten.", "Fehler", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}		
 	}
 	
+	/**
+	 * Speichert einen Workspace zum ersten Mal, bzw. in eine neue Datei. Der Benutzer kann über einen File-Dialog
+	 * auswählen, wo und unter welchem Namen der Workspace gespeichert werden soll.
+	 */
 	private void saveAs() {
 		if(fileDialog.showSaveDialog(IDE.this) == JFileChooser.APPROVE_OPTION) {
 			File file = fileDialog.getSelectedFile();
-			WeltObjekt welt = tabbedPane.getCurrentWorkspace().getWorld();
-			ObjectOutputStream oos;
-			try {
-				oos = new ObjectOutputStream(new FileOutputStream(file));
-				oos.writeObject(welt);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
+			System.out.println(file.getAbsolutePath());
+			save(tabbedPane.getCurrentWorkspace(), file);
 			tabbedPane.setCurrentFile(file);
 			tabbedPane.updateCurrentTitle();
 			updateTitle();
 		}
 	}
 	
+	/**
+	 * Öffnet einen File-Dialog und dann die gewählte Datei in einem neuen Tab. Falls die gewählte Datei keine gültige
+	 * Codierung einer Welt enthält, wird dies dem Benutzer mitgeteilt.  
+	 */
 	private void load() {
 		if(fileDialog.showOpenDialog(IDE.this) == JFileChooser.APPROVE_OPTION) {
 			File file = fileDialog.getSelectedFile();
-			ObjectInputStream ois;
-			try {
-				ois = new ObjectInputStream(new FileInputStream(file));
-				WeltObjekt ort = (WeltObjekt)ois.readObject();
-				JScrollPane bfComp =  new JScrollPane(new Workspace(this, file, ort));
-				/*KeyStroke altLeft = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK);
-				bfComp.textPane.getInputMap().put(altLeft, tabbedPane.getPreviousTabAction());
-				KeyStroke altRight = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK);
-				bfComp.textPane.getInputMap().put(altRight, tabbedPane.getNextTabAction());*/
-				tabbedPane.addTab(file.getName(), bfComp);
-				
-			} catch(IOException e1) {
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Fehler beim Lesen der Datei aufgetraten.", "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Sourcecode beschädigt! Klasse nicht gefunden!", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			updateTitle();
+			load(file);
 		}
+	}
+
+	/**
+	 * Öffnet die Datei file in einem neuen Tab. Falls die gewählte Datei keine gültige
+	 * Codierung einer Welt enthält, wird dies dem Benutzer mitgeteilt.  
+	 */	
+	void load(File file) {
+		ObjectInputStream ois;
+		try {
+			ois = new ObjectInputStream(new FileInputStream(file));
+			Object input = ois.readObject();
+			ois.close();
+			if(!(input instanceof WeltObjekt)) {
+				JOptionPane.showMessageDialog(this, "Die Datei " + file.getName() + " enthält keine Codierung einer Welt.", "Ungültige Datei", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			WeltObjekt ort = (WeltObjekt)input;
+			JScrollPane bfComp =  new JScrollPane(new Workspace(this, file, ort));
+			tabbedPane.addTab(file.getName(), bfComp);
+			tabbedPane.setCurrentFile(file);
+			
+		} catch(IOException e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Fehler beim Lesen der Datei aufgetraten.", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Sourcecode beschädigt! Klasse nicht gefunden!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		updateTitle();
 	}
 	/* * * IO-Methods End * * */
 	
@@ -314,8 +346,8 @@ public class IDE extends JFrame implements ChangeListener {
 		menu.add(save);
 		//saveAs
 		JMenuItem saveAs = new JMenuItem(new SaveAsAction());
-		KeyStroke ctrlShiftS = KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK);
-		saveAs.setAccelerator(ctrlShiftS);
+		//KeyStroke ctrlShiftS = KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK);
+		//saveAs.setAccelerator(ctrlShiftS);
 		menu.add(saveAs);
 		
 		menu.addSeparator();

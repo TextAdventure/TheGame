@@ -1,5 +1,7 @@
 package editor;
 
+import java.util.Arrays;
+
 import game.items.Gegenstand;
 
 import javax.swing.JTable;
@@ -9,22 +11,25 @@ public class GegenstandTabelle extends JTable {
 	private static final long serialVersionUID = 1L;
 
 	private static String[] colNames = {"Typ", "Name", "NumGen", "Beschreibung", "Eigenschaften"};
-	
+	private WeltObjekt welt;
 	private DefaultTableModel model;
 	
 	GegenstandTabelle(WeltObjekt welt) {
+		this.welt = welt;
 		model = new DefaultTableModel(colNames, 0);
 		setModel(model);
 		
-		Gegenstand[] geg = Gegenstand.GEGENSTAENDE;
+		Gegenstand[] geg = welt.getGegenstaende();
 		for(Gegenstand g : geg) {
-			String eigenschaften = "";
-			String[] row = {"", g.getName(), g.getNumGen().toString(), g.getDescription(), eigenschaften};
-			model.addRow(row);
+			addGegenstand(g);
 		}	
 		
 	}
 	
+	/**
+	 * Fügt der Tabelle eine neue Zeile hinzu.
+	 * @param g
+	 */
 	void addGegenstand(Gegenstand g) {
 		String eigenschaften = "";
 		String[] row = {"", g.getName(), g.getNumGen().toString(), g.getDescription(), eigenschaften};
@@ -37,8 +42,10 @@ public class GegenstandTabelle extends JTable {
 	 */
 	int[] removeSelectedRows() {
 		int[] rows = getSelectedRows();
-		for(int i : rows) 
-			model.removeRow(i);
+		Arrays.sort(rows);
+		for(int i = 0; i < rows.length; i++) {
+			model.removeRow(rows[i]-i);
+		}
 		return rows;
 	}
 	

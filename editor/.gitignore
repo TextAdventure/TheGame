@@ -39,3 +39,5 @@
 /WorldGenerator.class
 /WorldToolbar.class
 /FileTree$FileComparator.class
+/GegenstandPanel.class
+/GegenstandPanel$GTableModel.class
