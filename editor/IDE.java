@@ -75,7 +75,7 @@ public class IDE extends JFrame implements ChangeListener {
 		add(p, BorderLayout.CENTER);
 		
 		//FileTree
-		add(new JScrollPane(new FileTree(new File(System.getProperty("user.dir")))), BorderLayout.WEST);
+		add(new FileTree(new File(System.getProperty("user.dir"))), BorderLayout.WEST);
 		
 		
 		
