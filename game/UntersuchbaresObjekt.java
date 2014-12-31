@@ -47,9 +47,9 @@ public class UntersuchbaresObjekt implements Serializable, IPrintable {
 	 @Override
 	public String getName() {
 		 String actual = name;
-		 while(name.contains("<c=")) {
-			 actual = name.replaceFirst("</c>", "");
-			 actual = name.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
+		 while(actual.contains("<c=")) {
+			 actual = actual.replaceFirst("</c>", "");
+			 actual = actual.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
 		 }
 		 return actual;
 	}
@@ -126,7 +126,7 @@ public class UntersuchbaresObjekt implements Serializable, IPrintable {
 		}
 		return null;
 		*/
-		return "";
+		return "test";
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class UntersuchbaresObjekt implements Serializable, IPrintable {
 	@Override
 	public String[] getParams() {
 		// return new String[] {"name", "nameExt", "besucht"}; TODO
-		return new String[0];
+		return new String[]{"test"};
 	}
 
 }

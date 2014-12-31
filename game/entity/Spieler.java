@@ -2,8 +2,8 @@ package game.entity;
 
 import game.SpielWelt;
 import game.items.Accessoire;
-import game.items.Ausruestung;
 import game.items.Gegenstand;
+import game.items.Ausruestung;
 import game.items.Inventar;
 import game.items.Ruestung;
 import game.items.Waffe;
@@ -18,21 +18,23 @@ import util.StringEvent;
 import util.StringListener;
 
 /**
- *  Alle relevanten Objekte fuer den Spieler werden hier gespeichert, diese Klasse repraesentiert also den Spieler.
+ * Alle relevanten Objekte fuer den Spieler werden hier gespeichert, diese Klasse repraesentiert also den Spieler.
+ * @author Marvin
  */
 public class Spieler extends Entity {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
 
+	/* --- Variablen --- */
+	
 	// Das Level des Spielers und seine XP.
 	private short level;
 	private int xp;
 	//private int nextLevel;
 	
 	// Die Level des Spielers
-	private Level[] levels;
-	  
+	private Level[] levels;	  
 	
 	// Das Inventar des Spielers.
 	private Inventar inventar;
@@ -41,9 +43,14 @@ public class Spieler extends Entity {
 	
 	// Die Listener
 	transient private Vector<Object> listeners;
-	  
+	
+	/* --- Konstruktor --- */
+	
 	/**
-	 *  Ein neuer Spieler wird ohne ein Parameter initialisiert.
+	 * Ein neuer Spieler hat einen Namen, ein Geschlecht und eine Beschreibung.
+	 * @param name Der Name des Spielers.
+	 * @param geschlecht Das Geschlecht des Spielers.
+	 * @param beschreibung Die Beschreibung des Spielers.
 	 */
 	public Spieler(String name, NumerusGenus geschlecht, String beschreibung) {
 		super();
@@ -58,10 +65,10 @@ public class Spieler extends Entity {
 	    listeners = new Vector<Object>();
 	}
 	  
-	/* --- Alle Methoden --- */  
+	/* --- Methoden --- */  
 
 	/**
-	 * Anedert die Level des Spielers und erstzt sie durch neue, diese Methode sollte nur im WeltenGenerator verwendet werden.
+	 * Aendert die Level des Spielers und erstzt sie durch neue, diese Methode sollte nur im WeltenGenerator verwendet werden.
 	 * @param levels Die neuen Level des Spielers.
 	 */
 	public void setLevels(Level[] levels) {
@@ -80,17 +87,19 @@ public class Spieler extends Entity {
 	
 	/**
 	 * Gibt die XP zurueck, die fuer ein Level Up benoetigt werden.
-	 * @return Die Xp fuer ein Level Up.
+	 * @return Die XP fuer ein Level Up.
 	 */
 	private int getXpFuerLevelUp() {
 		int levelUp = 0;
-		for(int i = 0; i <= level; i++) {
+		for(int i = 0; i <= level; i++)
 			levelUp += levels[i].getErfahrung();
-		}
 		return levelUp - xp;
 	}
 	  
-	// Fuegt dem Spieler xp hinzu.
+	/**
+	 * Fuegt dem Spieler XP hinzu und laesst ihn in seiner Stufe aufsteigen.
+	 * @param menge Die Menge an Erfahrung.
+	 */
 	public void addXp(int menge) {
 		for( ; menge > 0 ; menge--) {
 			xp++;
@@ -116,8 +125,11 @@ public class Spieler extends Entity {
 		}
 	}
 	
-	// Gibt das Inventar des Spielers zurueck.
-	public Inventar getInventar(){
+	/**
+	 * Gibt das Inventar des Spielers zurueck.
+	 * @return Das Inventar des Spielers.
+	 */
+	public Inventar getInventar() {
 	    return inventar;
 	}
 
@@ -125,18 +137,25 @@ public class Spieler extends Entity {
 	 * Gibt die Ausruestung des Spielers zurueck.
 	 * @return Die Ausruestung des Spielers.
 	 */
-	public Ausruestung getAusruestung(){
+	public Ausruestung getAusruestung() {
 	    return ausruestung;
 	}
 	
-	// Fuegt den Faehigkeiten des Spielers eine neue hizu.
+	/**
+	 * Fuegt den Faehigkeiten des Spielers eine neue hizu.
+	 * @param faehigkeit Die neue Faehigkeit des Spielers.
+	 */
 	@Override
 	public void addFaehigkeit(Faehigkeit faehigkeit) {
 		super.addFaehigkeit(faehigkeit);
 		notifyListeners(faehigkeit);
 	}
 	
-	// Gibt die entsprechende Angriffsfaehigkeit zurueck.
+	/**
+	 * Gibt die entsprechende Angriffsfaehigkeit zurueck, basierend auf dem Kommando.
+	 * @param kommando Das Kommando des Spielers.
+	 * @return Die gesuchte Faehigkeit, falls vorhanden.
+	 */
 	@Override
 	public Faehigkeit getFaehigkeit(String kommando) {
 		for(Faehigkeit f : faehigkeiten)
@@ -148,15 +167,16 @@ public class Spieler extends Entity {
 	/**
 	 * Ueberprueft, ob der Spieler diese Faehigkeit bereits kennt oder nicht.
 	 * @param faehigkeit Die Faehigkeit auf die geprueft werden soll.
-	 * @return true, wenn der Spieler sie kennt, ansosnten false.
+	 * @return True, wenn der Spieler sie kennt, ansonsten false.
 	 */
 	public boolean kenntFaehigkeit(Faehigkeit faehigkeit) {
 		return faehigkeiten.contains(faehigkeit);
 	}
 	
 	/**
-	 *  Der Spieler reustet einen Gegenstand aus, es wird ein boolean zurueckgegeben, der mitteilt, ob es funktioniert hat.
-	 *  gegenstand: der Gegenstand, welcher ausgeruestet werden soll.
+	 * Der Spieler ruestet einen Gegenstand aus, es wird ein boolean zurueckgegeben, der mitteilt, ob es funktioniert hat.
+	 * @param gegenstand Der Gegenstand, welcher ausgeruestet werden soll.
+	 * @return True, wenn es ausgeruestet wurde, ansonsten false.
 	 */
 	public boolean ruesteAus(Gegenstand gegenstand) {
 	    if(!inventar.containsGegenstand(gegenstand))
@@ -199,11 +219,13 @@ public class Spieler extends Entity {
 	}
 	  
 	/**
-	 *  Der Spieler legt den uebergebenen Gegenstand ab, wenn er ihn ausgeruestet hat.
-	 *  gegenstand: der abzulegende Gegenstand.
+	 * Der Spieler legt den uebergebenen Gegenstand ab, wenn er ihn ausgeruestet hat.
+	 * @param gegenstand Der abzulegende Gegenstand.
+	 * @return True, wenn er abgelegt ist, ansonsten false.
 	 */
 	public boolean legeAb(Gegenstand gegenstand) {
-	    if(!ausruestung.istAusgeruestet(gegenstand)) return false;
+	    if(!ausruestung.istAusgeruestet(gegenstand))
+	    	return false;
 	    Gegenstand[] alt2 = new Gegenstand[1];
 	    if(gegenstand instanceof Waffe) {
 	    	Waffe test = (Waffe)gegenstand;
@@ -217,7 +239,7 @@ public class Spieler extends Entity {
 	    } else {
 	    	return false;
 	    }
-	    for(Gegenstand g: alt2) {
+	    for(Gegenstand g : alt2) {
 	    	inventar.addGegenstand(g, 1);
 	    	maxLp -= g.getLp();
 	    	if(lp > maxLp) lp = maxLp;
@@ -233,15 +255,19 @@ public class Spieler extends Entity {
 	}
 	  
 	/**
-	 * Gibt die Arten beider Waffen des Spielers.
+	 * Gibt die Arten beider Waffen des Spielers zurueck.
 	 * @return Die Arten der Waffen des Spielers.
 	 */
-	public Waffenart[] getWaffenarten(){
+	public Waffenart[] getWaffenarten() {
 	    Waffenart[] wa = new Waffenart[2];
-	    if(ausruestung.getHaupthand() != null) wa[0] = ausruestung.getHaupthand().getWaffenart();
-	    else wa[0] = null;
-	    if(ausruestung.getSchildhand() != null) wa[1] = ausruestung.getSchildhand().getWaffenart();
-	    else wa[1] = null;
+	    if(ausruestung.getHaupthand() != null)
+	    	wa[0] = ausruestung.getHaupthand().getWaffenart();
+	    else
+	    	wa[0] = null;
+	    if(ausruestung.getSchildhand() != null)
+	    	wa[1] = ausruestung.getSchildhand().getWaffenart();
+	    else
+	    	wa[1] = null;
 	    return wa;
 	}
 	  
@@ -266,9 +292,8 @@ public class Spieler extends Entity {
 	    	welt.println(Resistenz.RESISTENZEN[i].getName() + ": " + this.getResistenz(Resistenz.RESISTENZEN[i].getName()) + "%");
 	    welt.println();
 	    for(EntityDamageAmplifier eda : schadensMultiplikatoren)
-	    	welt.println(eda.getSchadensart().getName() + " wird um " + eda.getProzetual() + "% erhöht und um " + eda.getAbsolut());
+	    	welt.println(eda.getSchadensart().getName() + " wird um " + eda.getProzetual() + "% und um " + eda.getAbsolut() + " erhöht");
 	}
-	
 	
 	/**
 	 * Fuegt dem Spieler einen neuen Listener hinzu.
@@ -289,15 +314,14 @@ public class Spieler extends Entity {
 	 */
 	public void notifyListeners(Faehigkeit... faehigkeit) {
 		for(Object listener : listeners) {			
-			if(listener instanceof PlayerListener) {
+			if(listener instanceof PlayerListener)
 				((PlayerListener)listener).playerChanged(new PlayerEvent(this));
-			}
 			
-			if(listener instanceof StringListener) {
-				for(Faehigkeit f : faehigkeit) {
+			if(listener instanceof StringListener)
+				for(Faehigkeit f : faehigkeit)
 					((StringListener)listener).actionPerformed(new StringEvent(f.getName()));
-				}				
-			}
+				
+		
 	    }
 	}
 	

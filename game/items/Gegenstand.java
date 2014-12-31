@@ -7,7 +7,6 @@ import game.entity.Resistenz;
 import game.entity.Schadensart;
 
 import java.io.Serializable;
-import java.util.Vector;
 
 import util.IPrintable;
 import util.NumerusGenus;
@@ -17,15 +16,15 @@ import util.NumerusGenus;
  */
 public class Gegenstand implements Serializable, IPrintable {
 
-	// Die serielle Versionsnummer
+	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	/* --- Das statische Array --- */
+	/* --- statische Liste --- */
 
 	// Ein statisches Array mit allen Gegenstaenden.
 	public static Gegenstand[] GEGENSTAENDE = new Gegenstand[0];
 	
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Name des Gegenstands.
 	private String name;
@@ -40,7 +39,7 @@ public class Gegenstand implements Serializable, IPrintable {
 	// Die ID des Gegenstands.
 	private short id;
 	
-	/* --- Die Variablen fuer alle Subklassen --- */	
+	/* --- Variablen fuer alle Subklassen --- */	
 	
 	// Der Lebenspunktebonus des Gegenstands.
 	protected int lp;	
@@ -51,8 +50,8 @@ public class Gegenstand implements Serializable, IPrintable {
 	protected EntityAttribut[] attribute;
 	// Alle Resistenzen des Gegenstands.
 	protected EntityResistenz[] resistenzen;
-	  
-	/* --- Der Konstruktor --- */
+		  
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Ein neuer Gegenstand wird erstellt und ihm wird ein Name und Synonyme gegeben, ein NumerusGenus und eine Beschreibung.
@@ -89,15 +88,15 @@ public class Gegenstand implements Serializable, IPrintable {
 		}
 	}
 	  
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Diese Methode aendert den Namen des Gegenstands.
 	 * @param neuerName Der neue Name fuer den Gegenstand.
-	 */
+	 *
 	public void setName(String neuerName) {
 	    name = neuerName;
-	}
+	}*/
 	  
 	/**
 	 * Diese Methode gibt den Namen des Gegenstands zurueck, OHNE Modifikatoren.
@@ -105,27 +104,26 @@ public class Gegenstand implements Serializable, IPrintable {
 	 */
 	@Override
 	public String getName() {
-		// Subklassen koennen hier noch genauer bestimmt werden.
-		if(name.contains("<c=") || name.contains("<p=")) {
-			String actual = name.replaceAll("</c>", "");
-			while(actual.contains("<") && actual.contains(">"))
-				actual = actual.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
-			return actual;
+		// Es werden nur Farben ersetzt, da von mehr im Moment nicht auszugehen ist.
+		String actual = name;
+		while(actual.contains("<c=")) {
+			actual = actual.replaceFirst("</c>", "");
+			actual = actual.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
 		}
-	    return name;
+		return actual;
 	}
 	/**
 	 * Gibt den Plural des Gegenstands zurueck.
 	 * @return Den Plural des Gegenstands.
 	 */
 	public String getPlural() {
-		if(plural.contains("<c=") || plural.contains("<p=")) {
-			String actual = plural.replaceAll("</c>", "");
-			while(actual.contains("<") && actual.contains(">"))
-				actual = actual.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
-			return actual;
+		// Es werden nur Farben ersetzt, da von mehr im Moment nicht auszugehen ist.
+		String actual = plural;
+		while(actual.contains("<c=")) {
+			actual = actual.replaceFirst("</c>", "");
+			actual = actual.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
 		}
-	    return plural;
+		return actual;
 	}
 	/**
 	 * Gibt den Namen des Gegenstands MIT den Modifikatoren zurueck.
@@ -142,13 +140,14 @@ public class Gegenstand implements Serializable, IPrintable {
 	public String getPluralExtended() {
 		return plural;
 	}
+	
 	/**
 	 * Diese Methode aendert die Beschreibung des Gegenstands.
 	 * @param neueBeschreibung Die neue Beschreibung fuer den Gegenstand.
-	 */
+	 *
 	public void setBeschreibung(String neueBeschreibung) {
 	    beschreibung = neueBeschreibung;
-	}
+	}*/
 	  
 	/**
 	 * Diese Methode gibt die Beschreibung des Gegenstands zurueck.
@@ -156,7 +155,7 @@ public class Gegenstand implements Serializable, IPrintable {
 	 */
 	@Override
 	public String getDescription() {
-		// Subklassen koennen hier noch genauer bestimmt werden.
+		// Subklassen koennen hier noch genauer definiert werden.
 		return beschreibung;
 	}
 	  
@@ -188,6 +187,7 @@ public class Gegenstand implements Serializable, IPrintable {
 	 */
 	@Override
 	public String getParam(String param) {
+		/*
 		// Alle Parameter muessen von Hand int getParams() registriert werden!
 		switch(param) {
 		case "lp": return Integer.toString(lp);
@@ -200,6 +200,8 @@ public class Gegenstand implements Serializable, IPrintable {
 			if(er.getResistenz().getParam().equals(param))
 				return Float.toString(er.getWert());
 		return "";
+		*/
+		return "test";
 	}
 
 	/**
@@ -208,6 +210,7 @@ public class Gegenstand implements Serializable, IPrintable {
 	 */
 	@Override
 	public String[] getParams() {
+		/*
 		Vector<String> s = new Vector<String>();
 		s.add("lp");
 		s.add("mp");
@@ -216,6 +219,8 @@ public class Gegenstand implements Serializable, IPrintable {
 		for(EntityResistenz er : resistenzen)
 			s.add(er.getResistenz().getParam());
 		return s.toArray(new String[0]);
+		*/
+		return new String[]{"test"};
 	}
 
 	/**
@@ -225,8 +230,16 @@ public class Gegenstand implements Serializable, IPrintable {
 	public short getId() {
 		return id;
 	}
+	
+	/**
+	 * Gibt die Art des Gegenstands zurueck.
+	 * @return "Gegenstand"
+	 */
+	public String getGegenstandsart() {
+		return "Gegenstand";
+	}
 
-	/* --- Die statischen Methoden --- */
+	/* --- statische Methoden --- */
 	
 	/**
 	 * Gibt einen Gegenstand basierend auf seinem Namen zurueck.
@@ -234,10 +247,9 @@ public class Gegenstand implements Serializable, IPrintable {
 	 * @retun Der entsprechende Gegenstand fuer den Namen.
 	 */
 	public static Gegenstand getGegenstand(String name) {
-		for(Gegenstand g : GEGENSTAENDE) {
+		for(Gegenstand g : GEGENSTAENDE)
 			if(g.isSynonym(name))
 				return g;
-		}
 	    return null;
 	}
 	/**
@@ -250,7 +262,7 @@ public class Gegenstand implements Serializable, IPrintable {
 			return null;
 		return GEGENSTAENDE[id];
 	}
-	  
+	
 	/* --- Die Methoden fuer die Subklassen --- */
 	
 	/**
@@ -327,14 +339,6 @@ public class Gegenstand implements Serializable, IPrintable {
 			if(er.getWert() != 0)
 				return true;
 		return false;
-	}
-	
-	/**
-	 * Gibt die Art des Gegenstands zurueck.
-	 * @return "Gegenstand"
-	 */
-	public String getGegenstandsart() {
-		return "Gegenstand";
 	}
 	
 }

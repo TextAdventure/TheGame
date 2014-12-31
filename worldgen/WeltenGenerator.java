@@ -9,6 +9,8 @@ import game.entity.Attribut;
 import game.items.Gegenstand;
 import game.items.KommandoGegenstand;
 import game.items.Waehrung;
+import game.items.Waffe;
+import game.items.Waffenart;
 import game.logic.*;
 import game.logic.aktion.*;
 import game.logic.bedingung.*;
@@ -25,13 +27,23 @@ public final class WeltenGenerator {
 	/**
 	 *  Wenn dieses Programm ausgefuehrt wird, erzeugt es eine neue Welt in der angegebenen Datei.
 	 */
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
+		
+		new Attribut("St‰rke", "st‰rke");
+		
+		Waffenart flammen = new Waffenart("Flammenwerfer", "flammenwerfer");
 		
 		SpielWelt welt = new SpielWelt();
 		
-		Farbe f = new Farbe("heiﬂ", 220, 100, 50);
+		new Farbe("heiﬂ", 220, 100, 50);
+		
+		Gegenstand hallo = new Gegenstand(new String[] { "Hallo" }, "Hallos", NumerusGenus.NEUTRUM, "Ein freundliches Hallo.");
+		Waffe flammenwerfer = new Waffe(new String[] { "Napalmwerfer", "Flammenwerfer" }, "Napalmwerfer", NumerusGenus.MASKULIN, "Er ist ziemlich <c=heiﬂ>heiﬂ</c>.",
+				Waffe.ZWEIHAENDIG, flammen, 0, 0, 666);
 		
 		Ort ort1 = new Ort("<c=heiﬂ>Ort 1</c>", "Das ist der erste Ort.");
+		ort1.addGegenstand(hallo, 1);
+		ort1.addGegenstand(flammenwerfer, 1);
 		Ort ort2 = new Ort("Ort 2", "Das ist der 2. Ort.");
 		Ort ort3 = new Ort("Der Ort", "Ein ganz besonderer Ort.");
 		Ort ort4 = new Ort("Ein weiterer Ort", "Ein Ort");

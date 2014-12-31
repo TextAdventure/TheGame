@@ -51,10 +51,6 @@ public class Interpreter {
 	    	welt.setGUI(gui);
 	    	welt.getSpieler().resetTemp();
 
-	    	/*welt.getSpieler().getInventar().addListener(gui.getEingabefeld());
-	    	welt.getSpieler().addListener(gui.getEingabefeld()); TODO
-	    	welt.getSpieler().addListener(gui.getSkillDisplay());*/
-
 	    	ois.close();
 	    } catch(IOException e) {
 	    	System.err.println("Die Datei konnte nicht richtig geladen werden.");
@@ -181,10 +177,6 @@ public class Interpreter {
 	    		welt.println("Es wurde das Spiel aus " + pfad + " geladen.");
 		    	welt.getSpieler().resetTemp();
 
-	    		/*welt.getSpieler().getInventar().addListener(gui.getEingabefeld());
-		    	welt.getSpieler().addListener(gui.getEingabefeld()); TODO
-		    	welt.getSpieler().addListener(gui.getSkillDisplay());*/
-
 	    		gueltigesKommando = true;
 	    	} catch(IOException e) {
 	    		System.err.println("Es trat ein Fehler beim Laden eines Spielstands auf.");
@@ -203,7 +195,7 @@ public class Interpreter {
 	    		// Der Spieler "bewegt" sich durch den Ausgang zu dem Zielort.
 	    		welt.setAktuellePositon(a.getZielort());
 
-	    		// Die Position des Spielers anzeigen, da sie sich veraendert hat.
+	    		// Die Position des Spielers anzeigen, da sie sich veraendert hat, ausser der Spieler befindet sich im Kampf.
 	    		if(!welt.spielerKaempft())
 	    			welt.spielerPositionAnzeigen();
 

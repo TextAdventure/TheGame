@@ -39,7 +39,7 @@ public class Waffe extends Gegenstand {
 	 *  Eine neue Waffe ueberschreibt den Konstruktor von Gegenstand und erweitert ihn.
 	 */
 	public Waffe(String[] namenGegenstand, String plural, NumerusGenus numerusGenus, String beschreibung, byte hand, Waffenart art, int lebenspunkte, int magiepunkte,
-			int... attributswerte){
+			int... attributswerte) {
 	    super(namenGegenstand, plural, numerusGenus, beschreibung);
 	    this.hand = hand;
 	    this.waffenart = art;
@@ -53,14 +53,14 @@ public class Waffe extends Gegenstand {
 	/**
 	 *  Diese Methode gibt die Hand zurueck, in der die Waffe gefuehrt wird.
 	 */
-	public byte getHand(){
+	public byte getHand() {
 		return hand;
 	}
 	  
 	/**
 	 *  Diese Methode gibt die Waffenart zurueck.
 	 */
-	public Waffenart getWaffenart(){
+	public Waffenart getWaffenart() {
 	    return waffenart;
 	}
 	
@@ -71,24 +71,11 @@ public class Waffe extends Gegenstand {
 	public String getGegenstandsart() {
 		return "Waffe";
 	}
-	
-	/* --- ueberschriebene Methoden --- */
-	
-	@Override
-	public String getParam(String param) {
-		String sup = super.getParam(param);
-		if(sup != "")
-			return param;
-		switch(param) {
-		case "hand": return Waffe.getWaffenhandNamen(this.hand);
-		case "art": return this.waffenart.getName();
-		}		
-		return "";
-	}
 	 
 	/* --- Die statischen Methoden --- */
 	
 	public static String getWaffenhandNamen(byte hand) {
 		return WAFFENHAND[hand];
 	}
+
 }

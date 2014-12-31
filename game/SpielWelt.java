@@ -29,7 +29,6 @@ import java.util.Random;
 import java.util.Vector;
 
 import npc.NPC;
-
 import util.Farbe;
 import util.NumerusGenus;
 import util.StringEvent;
@@ -191,19 +190,6 @@ public class SpielWelt implements Serializable, StringListener {
 	 */
 	public Ort getAktuellePosition() {
 		return spielerPosition;
-	}
-	
-	/**
-	 * Aendert die aktuelle Position des Spielers, dabei wird geprueft, ob ein Kampf stattfindet und aktualisiert die MiniMap.
-	 * @param zielort Der Ort an den sich der Spieler bewegt.
-	 */
-	public void setAktuellePositon(Ort zielort) {
-	    spielerPosition = zielort;
-	    if(map != null)
-	    	map.updateMiniMap(spielerPosition);
-	    Kampf k = spielerPosition.findetKampfStatt();
-	    if(k != null)
-	    	this.initKampf(k);
 	}
 	
 	/**
@@ -433,6 +419,19 @@ public class SpielWelt implements Serializable, StringListener {
 	// ===================================================== //
 
 	/**
+	 * Aendert die aktuelle Position des Spielers, dabei wird geprueft, ob ein Kampf stattfindet und aktualisiert die MiniMap.
+	 * @param zielort Der Ort an den sich der Spieler bewegt.
+	 */
+	public void setAktuellePositon(Ort zielort) {
+	    spielerPosition = zielort;
+	    if(map != null)
+	    	map.updateMiniMap(spielerPosition);
+	    Kampf k = spielerPosition.findetKampfStatt();
+	    if(k != null)
+	    	this.initKampf(k);
+	}
+	
+	/**
 	 * Gibt alle Informationen ueber die Spielerposition auf der Anzeige aus.
 	 */
 	public void spielerPositionAnzeigen() {
@@ -444,7 +443,7 @@ public class SpielWelt implements Serializable, StringListener {
 
 		ausgabe.printPrintable(spielerPosition);
 		ausgabe.println();
-
+		
 	    if(!spielerPosition.getAusgaenge().isEmpty()) {
 	    	// Alle verfuegbaren Ausgaenge werden angezeigt.
 	    	ausgabe.println("Verfügbare Ausgänge:");
@@ -456,11 +455,13 @@ public class SpielWelt implements Serializable, StringListener {
 	    	for(Ausgang a : aktuelleAusgaenge) {
 	    		// Der Ausgang wird ausgegeben.
 	    		ausgabe.println(a.getRichtungsName() + "(" + a.getAbkuerzung() + ")");
+	    		
 	    		if(a.getZielort().isBesucht())
 	    			ausgabe.print(" - " + a.getZielort().getName());
 	    		else
 	    			ausgabe.print(" - ???");
 	    	}
+	    	
 	    	ausgabe.println("\n");
 	    }
 	    
@@ -485,14 +486,14 @@ public class SpielWelt implements Serializable, StringListener {
 				((UntersuchbaresObjektEreignis)o).nachUntersuchung();
 	    } else {
 	    	switch(r.nextInt(8)) {
-	    		case(0): ausgabe.println("An " + objektName + " ist nichts auffällig."); break;
-	    		case(1): ausgabe.println(objektName + " ist nicht interessant."); break;
-	    		case(2): ausgabe.println("Es gibt interssantere Dinge als " + objektName); break;
-	    		case(3): ausgabe.println(objektName + " ist nicht wichtig."); break;
-	    		case(4): ausgabe.println("Es gibt hier auffäligere Dinge als " + objektName); break;
-	    		case(5): ausgabe.println("Was soll an " + objektName + " interessant sein?"); break;
-	    		case(6): ausgabe.println("Es bringt nichts " + objektName + " zu untersuchen."); break;
-	    		case(7): ausgabe.println(objektName + " ist nicht von Bedeutung."); break;
+	    		case(0): ausgabe.print("An " + objektName + " ist nichts auffällig."); break;
+	    		case(1): ausgabe.print(objektName + " ist nicht interessant."); break;
+	    		case(2): ausgabe.print("Es gibt interssantere Dinge als " + objektName); break;
+	    		case(3): ausgabe.print(objektName + " ist nicht wichtig."); break;
+	    		case(4): ausgabe.print("Es gibt hier auffäligere Dinge als " + objektName); break;
+	    		case(5): ausgabe.print("Was soll an " + objektName + " interessant sein?"); break;
+	    		case(6): ausgabe.print("Es bringt nichts " + objektName + " zu untersuchen."); break;
+	    		case(7): ausgabe.print(objektName + " ist nicht von Bedeutung."); break;
 	    	}
 	    }
 	}
@@ -507,12 +508,12 @@ public class SpielWelt implements Serializable, StringListener {
 	    if(s != null) {
 	    	Gegenstand g = s.getGegenstand();
 	    	switch(r.nextInt(6)) {
-	    		case(0): ausgabe.println("Du hast " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " eingesteckt."); break;
-	    		case(1): ausgabe.println("Du steckst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " ein."); break;
-	    		case(2): ausgabe.println("Du nimmst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " mit."); break;
-	    		case(3): ausgabe.println(g.getNumGen().getBest(0) + g.getName() + " könnte sich als nützlich erweisen, deshalb steckst du " + g.getNumGen().getPers(3).toLowerCase() + "ein."); break;
-	    		case(4): ausgabe.println("Du nimmst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " an dich, da " + g.getNumGen().getPers(0).toLowerCase() + "nützlich aussieht."); break;
-	    		case(5): ausgabe.println("Du steckst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " in deine Tasche."); break;
+	    		case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " eingesteckt."); break;
+	    		case(1): ausgabe.print("Du steckst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " ein."); break;
+	    		case(2): ausgabe.print("Du nimmst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " mit."); break;
+	    		case(3): ausgabe.print(g.getNumGen().getBest(0) + g.getName() + " könnte sich als nützlich erweisen, deshalb steckst du " + g.getNumGen().getPers(3).toLowerCase() + "ein."); break;
+	    		case(4): ausgabe.print("Du nimmst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " an dich, da " + g.getNumGen().getPers(0).toLowerCase() + "nützlich aussieht."); break;
+	    		case(5): ausgabe.print("Du steckst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " in deine Tasche."); break;
 	    	}
 	    	spieler.getInventar().addGegenstand(s);
 	    	spielerPosition.removeGegenstand(g);
@@ -539,11 +540,11 @@ public class SpielWelt implements Serializable, StringListener {
 
 	    } else {
 	    	switch(r.nextInt(5)) {
-	    		case(0): ausgabe.println(gegenstandName + " kann nicht mitgenommen werden."); break;
-	    		case(1): ausgabe.println("Du kannst " + gegenstandName + " nicht mitnehmen."); break;
-	    		case(2): ausgabe.println(gegenstandName + " ist nicht von nutzen."); break;
-	    		case(3): ausgabe.println("Was willst du mit " + gegenstandName + " anfangen?"); break;
-	    		case(4): ausgabe.println("Du kannst " + gegenstandName + " nicht aufheben."); break;
+	    		case(0): ausgabe.print(gegenstandName + " kann nicht mitgenommen werden."); break;
+	    		case(1): ausgabe.print("Du kannst " + gegenstandName + " nicht mitnehmen."); break;
+	    		case(2): ausgabe.print(gegenstandName + " ist nicht von nutzen."); break;
+	    		case(3): ausgabe.print("Was willst du mit " + gegenstandName + " anfangen?"); break;
+	    		case(4): ausgabe.print("Du kannst " + gegenstandName + " nicht aufheben."); break;
 	    	}
 	    	return;
 	    }
@@ -571,11 +572,11 @@ public class SpielWelt implements Serializable, StringListener {
 	public void zeigeGegenstandInfosAn(Gegenstand gegenstand) {
 	    if(gegenstand == null) {
 	    	switch(r.nextInt(5)) {
-	    		case(0): ausgabe.println("Das ist kein Gegenstand, den du hast."); break;
-	    		case(1): ausgabe.println("Dir liegen keinerlei Informationen über diesen Gegenstand vor."); break;
-	    		case(2): ausgabe.println("Darüber hast du keine Informationen."); break;
-	    		case(3): ausgabe.println("Über diesen Gegenstand lässt sich nichts besonderes sagen."); break;
-	    		case(4): ausgabe.println("Über diesen Gegenstand liegen dir keine Informationen vor."); break;
+	    		case(0): ausgabe.print("Das ist kein Gegenstand, den du hast."); break;
+	    		case(1): ausgabe.print("Dir liegen keinerlei Informationen über diesen Gegenstand vor."); break;
+	    		case(2): ausgabe.print("Darüber hast du keine Informationen."); break;
+	    		case(3): ausgabe.print("Über diesen Gegenstand lässt sich nichts besonderes sagen."); break;
+	    		case(4): ausgabe.print("Über diesen Gegenstand liegen dir keine Informationen vor."); break;
 	    	}
 	    	return;
 	    }
@@ -617,7 +618,7 @@ public class SpielWelt implements Serializable, StringListener {
 	    	eingesetzt = true;
 
 	    if(!eingesetzt)
-	    	ausgabe.println("Du kannst diesen Gegenstand hier nicht verwenden.");
+	    	ausgabe.print("Du kannst diesen Gegenstand hier nicht verwenden.");
 	}
 
 	/**
@@ -626,19 +627,21 @@ public class SpielWelt implements Serializable, StringListener {
 	 */
 	public void ausruesten(String nameAusruestung) {
 		Gegenstand g = Gegenstand.getGegenstand(nameAusruestung);
-	    if(g == null) return;
-	    if(spieler.ruesteAus(g)) {
-	    	switch(r.nextInt(2)) {
-	    		case(0): ausgabe.println("Du hast " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " ausgerüstet."); break;
-	    		case(1): ausgabe.println("Du hast den Gegenstand ausgerüstet."); break;
-	    	}
-	    } else {
-	    	switch(r.nextInt(3)){
-	    		case(0): ausgabe.println("Du besitzt diesen Gegenstand nicht."); break;
-	    		case(1): ausgabe.println(nameAusruestung + " befindet sich nicht in deinem Inventar."); break;
-	    		case(2): ausgabe.println(nameAusruestung + " kann nicht ausgerüstet werden."); break;
-	    	}
-	    }
+		if(g == null)
+			return;
+		
+		if(spieler.ruesteAus(g)) {
+			switch(r.nextInt(2)) {
+			case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " ausgerüstet."); break;
+			case(1): ausgabe.print("Du hast den Gegenstand ausgerüstet."); break;
+			}
+		} else {
+			switch(r.nextInt(3)){
+			case(0): ausgabe.print("Du besitzt diesen Gegenstand nicht."); break;
+			case(1): ausgabe.print(nameAusruestung + " befindet sich nicht in deinem Inventar."); break;
+			case(2): ausgabe.print(nameAusruestung + " kann nicht ausgerüstet werden."); break;
+			}
+		}
 	}
 
 	/**
@@ -647,21 +650,23 @@ public class SpielWelt implements Serializable, StringListener {
 	 */
 	public void ablegen(String nameAusruestung) {
 		Gegenstand g = Gegenstand.getGegenstand(nameAusruestung);
-	    if(g == null) return;
-	    if(spieler.legeAb(g)) {
-	    	switch(r.nextInt(3)) {
-	    		case(0): ausgabe.println("Du legst den Gegenstand ab."); break;
-	    		case(1): ausgabe.println("Du hast " + g.getName() + " abgelegt."); break;
-	    		case(2): ausgabe.println("Du hast " + g.getName() + " zurück in dein Inventar gelegt."); break;
-	    	}
-
-	    } else {
-	    	switch(r.nextInt(3)) {
-	        	case(0): ausgabe.println("Du hast diesen Gegenstand nicht ausgerüstet"); break;
-	        	case(1): ausgabe.println("Du kannst einen Gegenstand, den du nicht ausgerüstet hast, nicht ablegen."); break;
-	        	case(2): ausgabe.println(g.getName() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(3) + "nicht ausgerüstet hast."); break;
-	    	}
-	    }
+		if(g == null)
+			return;
+	    
+		if(spieler.legeAb(g)) {
+			switch(r.nextInt(3)) {
+			case(0): ausgabe.print("Du legst den Gegenstand ab."); break;
+			case(1): ausgabe.print("Du hast " + g.getName() + " abgelegt."); break;
+			case(2): ausgabe.print("Du hast " + g.getName() + " zurück in dein Inventar gelegt."); break;
+			}
+			
+		} else {
+			switch(r.nextInt(3)) {
+			case(0): ausgabe.print("Du hast diesen Gegenstand nicht ausgerüstet"); break;
+			case(1): ausgabe.print("Du kannst einen Gegenstand, den du nicht ausgerüstet hast, nicht ablegen."); break;
+			case(2): ausgabe.print(g.getName() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(3) + "nicht ausgerüstet hast."); break;
+			}
+		}
 	}
 
 	/**
@@ -702,9 +707,9 @@ public class SpielWelt implements Serializable, StringListener {
 	    	if(gegenstaende != null) {
 	    		if(gegenstaende.length > 0) {
 	    			switch(typ) {
-	    				case(Behaelter.FASS): ausgabe.println("Du öffnest das Fass und suchst darin nach Gegenständen. Du findest "); break;
-	    				case(Behaelter.KISTE): ausgabe.println("Du öffnest die Kiste und suchst darin nach Gegenständen. Du findest "); break;
-	    				case(Behaelter.TRUHE): ausgabe.println("Du öffnest den Deckel der Truhe und suchst darin nach Gegenständen, du findest in der Truhe "); break;
+	    				case(Behaelter.FASS): ausgabe.print("Du öffnest das Fass und suchst darin nach Gegenständen. Du findest "); break;
+	    				case(Behaelter.KISTE): ausgabe.print("Du öffnest die Kiste und suchst darin nach Gegenständen. Du findest "); break;
+	    				case(Behaelter.TRUHE): ausgabe.print("Du öffnest den Deckel der Truhe und suchst darin nach Gegenständen, du findest in der Truhe "); break;
 	    			}
 
 	    			for(Stapel s: gegenstaende) {
@@ -718,19 +723,19 @@ public class SpielWelt implements Serializable, StringListener {
 
 	    		} else {
 	    			switch(typ) {
-	    				case(Behaelter.FASS): ausgabe.println("Du öffnest das Fass und suchst darin nach Gegenstäden, aber das innere des Fass ist leer."); break;
-	    				case(Behaelter.KISTE): ausgabe.println("Du öffnest die Kiste und suchst darin nach Gegenständen, aber in der Kiste befindet sich nichts."); break;
-	    				case(Behaelter.TRUHE): ausgabe.println("Du öffnest den Deckel der Truhe und suchst darin nach Gegenständen, aber die Truhe scheint schon seit langem leer zu sein."); break;
+	    				case(Behaelter.FASS): ausgabe.print("Du öffnest das Fass und suchst darin nach Gegenstäden, aber das innere des Fass ist leer."); break;
+	    				case(Behaelter.KISTE): ausgabe.print("Du öffnest die Kiste und suchst darin nach Gegenständen, aber in der Kiste befindet sich nichts."); break;
+	    				case(Behaelter.TRUHE): ausgabe.print("Du öffnest den Deckel der Truhe und suchst darin nach Gegenständen, aber die Truhe scheint schon seit langem leer zu sein."); break;
 	    			}
 	    		}
 	    		return;
 	    	}
 
 	    	switch(r.nextInt(4)) {
-	        	case(0): ausgabe.println("Es gibt an diesem Ort nicht so etwas."); break;
-	        	case(1): ausgabe.println("Hier befindet sich so etwas nicht."); break;
-	        	case(2): ausgabe.println("Es lohnt sich nicht an diesem Ort irgendetwas zu suchen."); break;
-	        	case(3): ausgabe.println("An diesem Ort befindet sich nichts von Interesse."); break;
+	        	case(0): ausgabe.print("Es gibt an diesem Ort nicht so etwas."); break;
+	        	case(1): ausgabe.print("Hier befindet sich so etwas nicht."); break;
+	        	case(2): ausgabe.print("Es lohnt sich nicht an diesem Ort irgendetwas zu suchen."); break;
+	        	case(3): ausgabe.print("An diesem Ort befindet sich nichts von Interesse."); break;
 	    	}
 	    }
 	}

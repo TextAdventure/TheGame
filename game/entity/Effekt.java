@@ -31,7 +31,7 @@ public class Effekt implements Serializable {
 	// Flinkheit+: param = Bonus-Flinkheit(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]75[%][;5]
 	public static final byte FLKBONUS = 7;
 	  
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Typ des Effekts.
 	private byte typ;

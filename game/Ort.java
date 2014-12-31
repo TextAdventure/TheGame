@@ -102,9 +102,9 @@ public class Ort implements Serializable, IPrintable {
 	public String getName() {
 		// Es werden nur Farben ersetzt, da von mehr im Moment nicht auszugehen ist.
 		String actual = name;
-		while(name.contains("<c=")) {
-			actual = name.replaceFirst("</c>", "");
-			actual = name.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
+		while(actual.contains("<c=")) {
+			actual = actual.replaceFirst("</c>", "");
+			actual = actual.substring(0, actual.indexOf("<")) + actual.substring(actual.indexOf(">") + 1);
 		}
 		return actual;
 	}
@@ -181,7 +181,7 @@ public class Ort implements Serializable, IPrintable {
 			if(a.getRichtungsName().toLowerCase().equals(param))
 				return a.getZielort().getNameExtended();
 		*/
-		return "";
+		return "test";
 	}
 	
 	/**
@@ -205,7 +205,7 @@ public class Ort implements Serializable, IPrintable {
 
 		return params.toArray(new String[0]);
 		*/
-		return new String[0];
+		return new String[]{"test"};
 	}
 
 	/* Besucht */

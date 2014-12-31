@@ -5,14 +5,15 @@ import game.entity.EntityAttribut;
 import util.NumerusGenus;
 
 /**
- * Diese Klasse repraesentiert alle Accessoires fuer den Spielers.
+ * Ein ausruestbares Accessoire, das Attributsboni und Resistenzen fuer den Traegergibt.
+ * @author Marvin
  */
 public class Accessoire extends Gegenstand {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 	
-	/* --- Die statischen Konstanten --- */
+	/* --- statische Konstanten --- */
 	
 	// Der Wert fuer ein Amulett.
 	public static final byte AMULETT = 0;
@@ -25,12 +26,12 @@ public class Accessoire extends Gegenstand {
 	// Der Wert fuer ein Armband.
 	public static final byte ARMBAND = 5;	// Hat auch noch Platz 6
 	
-	/* --- Die Variable --- */
+	/* --- Variable --- */
 	
 	// Der Typ des Accesoires.
 	private byte typ;
 	
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Ein neues Accessoire wir mit Namen, NumerusGenus, Beschreibung, einem Typ und den Attributsboni erstellt.
@@ -50,7 +51,7 @@ public class Accessoire extends Gegenstand {
 			attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], attributswerte[i]);
 	}
 	
-	/* --- Die Methode --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Typ des Accessoires zurueck.
@@ -68,7 +69,7 @@ public class Accessoire extends Gegenstand {
 		return "Accessoire";
 	}
 	
-	/* --- Die statische Methode --- */
+	/* --- statische Methode --- */
 	
 	/**
 	 * Gibt den Namen eines Typs basierend auf dem byte-Wert zurueck.

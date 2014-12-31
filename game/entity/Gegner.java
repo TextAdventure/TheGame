@@ -4,17 +4,20 @@ import game.Drop;
 import util.NumerusGenus;
 
 /**
- *  Diese Klasse bietet die Moeglichkeit Gegner fuer das Spiel zu erstellen, die bekaempft werden koennen.
+ * Bietet die Moeglichkeit Gegner fuer das Spiel zu erstellen, die bekaempft werden koennen.
+ * @author Marvin
  */
 public class Gegner extends Entity {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 	  
+	/* --- Variablen --- */
+	
 	// Die EXP, die der Gegner gibt.
 	private int xp;
 	  
-	/* --- Die Konstruktoren --- */
+	/* --- Konstruktoren --- */
 	
 	/**
 	 * Erstellt einen Gegner mit Namen, Geschlecht, Beschreibung, Attributen und XP.
@@ -22,13 +25,16 @@ public class Gegner extends Entity {
 	 * @param numGen Das Geschlecht des Gegners.
 	 * @param beschreibung Die Beschreibung des Gegners.
 	 * @param xp Die XP fuer das besiegen des Gegners.
+	 * @param leben Die Lebenspunkte des Gegners.
+	 * @param magie Die Magiepunkte des Gegners.
+	 * @param attributswert Die Attribute des Gegners.
 	 */
 	public Gegner(String name, NumerusGenus numGen, String beschreibung, int xp, int leben, int magie, int... attributswerte) {
 		super(name, numGen, beschreibung, leben, magie, attributswerte);	    
 		
 	    this.xp = xp;
 	}
-	  
+	
 	/**
 	 * Ein Gegner wird aus einem anderen erstellt, sprich kopiert, aber als neues Objekt.
 	 * @param gegner Der Gegener, der dupliziert werden soll.
@@ -42,12 +48,20 @@ public class Gegner extends Entity {
 	    	this.loot.add(d);
 	}
 	  
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
-	// Gibt die XP zurueck.
-	public int getXp() { return xp; }
+	/**
+	 * Gibt die XP zurueck, die man fuer das Toeten erhaelt.
+	 * @return Die Menge an XP.
+	 */
+	public int getXp() {
+		return xp;
+	}
 	  
-	// Gibt die Attributswerte als Array zurueck.
+	/**
+	 * Gibt die Attributswerte als Array zurueck.
+	 * @return Eine Liste mit allen Attributswerten.
+	 */
 	private int[] getAttributswerte() {
 		int[] attributswerte = new int[attribute.length];
 		for(int i = 0; i < attributswerte.length; i++)

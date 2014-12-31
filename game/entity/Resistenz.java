@@ -4,18 +4,19 @@ import java.io.Serializable;
 
 /**
  * Die Resistenz vor einer bestimmten Schadensart, speichert das Attribut mir dem abgewehrt wird und den Namen der Resistenz.
+ * @author Marvin
  */
 public class Resistenz implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	/* --- Die statischen Konstanten --- */
+	/* --- statische Konstanten --- */
 	
 	// Ein statiches Array mit allen Resistenzen, die ID ist der Index.
 	public static Resistenz[] RESISTENZEN = new Resistenz[Byte.MAX_VALUE];
 	
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Name der Resistenz.
 	private String name;
@@ -28,7 +29,7 @@ public class Resistenz implements Serializable {
 	// Die ID der Resistenz.
 	private byte id;
 	
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Erstellt eine neue Resistenz fuer jede Schadensart im Spiel.
@@ -51,7 +52,7 @@ public class Resistenz implements Serializable {
 		}
 	}
 
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Namen der Resistenz zurueck.
@@ -60,6 +61,7 @@ public class Resistenz implements Serializable {
 	public String getName() {
 		return name;
 	}
+	
 	/**
 	 * Gibt die Parameterschreibweise der Resistenz zurueck.
 	 * @return Den Parameter.
@@ -67,6 +69,7 @@ public class Resistenz implements Serializable {
 	public String getParam() {
 		return param;
 	}
+	
 	/**
 	 * Gibt die Schadensart zurueck, vor der die Resistenz schuetzt.
 	 * @return Die Schadensart vor der die Resistenz schuetzt.
@@ -74,6 +77,7 @@ public class Resistenz implements Serializable {
 	public Schadensart getSchadensart() {
 		return Schadensart.getSchadensart(schadensart);
 	}
+	
 	/**
 	 * Gibt die ID der Resistenz zurueck.
 	 * @return Die ID der Resistenz.
@@ -81,6 +85,7 @@ public class Resistenz implements Serializable {
 	public byte getId() {
 		return id;
 	}
+	
 	/**
 	 * Gibt den Attributswert zurueck mit dem diese Art von Schaden abgewehrt werden kann.
 	 * @param entity Das Entity fuer das der Wert berechnet werden soll.
@@ -90,7 +95,7 @@ public class Resistenz implements Serializable {
 		return entity.getTempAttribut(Attribut.getAttribut(attribut).getName());
 	}
 	
-	/* --- Die statischen Methoden --- */
+	/* --- statische Methoden --- */
 	
 	/**
 	 * Gibt eine Resistenz basierend auf ihrer ID zurueck.
@@ -102,6 +107,7 @@ public class Resistenz implements Serializable {
 			return null;
 		return RESISTENZEN[id];
 	}
+	
 	/**
 	 * Gibt eine Resistenz basieren auf der Schadensart, die sie abwehrt zurueck.
 	 * @param schadensart Die Schadensart, die abgewehrt werden soll.
@@ -113,6 +119,7 @@ public class Resistenz implements Serializable {
 				return r;
 		return null;
 	}
+	
 	/**
 	 * Gibt den hoechsten belegten ID Platz zurueck.
 	 * @return Den hoechsten ID Platz, oder -1 wenn alle belegt sind.
@@ -123,6 +130,7 @@ public class Resistenz implements Serializable {
 				return i;
 		return -1;
 	}
+	
 	/**
 	 * Gibt ein Array mit allen belegten Resistenzen zurueck.
 	 * @return Ein Array mit allen Resistenzen, die im Spiel verwendet werden.
@@ -133,13 +141,5 @@ public class Resistenz implements Serializable {
 			r[i] = RESISTENZEN[i];
 		return r;
 	}
-	
-	/**
-	 * Setzt die Resistenzen auf den uebergebenen Wert(wird benoetigt, um das statische Array zu laden).
-	 * @param resistenzen Das neue Resistenz Array.
-	 *
-	public static void setResistenzen(Resistenz[] resistenzen) {
-		RESISTENZEN = resistenzen;
-	}*/
 	
 }

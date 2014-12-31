@@ -21,6 +21,7 @@ public interface IPrintable {
 	 * @return Das Wort fuer disen Parameter.
 	 */
 	public String getParam(String param);
+	
 	// Gibt alle Parameter fuer dieses Objekt zurueck.
 	
 	/**

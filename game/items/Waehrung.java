@@ -30,11 +30,6 @@ public class Waehrung extends Gegenstand {
 		
 		this.waehrungsName = waehrungsName;
 		this.kleinereWaehrung = null;
-		
-		this.attribute = null;
-		this.resistenzen = null;
-		this.lp = 0;
-		this.mp = 0;
 	}
 	
 	/* --- Deaktivierte Methoden --- */

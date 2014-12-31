@@ -5,18 +5,19 @@ import java.io.Serializable;
 /**
  * Repraesentiert eine Schadensart im Spiel z.B. Physich oder Magisch, koennen direkt im 
  * Weltengenerator erstellt werden und verwendet werden.
+ * @author Marvin
  */
 public class Schadensart implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 	
-	/* --- Die statischen Konstanten --- */
+	/* --- statische Konstanten --- */
 	
 	// Ein statisches Array mit allen Schadensarten.
 	public static Schadensart[] SCHADEN = new Schadensart[Byte.MAX_VALUE];
 	
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Name des Schadensart.
 	private String name;	
@@ -25,7 +26,7 @@ public class Schadensart implements Serializable {
 	// Die id der Schadensart.
 	private byte id;
 	
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Einer neuen Schadensart wird lediglich ein Name uebergeben.
@@ -50,7 +51,7 @@ public class Schadensart implements Serializable {
 		}
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Namen der Schadensart zurueck.
@@ -59,6 +60,7 @@ public class Schadensart implements Serializable {
 	public String getName() {
 		return name;
 	}
+	
 	/**
 	 * Gibt die ID der Schadensart zurueck,
 	 * @return Die ID der Schadensart.
@@ -66,6 +68,7 @@ public class Schadensart implements Serializable {
 	public byte getId() {
 		return id;
 	}
+	
 	/**
 	 * Gibt den Attributswert zurueck, fuer welchen ein Bonus berechnet werden soll.
 	 * @param entity Das Entity fuer welches das Attribut bestimmt werden soll.
@@ -74,6 +77,7 @@ public class Schadensart implements Serializable {
 	public int getAttribut(Entity entity) {
 		return entity.getTempAttribut(Attribut.getAttribut(attribut).getName());
 	}
+	
 	/**
 	 * Gibt den Attributs Bonus zurueck als String.
 	 * @return Der Attributs Bonus in Parameterschreibweise.
@@ -82,7 +86,7 @@ public class Schadensart implements Serializable {
 		return Attribut.getAttribut(attribut).getParam();
 	}
 	
-	/* --- Die statischen Methoden --- */
+	/* --- statische Methoden --- */
 	
 	/**
 	 * Gibt eine Schadensart basierend auf ihrem Namen zurueck.
@@ -95,6 +99,7 @@ public class Schadensart implements Serializable {
 				return s;
 		return null;
 	}
+	
 	/**
 	 * Gibt eine Schadensart zurueck, basierend auf ihrer ID.
 	 * @param id Die ID der Schadensart.
@@ -105,6 +110,7 @@ public class Schadensart implements Serializable {
 			return null;
 		return SCHADEN[id];
 	}
+	
 	/**
 	 * Gibt den hoechsten belegten ID Platz zurueck.
 	 * @return Den hoechsten ID Wert, -1 falls alle Plaetze belegt sind.
@@ -115,6 +121,7 @@ public class Schadensart implements Serializable {
 				return i;
 		return -1;
 	}
+	
 	/**
 	 * Gibt ein Array mit allen belegten Schadensarten zurueck.
 	 * @return Ein Array mit allen Schadensarten, die im Spiel verwendet werden.
@@ -124,13 +131,6 @@ public class Schadensart implements Serializable {
 		for(int i = 0; i < r.length; i++)
 			r[i] = SCHADEN[i];
 		return r;
-	}	
-	
-	/**
-	 * Setzt die Schadensarten auf den uebergebenen Wert(wird benoetigt, um das statische Array zu laden).
-	 * @param schadensarten Das neue Schadensart Array.
-	 *
-	public static void setSchadensarten(Schadensart[] schadensarten) {
-		SCHADEN = schadensarten;
-	}*/
+	}
+
 }

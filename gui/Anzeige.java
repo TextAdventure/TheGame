@@ -105,7 +105,7 @@ public class Anzeige extends JTextPane {
 			name = name.replaceAll("<p=" + s + ">" , print.getParam(s));
 			description = description.replaceAll("<p=" + s + ">", print.getParam(s));
 		}
-
+		
 		// faerben
 		colorText(name, true);
 
@@ -133,11 +133,14 @@ public class Anzeige extends JTextPane {
 
 		// Einen Ort besuchen
 		if(print instanceof Ort || print instanceof UntersuchbaresObjekt) {
-			if(print instanceof Ort) ((Ort) print).besuchen();
-			if(print instanceof UntersuchbaresObjekt) ((UntersuchbaresObjekt) print).untersuchen();
+			if(print instanceof Ort)
+				((Ort) print).besuchen();
+			if(print instanceof UntersuchbaresObjekt)
+				((UntersuchbaresObjekt) print).untersuchen();
 			colorText("\n" + description, false);
-		} else
+		} else {
 			colorText("\n\n" + description, false);
+		}
 	}
 
 	/**
@@ -196,6 +199,5 @@ public class Anzeige extends JTextPane {
 	public JScrollPane getJScrollPane() {
 	    return scroll;
 	}
-
-
+	
 }

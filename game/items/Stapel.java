@@ -20,29 +20,29 @@ public class Stapel implements Serializable {
 	 *  gegenstand: der Typ des neuen Stapels
 	 *  anzahl: die Anzahl an Gegenstaenden, die zu Beginn in dem Stapel sind.
 	 */
-	public Stapel(Gegenstand gegenstand, int anzahl){
-		this.gegenstand = gegenstand == null ? -1 :(short) gegenstand.getId();
+	public Stapel(Gegenstand gegenstand, int anzahl) {
+		this.gegenstand = (gegenstand == null) ? -1 :(short) gegenstand.getId();
 	    this.anzahl = anzahl;
 	}
 	  
 	/**
 	 *  Diese Methode gibt den Gegenstand zurueck, der sich in dem Stapel befindet.
 	 */
-	public Gegenstand getGegenstand(){
+	public Gegenstand getGegenstand() {
 	    return Gegenstand.getGegenstand(gegenstand);
 	}
 	  
 	/**
 	 *  Diese Methode gibt direkt den Name des Gegenstands zurueck.
 	 */
-	public String getName(){
-	    return anzahl != 1 ? Gegenstand.getGegenstand(gegenstand).getPlural() : Gegenstand.getGegenstand(gegenstand).getName();
+	public String getName() {
+	    return (anzahl > 1) ? Gegenstand.getGegenstand(gegenstand).getPlural() : Gegenstand.getGegenstand(gegenstand).getName();
 	}
 	  
 	/**
 	 *  Diese Methode gibt die aktuelle Anzahl an Gegenstaenden zurueck.
 	 */
-	public int getAnzahl(){
+	public int getAnzahl() {
 	    return anzahl;
 	}
 	  
@@ -50,30 +50,30 @@ public class Stapel implements Serializable {
 	 *  Fuegt diesem Stapel mehr Gegenstaende hinzu.
 	 *  anzahl: Anzahl neuer Gegenstaende.
 	 */
-	public void addAnzahl(int anzahl){
+	public void addAnzahl(int anzahl) {
 	    this.anzahl += anzahl;
 	}
 	  
 	/**
-	 *  Entfernt von diesem Stapel eine gewisse Anzal an Gegenstaenden.
+	 *  Entfernt von diesem Stapel eine gewisse Anzahl an Gegenstaenden.
 	 *  anzahl: Anzahl, der zu entfernenden Gegenstaende.
 	 */
-	public boolean removeAnzahl(int anzahl){
+	public boolean removeAnzahl(int anzahl) {
 		if(this.anzahl - anzahl < 1){
 			return false;
-	    }else{
+	    } else {
 	    	this.anzahl -= anzahl;
 	    	return true;
 	    }
 	}
 	  
 	/**
-	 *  Entfernt alle Gegenstaende aus dem Stapel.
+	 * Entfernt alle Gegenstaende aus dem Stapel.
 	 */
-	public void removeAll(){
-		try{
+	public void removeAll() {
+		try {
 			finalize();
-	    }catch(Throwable e){
+	    } catch(Throwable e) {
 	    	System.err.println("Der Stapel konnte nicht entfernt werden.");
 	    }
 	}
@@ -82,7 +82,7 @@ public class Stapel implements Serializable {
 	 *  Fuegt diesem Stapel einen Stapel mit dem gleichen Gegenstand hinzu.
 	 *  stapel: der Stapel, der hinzugefuegt werden soll.
 	 */
-	public void addStapel(Stapel stapel){
+	public void addStapel(Stapel stapel) {
 		this.anzahl += stapel.getAnzahl();
 	}
 }

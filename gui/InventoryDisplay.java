@@ -25,7 +25,7 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	/**
 	 *  Ein InventoryDisplay wird ein Inventar uebergeben, sodass dieses das InventoryDisplay aktualisiert.
 	 */
-	public InventoryDisplay(){
+	public InventoryDisplay() {
 		scroll = new JScrollPane(this);
 	    document = this.getStyledDocument();
 	    SimpleAttributeSet font = new SimpleAttributeSet();
@@ -40,7 +40,7 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	/**
 	 *  Diese Methode gibt das JScrollPane zurueck.
 	 */
-	public JScrollPane getJScrollPane(){
+	public JScrollPane getJScrollPane() {
 	    return scroll;
 	}
 
@@ -48,13 +48,13 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	 *  Diese Methode fuegt einen String dem JTextPane hinzu, ohne Zeilenumbruch.
 	 *  text: der uebergebene Text.
 	 */
-	private void print(String text){
-	    try{
+	private void print(String text) {
+	    try {
 	    	document.insertString(document.getLength(), text, null);
 	    	SimpleAttributeSet sas = new SimpleAttributeSet();
 	    	StyleConstants.setAlignment(sas, StyleConstants.ALIGN_CENTER);
 	    	document.setParagraphAttributes(0, document.getLength(), sas, false);
-	    }catch(BadLocationException e){
+	    } catch(BadLocationException e) {
 	    	System.err.println(e.getStackTrace());
 	    }
 	}
@@ -64,7 +64,7 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	 *  text: der uebergebene Text.
 	 *  size: die groesse des Texts.
 	 */
-	private void printSize(String text, int size){
+	private void printSize(String text, int size) {
 		print(text);
 	    SimpleAttributeSet sas = new SimpleAttributeSet();
 	    StyleConstants.setFontSize(sas, size);
@@ -74,10 +74,10 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	/**
 	 *  Das InventoryDisplay wird geloescht, sodass es neu beschrieben werden kann.
 	 */
-	private void clear(){
-		try{
+	private void clear() {
+		try {
 			document.remove(0, document.getLength());
-		}catch(BadLocationException e){
+		} catch(BadLocationException e) {
 			System.err.println(e.getStackTrace());
 	    }
 	}
@@ -97,7 +97,7 @@ public class InventoryDisplay extends JTextPane implements InventoryListener {
 	    	return;
 
 	    print("\n\n");
-	    printSize("Wï¿½hrungen:", 18);
+	    printSize("Währungen:", 18);
 	    for(Waehrung w : evt.getInventory().getGeldbeutel().getWaehrungen())
 	    	printSize("\n" + evt.getInventory().getGeldbeutel().getMenge(w) + " " + evt.getInventory().getGeldbeutel().getName(w), 14);
 	}

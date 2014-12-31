@@ -2,17 +2,25 @@ package game.entity;
 
 import java.io.Serializable;
 
+/**
+ * Speichert eine Schadenserhoehung fuer eine Lebewesen und eine bestimmte Schadensart.
+ * @author Maravin
+ */
 public class EntityDamageAmplifier implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
+	/* --- Variablen --- */
+	
 	// Die Schadensart, ide verstaerkt werden soll.
 	private byte schadensart;
 	// Der prozentuale Wert, um den der Wert erhoeht werden soll.
 	private float prozent;
 	// Der absolute Wert, um den der Wert erhoeht werden soll.
 	private int absolut;
+	
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Ein EntityDamageAmpliefier erhoeht den Schaden fuer eine bestimmte Schadensart.
@@ -25,6 +33,8 @@ public class EntityDamageAmplifier implements Serializable {
 		this.prozent = prozent;
 		this.absolut = absolut;
 	}
+	
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Schaden inklusive der Verstaerkung zurueck.
@@ -46,7 +56,7 @@ public class EntityDamageAmplifier implements Serializable {
 	}
 	
 	/**
-	 * Fuegt dem prizentualen Schaden eine Wert hinzu.
+	 * Fuegt dem prozentualen Schaden eine Wert hinzu.
 	 * @param prozent Der zusaetzliche prozentuale Schaden.
 	 */
 	public void addProzentualenSchaden(float prozent) {
@@ -62,11 +72,12 @@ public class EntityDamageAmplifier implements Serializable {
 	
 	/**
 	 * Gibt die prozentuale Schadenserhoehung zurueck.
-	 * @return Die prozentualse Schadenserhoehung.
+	 * @return Die prozentuale Schadenserhoehung.
 	 */
 	public float getProzetual() {
 		return prozent;
 	}
+	
 	/**
 	 * Gibt die absolute Schadenserhoehung zurueck.
 	 * @return Die absolute Schadenserhoehung.

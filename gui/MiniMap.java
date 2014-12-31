@@ -37,16 +37,16 @@ public class MiniMap extends Canvas {
 	/**
 	 *  Eine neue Map wird erstellt und ihr wird nichts uebergeben.
 	 */
-	public MiniMap(){
+	public MiniMap() {
 		// laden der Bilder
 	    java.net.URL pointURL = getClass().getResource("resource/point.png");
 	    java.net.URL fullURL = getClass().getResource("resource/connectorfull.png");
 	    java.net.URL fadeURL = getClass().getResource("resource/connectorfade.png");
-	    try{
+	    try {
 	    	point = ImageIO.read(pointURL);
 	    	linieFull = ImageIO.read(fullURL);
 	    	linieFade = ImageIO.read(fadeURL);
-	    }catch(java.io.IOException e){
+	    } catch(java.io.IOException e) {
 	    	System.err.println("Es trat ein Fehler beim laden der Datei auf.");
 	    	e.printStackTrace();
 	    }
@@ -59,35 +59,38 @@ public class MiniMap extends Canvas {
 	/**
 	 *  Wird jedesmal ausgeloest, wenn die aktuelle Position des Spielers sich veraendert hat.
 	 */
-	public void updateMiniMap(Ort ort){
+	public void updateMiniMap(Ort ort) {
 		// DIE MAP MUSS NEU GENERIERT WERDEN
 	    //altePosition = position;TODO
 	    position = ort;
 	    repaint();                       // ???
 	}
 
-	/** @override
+	/**
 	 *  Die paint() wird ueberschrieben, sodass sie die Map neu zeichnet, wenn sie aufgerufen wird.
 	 */
-	public void paint(Graphics g){
+	@Override
+	public void paint(Graphics g) {
 		// Die Methode faengt in der Mitte an, bei der Spieler Position, und zeichnet die anderen Orte um die Spieler Position herum.
 	    BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = (Graphics2D)img.getGraphics();
 
-	    if(position != null){
-	    	for(Ausgang a: position.getAusgaenge().toArray(new Ausgang[0])){
+	    if(position != null) {
+	    	for(Ausgang a : position.getAusgaenge().toArray(new Ausgang[0])) {
 	    		Point p = zeichneVerbindung(getWidth() / 2, getHeight() / 2, a, g2d);
-	    		if(a.getZielort().isBesucht() && p != null){
+	    		if(a.getZielort().isBesucht() && p != null) {
 	    			int newX = (int)Math.round(p.getX() + Math.cos((9 - a.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    			int newY = (int)Math.round(p.getY() - Math.sin((9 - a.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
-	    			for(Ausgang aus: a.getZielort().getAusgaenge().toArray(new Ausgang[0])){
+	    			
+	    			for(Ausgang aus : a.getZielort().getAusgaenge().toArray(new Ausgang[0])) {
 	    				// So wird verhindert, dass der Ausgang zurueck nochmal gezeichnet wird.
 	    				int alteRichtung = a.getRichtung() - 4;
-	    				if(alteRichtung < 1) alteRichtung += 8;
-	    				if(aus.getRichtung() != alteRichtung){
+	    				if(alteRichtung < 1)
+	    					alteRichtung += 8;
+	    				if(aus.getRichtung() != alteRichtung) {
 	    					// Es wird die zweite Stufe ueberprueft und gezeichnet.
 	    					Point p2 = zeichneVerbindung(newX, newY, aus, g2d);
-	    					if(aus.getZielort().isBesucht() && p2 != null){
+	    					if(aus.getZielort().isBesucht() && p2 != null) {
 	    						int secX = (int)Math.round(p2.getX() + Math.cos((9 - aus.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    						int secY = (int)Math.round(p2.getY() - Math.sin((9 - aus.getRichtung()) * Math.PI / 4.0) * linieFull.getWidth());
 	    						zeichnePunkt(Color.BLUE, secX, secY, g2d);
@@ -121,10 +124,10 @@ public class MiniMap extends Canvas {
 
 	private Point zeichneVerbindung(int xstart, int ystart, Ausgang richtung, Graphics2D g2d){
 		BufferedImage img = linieFull;
-	    if(!richtung.getZielort().isBesucht()) img = linieFade;
-	    if(richtung.getRichtung() > 8 || richtung.getRichtung() == 0) {
+	    if(!richtung.getZielort().isBesucht())
+	    	img = linieFade;
+	    if(richtung.getRichtung() > 8 || richtung.getRichtung() == 0)
 	    	return null;
-	    }
 	    double angle = (richtung.getRichtung() - 1) * Math.PI / 4.0;
 
 	    AffineTransform at = new AffineTransform();

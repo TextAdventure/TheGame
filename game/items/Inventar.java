@@ -17,7 +17,7 @@ public class Inventar implements Serializable {
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Alle Gegenstaende, die sich im Inventar befinden.
 	private Vector<Stapel> gegenstaende;
@@ -180,10 +180,9 @@ public class Inventar implements Serializable {
 	 */
 	public Gegenstand[] getAlleGegenstaende() {
 	    Gegenstand[] g = new Gegenstand[gegenstaende.size()];
-	    for(int i = 0; i < gegenstaende.size(); i++) {
+	    for(int i = 0; i < gegenstaende.size(); i++)
 	    	g[i] = gegenstaende.get(i).getGegenstand();
-	    }
-	    return g;
+	    return  g;
 	}
 	
 	/**

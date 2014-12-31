@@ -69,7 +69,7 @@ public class Attribut implements Serializable {
 		return id;
 	}
 	
-	/* --- statischen Methoden --- */
+	/* --- statische Methoden --- */
 	
 	/**
 	 * Gibt ein Attribut zurueck, basierend auf seinem Parameternamen.

@@ -49,10 +49,10 @@ public class GUI extends JFrame implements CaretListener {
 	private KombinationsGUI kombination;
 
 	// Das Spiel wird hiermit gestartet.
-	private transient Interpreter test;
+	private transient Interpreter interpreter;
 
 	/**
-	 *  Eine neue GUI.
+	 * Eine neue GUI.
 	 */
 	public GUI() {
 	    super("Super Text Adventure");
@@ -76,10 +76,10 @@ public class GUI extends JFrame implements CaretListener {
 	    add(eingabe);
 	    add(info.getJScrollPane());
 	    displays.addTab("Inventar", inventory.getJScrollPane());
-	    displays.addTab("Fï¿½higkeiten", skills.getJScrollPane());
+	    displays.addTab("Fähigkeiten", skills.getJScrollPane());
 	    add(displays);
 
-	    add(map);       //TODO                     MAP WIEDER ADDEN
+	    add(map);
 	    /*add(directions);
 	    add(playerInfo);*/
 
@@ -105,8 +105,8 @@ public class GUI extends JFrame implements CaretListener {
 	    //setUndecorated(true);
 	    //AWTUtilities.setWindowOpaque(this, true);
 
-	    test = new Interpreter(this);
-	    test.ueberpruefeBefehl("");
+	    interpreter = new Interpreter(this);
+	    interpreter.ueberpruefeBefehl("");
 
 	    kombination = new KombinationsGUI(this, SpielWelt.WELT.getSpieler().getInventar());
 
@@ -153,7 +153,7 @@ public class GUI extends JFrame implements CaretListener {
 	 *  befehl: der Befehl, der an das Spiel uebergeben wird.
 	 */
 	public void uebergebeBefehl(String befehl) {
-		test.ueberpruefeBefehl(befehl);
+		interpreter.ueberpruefeBefehl(befehl);
 	}
 
 	// Diese Methode gibt die Anzeige zurueck.

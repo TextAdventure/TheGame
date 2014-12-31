@@ -8,21 +8,22 @@ import util.NumerusGenus;
 
 /**
  * Eine Faehigkeit, die im Kampf verwendet werden kann vom Spieler oder von einem Gegener.
+ * @author Marvin
  */
 public class Faehigkeit implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 	  
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Der Name der Faehigkeit.
 	private String name;
-	// Der Numerus/Genus der Faehigkeit
+	// Der Numerus und Genus der Faehigkeit
 	private NumerusGenus numGen;
 	// Die Ausgabe, die angezeigt wird, wenn die Faehigkeit ausgefuehrt wird.
 	private String ausgabe;
-	// Der Attributsbonus fuer die Faehigkeit. (MAGISCH => mag. Ang; PHYSISCH => Ang) mit "100%" wird das Attribut verdoppelt
+	// Der Attributsbonus fuer die Faehigkeit, mit "100%" wird das Attribut verdoppelt
 	private String bonus;
 	// Die Kosten fuer die Faehigkeit.
 	private String kosten;
@@ -31,7 +32,7 @@ public class Faehigkeit implements Serializable {
 	// Die Schadensart der Faehigkeit.
 	private byte schadensart;
 
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Eine neue Faehigkeit wird mit Namen, NumerusGenus, der Ausgabe, der Schadensart, einem Bonus,
@@ -45,33 +46,41 @@ public class Faehigkeit implements Serializable {
 	 * @param waffenarten Die Waffentypen mit denen man diese Faehigkeit ausfuehren kann.
 	 */
 	public Faehigkeit(String name, NumerusGenus numerusGenus, String ausgabe, Schadensart schadensart,
-			String bonus, String kosten, Waffenart[] waffenarten){
+			String bonus, String kosten, Waffenart[] waffenarten) {
 		this.name = name;
 	    this.numGen = numerusGenus;
 	    this.ausgabe = ausgabe;
-	    this.schadensart = (byte) schadensart.getId();
+	    this.schadensart = schadensart.getId();
 	    this.bonus = bonus;
 	    this.kosten = kosten;
 	    this.waffenarten = waffenarten;
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	  
 	/**
 	 * Gibt den Namen der Faehigkeit zurueck.
 	 * @return Der Name der Faehigkeit.
 	 */
-	public String getName() { return name; }
+	public String getName() {
+		return name;
+	}
+	
 	/**
 	 * Gibt den NumerusGenus zurueck.
 	 * @return Der NumerusGenus der Faehigkeit.
 	 */
-	public NumerusGenus getNumGen() { return numGen; }
+	public NumerusGenus getNumGen() {
+		return numGen;
+	}
+	
 	/**
 	 * Gibt die Ausgabe der Faehigkeit zurueck.
 	 * @return Die Ausgabe der Faehigkeit, wenn sie eingesetzt wird.
 	 */
-	public String getAusgabe() { return ausgabe; }
+	public String getAusgabe() {
+		return ausgabe;
+	}
 	
 	/**
 	 * Gibt zurueck, ob es sich um die uebergebene Schadensart handelt.
@@ -81,6 +90,7 @@ public class Faehigkeit implements Serializable {
 	public boolean isSchadensart(Schadensart schadensart) {
 		return Schadensart.getSchadensart(this.schadensart) == schadensart ? true : false;
 	}
+	
 	/**
 	 * Gibt die Schadensart der Faehigkeit zurueck.
 	 * @return Die Schadensart der Faehigkeit.
@@ -88,6 +98,7 @@ public class Faehigkeit implements Serializable {
 	public Schadensart getSchadensart() {
 		return Schadensart.getSchadensart(schadensart);
 	}
+	
 	/**
 	 * Gibt das Attribut zurueck inklusive des Bonuses.
 	 * @param entity Das Entity, fuer das der Bonus berechnet werden soll.
@@ -101,6 +112,7 @@ public class Faehigkeit implements Serializable {
 	    }
 	    return Schadensart.getSchadensart(schadensart).getAttribut(entity) + Integer.valueOf(bonus);
 	}
+	
 	/**
 	 * Gibt einen String mit der kompletten Berechnung des Schadesn zurueck.
 	 * @param entity Das Entity fuer das der Schaden berechnet werden soll.
@@ -117,6 +129,7 @@ public class Faehigkeit implements Serializable {
 		
 		return ausgabe;		
 	}
+	
 	/**
 	 * Gibt die Kosten der Faehigkeit zurueck, dazu muss die maximale MP Anzahl uebergeben werden.
 	 * @param maxMp Die maximalen MP des Wirkers.
@@ -147,8 +160,8 @@ public class Faehigkeit implements Serializable {
 	public boolean gueltigeWaffe(Waffenart[] waffen) {
 	    if(waffenarten.length < 1) 
 	    	return true;
-	    for(Waffenart wa: waffen) {
-	    	for(Waffenart wa1: waffenarten) {
+	    for(Waffenart wa : waffen) {
+	    	for(Waffenart wa1 : waffenarten) {
 	    		if(wa == wa1) 
 	    			return true;
 	    	}

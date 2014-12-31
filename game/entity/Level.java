@@ -3,14 +3,15 @@ package game.entity;
 import java.io.Serializable;
 
 /**
- * Ein Level fuer den Spieler mit allen moeglichen Attributsaenderungen.
+ * Ein Level/Stufe fuer den Spieler mit allen moeglichen Attributsaenderungen.
+ * @author Marvin
  */
 public class Level implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Die Erfahrung bis zu diesem Level.
 	private int erfahrung;
@@ -22,14 +23,14 @@ public class Level implements Serializable {
 	// Aenderungen der Attribute.	
 	private EntityAttribut[] attributsBonus;
 	
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Ein neues Level wird mit allen Veraenderungen der Statuswerte generiert.
 	 * @param erfahrung Die benoetigte Erfahrung bis zu diesem Level.
 	 * @param lpBonus Der Bonus auf die Lebenspunkte.
 	 * @param mpBonus Der Bonus auf die Magiepunkte.
-	 * @param attributsBonus Der Bonus auf das Attribut mit der entsprechenden ID.
+	 * @param attributsBonus Der Bonus auf das Attribut in der entsprechenden ID-Reihenfolge.
 	 */
 	public Level(int erfahrung, int lpBonus, int mpBonus, int... attributsBonus) {
 		this.erfahrung = erfahrung;
@@ -41,7 +42,7 @@ public class Level implements Serializable {
 			
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt die Erfahrung aus, die fuer diese Stufe benoetigt wird. 
@@ -50,6 +51,7 @@ public class Level implements Serializable {
 	public int getErfahrung() {
 		return erfahrung;
 	}
+	
 	/**
 	 * Gibt den Bonus fuer die Lebenspunkte fuer dieses Level zurueck.
 	 * @return Der Bonus fuer die Lebenspunkte.
@@ -57,6 +59,7 @@ public class Level implements Serializable {
 	public int getLpBonus() {
 		return lpBonus;
 	}
+	
 	/**
 	 * Gibt den Bonus fuer die Magiepunkte duer dieses Level zurueck.
 	 * @return Der Bonus fuer die Magiepunkte.
@@ -64,6 +67,7 @@ public class Level implements Serializable {
 	public int getMpBonus() {
 		return mpBonus;
 	}
+	
 	/**
 	 * Gibt den Bonus fuer ein bestimmtes Attribut zurueck, basierend auf dem Namen oder der Parameterschreibweise.
 	 * @param nameOderParam Der Name oder die Parameterschreibweise des Attributs.
@@ -76,14 +80,14 @@ public class Level implements Serializable {
 		return -1;
 	}
 	
-	/* --- Die statischen Methoden --- */
+	/* --- statische Methoden --- */
 	
 	/**
 	 * Erzeugt aus Anfangswerten und Zielwerten, ein Array aller Level, die dafuer benoetigt werden, aufgrund einer linearen Verteilung.
 	 * @param levelAnzahl Die Anzahl an Leveln.
 	 * @param anfangsWerte Die anfaengliche Werte als Level uebergeben.
 	 * @param zielWerte Die Zielwerte des Charakters auf dem hoechsten Level.
-	 * @return Alle Level fuer den Spieler, die 0 sind die Startwerte fuer den Spieler.
+	 * @return Alle Level fuer den Spieler, das 0. Level sind die Startwerte fuer den Spieler.
 	 */
 	public static Level[] createLinearLevels(int levelAnzahl, Level anfangsWerte, Level zielWerte) {
 		Level[] level = new Level[levelAnzahl + 2];
@@ -121,4 +125,5 @@ public class Level implements Serializable {
 		
 		return level;
 	}
+
 }
