@@ -1,9 +1,13 @@
 package editor;
 
+import game.UntersuchbaresObjekt;
+import game.items.Gegenstand;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -163,11 +167,75 @@ public class Workspace extends JPanel{
 		int y = ort.position.y;
 		int w = ort.groesse.width;
 		int h = ort.groesse.height;
-		if(x < xPos + width && x + w > xPos && y < yPos + height && y + h > yPos) {
-			//draw only if necessary
+		int xGap = 10, yGap = 20;			//lokale Konstanten, die angeben, wie viel Abstand beim zeichnen des Texts vom Rand gehalten wird.
+		int beschrLength = 100;		//Anz. der char der Beschreibung, die noch dargestellt werden.
+		
+		if(x < xPos + width && x + w > xPos && y < yPos + height && y + h > yPos) {		//draw only if necessary
+			//Rahmen zeichnen
 			graph.drawRect(x-xPos, y-yPos, w, h);
-			String text = ort.ort.getName();
-			graph.drawString(text, x-xPos+5, y-yPos+15);
+			
+			//Text erstellen
+			//Name
+			String text = ort.ort.getName() + "\n";			
+			
+			//Beschreibung
+			String beschreibung = ort.ort.getDescription();
+			if(beschreibung.length() <= beschrLength) {
+				text += beschreibung + "\n\n";
+			} else {
+				text += beschreibung.substring(0, beschrLength)+ "...\n\n";
+			}
+			
+			//Untersuchbare Objekte
+			text += "Untersuch. Obj.:   ";
+			UntersuchbaresObjekt[] untersuchObjs = ort.ort.getUnteruschbareObjekte();
+			for(int i = 0; i < untersuchObjs.length; i++) {
+				text += untersuchObjs[i].getName() + ", ";
+			}
+			
+			//Gegenstände
+			text = text.substring(0, text.length()-2) + "\nGegenstände:    ";
+			Gegenstand.GEGENSTAENDE = welt.getGegenstaende();
+			Gegenstand[] gegenstaende = ort.ort.getGegenstaende();
+			for(int i = 0; i < gegenstaende.length; i++) {
+				int anz = ort.ort.getGegenstandAnzahl(gegenstaende[i]);
+				if(anz > 1) 
+					text += anz + " " + gegenstaende[i].getPlural() + ", ";
+				else 
+					text += gegenstaende[i].getName() + ", ";
+			}
+			text = text.substring(0, text.length()-2);
+			
+			
+			//Text zeichnen
+			int stringY = y-yPos+yGap;
+			FontMetrics metrics = graph.getFontMetrics();
+			
+			for (String line : text.split("\n")) {
+				int stringX = x-xPos+xGap;
+				
+				String[] woerter = line.split(" ");
+				int index = 0;
+
+				while(index < woerter.length && stringY < y-yPos+h) {
+					if(stringX + metrics.stringWidth(woerter[index]) > x-xPos+w-xGap) {
+						//Zeilenumbruch
+						stringY += metrics.getHeight();
+						stringX = x-xPos+xGap;
+						
+					} else {
+						//zeichne Wort
+						graph.drawString(woerter[index] + " ", stringX, stringY);
+						stringX += metrics.stringWidth(woerter[index]+" ");
+						index++;
+					}
+					
+				}
+				
+				//springe zu nächster Zeile
+				stringY += metrics.getHeight();
+			}
+
 		}		
 	}
 	
