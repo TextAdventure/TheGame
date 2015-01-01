@@ -212,7 +212,7 @@ public class Workspace extends JPanel{
 			String text = ort.ort.getName() + "\n";			
 			
 			//Beschreibung
-			String beschreibung = ort.ort.getDescription();
+			String beschreibung = ort.ort.getBeschreibung();
 			if(beschreibung.length() <= beschrLength) {
 				text += beschreibung + "\n\n";
 			} else {

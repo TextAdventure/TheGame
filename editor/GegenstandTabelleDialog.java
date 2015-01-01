@@ -66,7 +66,7 @@ public class GegenstandTabelleDialog extends JDialog implements ActionListener {
 		for(Gegenstand g : gegenstaende) {
 			String typ = "";
 			String eigenschaften = ""; 
-			model.addRow(new Object[]{typ, g, g.getNumGen().toString(), g.getDescription(), eigenschaften});
+			model.addRow(new Object[]{typ, g, g.getNumGen().toString(), g.getBeschreibung(), eigenschaften});
 		}
 		
 		if(scroll != null) remove(scroll);	//erster Aufruf
