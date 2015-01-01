@@ -1,5 +1,7 @@
 package editor;
 
+import game.SpielWelt;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +17,10 @@ import javax.swing.undo.UndoManager;
 /**
  * Hauptklasse des Editors. Repräsentiert den Main-Frame erzeugt die Menüleiste und stellt deren Funktionalität bereit.
  * 
+ * - Übersetzer Menü
+ * 
  * TODO:
  *  - Undo/Redo
- *  - Übersetzer Menü
  *  - Edit Menü überarbeiten
  *  - Exception Handling
  *  
@@ -182,6 +185,44 @@ public class IDE extends JFrame implements ChangeListener {
 				
 			}
 		}
+	}
+	
+	
+	@SuppressWarnings("serial")
+	private class ToDatAction extends AbstractAction {
+		ToDatAction() {
+			super("In .dat-Datei übersetzen");
+		}		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Workspace workspace = tabbedPane.getCurrentWorkspace();
+			if(workspace != null) {
+				
+				//speichern
+				JFileChooser fileChooser = new JFileChooser();
+				if(fileChooser.showSaveDialog(IDE.this) == JFileChooser.APPROVE_OPTION) {
+					try {
+						SpielWelt spielWelt = Uebersetzer.toSpielWelt(workspace.getWorld());
+						File file = fileChooser.getSelectedFile();
+						ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+						oos.writeObject(spielWelt);
+						oos.close();
+						
+					} catch (FileNotFoundException e1) {
+						JOptionPane.showMessageDialog(IDE.this, "Die ausgewählte Datei existiert nicht!", "Error", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(IDE.this, "Beim Schreiben der Datei ist ein Fehler aufgetreten.", "Error", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					}
+					
+				}
+				
+				
+			}
+			
+		}
+		
 	}
 	
 	@SuppressWarnings("serial")
@@ -412,7 +453,7 @@ public class IDE extends JFrame implements ChangeListener {
 		JMenuItem translateJava = new JMenuItem(new ToJavaAction());
 		menu.add(translateJava);
 		
-		JMenuItem translateDat = new JMenuItem("In .dat-Datei übersetzen");
+		JMenuItem translateDat = new JMenuItem(new ToDatAction());
 		menu.add(translateDat);
 		
 		

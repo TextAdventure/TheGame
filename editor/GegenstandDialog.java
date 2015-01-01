@@ -4,7 +4,6 @@ import game.items.Gegenstand;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -23,7 +22,7 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 
 	private static final String[] typen = {"Gegenstand", "KommandoGegenstand", "VerwendbarerGegenstand", "Waffe", "Rüstung", "Accesoire"};
 	private WeltObjekt welt;
-	private Component parent;
+	private GegenstandTabelleDialog parent;
 	
 	private JTextField namen;
 	private JComboBox<NumerusGenus> numGen;
@@ -33,7 +32,7 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 	
 	private JPanel eigenschaften;
 	
-	GegenstandDialog(Component parent, WeltObjekt welt) {
+	GegenstandDialog(GegenstandTabelleDialog parent, WeltObjekt welt) {
 		this.parent = parent;		
 		this.welt = welt;
 		setModal(false);
@@ -206,6 +205,7 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 			
 		}
 		
+		parent.updateTabelle();
 		parent.revalidate();
 		dispose();
 		

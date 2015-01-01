@@ -83,9 +83,6 @@ public class OrtDialog extends JDialog implements ActionListener {
 		p.add(ok);
 		add(p, BorderLayout.SOUTH);
 		
-		
-		
-		
 	}
 
 	
@@ -96,6 +93,14 @@ public class OrtDialog extends JDialog implements ActionListener {
 		ort.setBeschreibung(allgemein.getBeschreibung());
 		parent.repaint();
 		dispose();
+	}
+	
+	
+	/**
+	 * Leitet die Aufforderung, sich den Focus zu beschaffen an das OrtAllgemeinPanel weiter.
+	 */
+	void setFocus() {
+		allgemein.setFocus();
 	}
 
 }

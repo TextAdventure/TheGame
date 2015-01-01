@@ -127,10 +127,10 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		ausgang.bez_von1nach2 = von1nach2Richtung.getSelectedIndex();
+		ausgang.bez_von1nach2 = (byte)von1nach2Richtung.getSelectedIndex();
 		if(von1nach2Richtung.getSelectedIndex() == -1) 
 			ausgang.eigeneBez_von1nach2 = (String)von1nach2Richtung.getSelectedItem();
-		ausgang.bez_von2nach1 = von2nach1Richtung.getSelectedIndex();
+		ausgang.bez_von2nach1 = (byte)von2nach1Richtung.getSelectedIndex();
 		if(von2nach1Richtung.getSelectedIndex() == -1) 
 			ausgang.eigeneBez_von2nach1 = (String)von1nach2Richtung.getSelectedItem();
 		ausgang.von1nach2 = von1nach2Bool.isSelected();

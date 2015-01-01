@@ -72,4 +72,13 @@ public class OrtAllgemeinPanel extends JPanel {
 	String getBeschreibung() {
 		return beschreibung.getText();
 	}
+
+
+	/**
+	 * Fordert das JTextField, in das der Name des Orts eingetragen wird, dazu auf, sich den Focus zu beschaffen.
+	 */
+	void setFocus() {
+		name.requestFocusInWindow();		
+	}
+	
 }

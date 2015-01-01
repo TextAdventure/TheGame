@@ -2,6 +2,8 @@ package editor;
 
 import game.Ausgang;
 import game.Ort;
+import game.SpielWelt;
+import game.items.Gegenstand;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -69,5 +71,39 @@ public class Uebersetzer {
 		int index = 0;
 		while(index < orte.length && orte[index].ort != o) index++;
 		return index == orte.length ? -1 : index;
+	}
+	
+	/*
+	 * TODO: Ausgänge nur einmal adden
+	 */
+	public static SpielWelt toSpielWelt(WeltObjekt welt) {
+		//1. Neue SpielWelt vorbereiten.
+		SpielWelt spielWelt = new SpielWelt();
+		
+		//2. Gegenstände eintragen
+		Gegenstand.GEGENSTAENDE = welt.getGegenstaende();
+		
+		//3. Ausgänge bauen
+		AusgangErweitert[] ausgaenge = welt.getAusgaenge();
+		for(AusgangErweitert ae : ausgaenge) {
+			if(ae.von1nach2) {
+				Ausgang a = new Ausgang(ae.bez_von1nach2, ae.ort2);
+				if(ae.bez_von1nach2 == Ausgang.EIGENE)
+					a.setRichtungsName(ae.eigeneBez_von1nach2);
+				ae.ort1.addAusgang(a);
+			}
+			
+			if(ae.von2nach1) {
+				Ausgang a = new Ausgang(ae.bez_von2nach1, ae.ort1);
+				if(ae.bez_von2nach1 == Ausgang.EIGENE)
+					a.setRichtungsName(ae.eigeneBez_von2nach1);
+				ae.ort2.addAusgang(a);
+			}
+		}
+		
+		//4. Startposition festlegen
+		spielWelt.setAktuellePositon(welt.getStartOrt().ort);
+		
+		return spielWelt;		
 	}
 }

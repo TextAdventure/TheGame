@@ -52,7 +52,9 @@ public class WorkspaceMousePointer extends MouseAdapter {
 		 */
 		OrtErweitert ort = welt.ortAt(e.getX(), e.getY());
 		if(ort != null) {
-			new OrtDialog(parent, welt, ort.ort).setVisible(true);
+			OrtDialog dialog = new OrtDialog(parent, welt, ort.ort);
+			dialog.setVisible(true);
+			dialog.setFocus();
 			
 		} else {
 			AusgangErweitert ausgang = welt.ausgangAt(e.getX(), e.getY());
