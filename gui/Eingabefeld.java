@@ -87,12 +87,10 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	 *  Diese Methode gibt ein String aus allen bekannten Woertern zurueck, aufgrund eines Wort Teils.
 	 *  word: das Wort nach dem gesucht wird.
 	 */
-	private String getWord(String word){
-		for(String s: woerter.toArray(new String[0])){
-			if(s.toLowerCase().startsWith(word.toLowerCase())){
+	private String getWord(String word) {
+		for(String s : woerter)
+			if(s.toLowerCase().startsWith(word.toLowerCase()))
 				return s;
-			}
-	    }
 	    return "";
 	}
 
