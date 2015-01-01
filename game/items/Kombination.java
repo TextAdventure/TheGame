@@ -24,6 +24,7 @@ public class Kombination implements Serializable {
 	  
 	// Liste aller Kombinationen.
 	private static ArrayList<Vector<Kombination>> alleKombinationen = new ArrayList<Vector<Kombination>>(3);
+	
 	static{
 		alleKombinationen.add(new Vector<Kombination>());            // 1 Edukt Kombinationen
 	    alleKombinationen.add(new Vector<Kombination>());            // 2 Edukt Kombinationen
@@ -72,11 +73,22 @@ public class Kombination implements Serializable {
 	public static Vector<Kombination> getAlleKombinationen(int edukte){
 		return alleKombinationen.get(edukte - 1);
 	}
-	  
-	// Gibt die Liste aller Kombiationen zurueck.
-	public static ArrayList<Vector<Kombination>> getAlleKombinationen(){return alleKombinationen;}
-	// Aktualisiert die Liste aller Kombinationen.
-	public static void setAlleKombinationen(ArrayList<Vector<Kombination>> kombinationen){alleKombinationen = kombinationen;}
+	
+	/**
+	 * Legt die aktuelle Liste der Kombinationen fest, wird benoetigt, um diese speichern und laden zu koennen.
+	 * @param kombinationen Die neue Liste aller Kombinationen.
+	 */
+	public static void setAlleKombinationen(ArrayList<Vector<Kombination>> kombinationen) {
+		alleKombinationen = kombinationen;
+	}
+	
+	/**
+	 * Gibt die Liste mit allen Kombinationen, wird benoetigt, um diese zu speichern und zu laden.
+	 * @return Die Liste mit allen Kombinationen.
+	 */
+	public static ArrayList<Vector<Kombination>> getAlleKombinationen() {
+		return alleKombinationen;
+	}
 
 	/**
 	 *  Diese Methode ueberprueft, ob es sich um ein gueltiges Rezept handelt und gibt das Ergebnis zurueck.

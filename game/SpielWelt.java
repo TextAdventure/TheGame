@@ -11,6 +11,7 @@ import game.entity.Gegner;
 import game.entity.Resistenz;
 import game.entity.Schadensart;
 import game.entity.Spieler;
+import game.items.AusruestbarerGegenstand;
 import game.items.Gegenstand;
 import game.items.Inventar;
 import game.items.Kombination;
@@ -31,7 +32,6 @@ import java.util.Vector;
 import npc.NPC;
 import util.Farbe;
 import util.NumerusGenus;
-import util.StringEvent;
 import util.StringListener;
 
 /**
@@ -84,7 +84,7 @@ public class SpielWelt implements Serializable, StringListener {
 	// Alle global geltenden Kommandos.
 	private Vector<Kommando> globaleKommandos;
 	// Alle Gegenstaende im Spiel(wird benoetigt, um die Gegenstandsliste zu speichern und laden)
-	private Gegenstand[] gegenstaende;
+	public Gegenstand[] gegenstaende;
 	// Alle Kombinationen im Spiel(wird benoetigt, um die Kombinationen zu speichern und zu laden)
 	private ArrayList<Vector<Kombination>> kombinationen;
 	// Alle Attribute im Spiel(wird benoetigt, um die Attribute zu speichern und zu laden)
@@ -117,12 +117,7 @@ public class SpielWelt implements Serializable, StringListener {
 
 	    kaempft = false;
 
-	    gegenstaende = Gegenstand.GEGENSTAENDE;
-	    kombinationen = Kombination.getAlleKombinationen();
-	    attribute = Attribut.ATTRIBUTE;
-	    schadensarten = Schadensart.SCHADEN;
-	    resistenzen = Resistenz.RESISTENZEN;
-	    Farbe.setAlleFarben(farben);
+	    //this.speichereListen();
 
 	    setWelt(this);
 	}
@@ -158,12 +153,24 @@ public class SpielWelt implements Serializable, StringListener {
 	public void updateListen() {
 		setWelt(this);
 
-	    Gegenstand.GEGENSTAENDE = gegenstaende;
-	    Kombination.setAlleKombinationen(kombinationen);
-	    Attribut.ATTRIBUTE = attribute;
-	    Schadensart.SCHADEN = schadensarten;
-	    Resistenz.RESISTENZEN = resistenzen;
-	    Farbe.setAlleFarben(farben);
+	    Gegenstand.setAlleGegenstaende(this.gegenstaende);
+	    Kombination.setAlleKombinationen(this.kombinationen);
+	    Attribut.ATTRIBUTE = this.attribute;
+	    Schadensart.SCHADEN = this.schadensarten;
+	    Resistenz.RESISTENZEN = this.resistenzen;
+	    Farbe.setAlleFarben(this.farben);
+	}
+	
+	/**
+	 * Speichert die Listen aller Dinge im Spiel, sodass sie beim naechsten Laden wieder verfuegbar sind.
+	 */
+	public void speichereListen() {
+		this.gegenstaende = Gegenstand.getAlleGegenstaende();
+	    this.kombinationen = Kombination.getAlleKombinationen();
+	    this.attribute = Attribut.ATTRIBUTE;
+	    this.schadensarten = Schadensart.SCHADEN;
+	    this.resistenzen = Resistenz.RESISTENZEN;
+	    this.farben = Farbe.getAlleFarben();
 	}
 	
 	/**
@@ -220,11 +227,11 @@ public class SpielWelt implements Serializable, StringListener {
 	}
 
 	/**
-	 * Der StringListener erhaelt ein StringEvent fuer einen Kampf oder ein Gespraech und gibt sie an diese weiter.
-	 * @param evt Das empfangene StringEvent.
+	 * Der StringListener erhaelt einen String fuer einen Kampf oder ein Gespraech und gibt sie an diese Methode weiter.
+	 * @param evt Der empfangene String.
 	 */
 	@Override
-	public void actionPerformed(StringEvent evt) {
+	public void actionPerformed(String evt) {
 		if(spielerKaempft())
 			kampf(evt);
 		if(spielerSpricht())
@@ -252,22 +259,22 @@ public class SpielWelt implements Serializable, StringListener {
 	    ausgabe.clear();
 	    ausgabe.print("Eine Gruppe von Feinden greift dich an!");
 	    for(Entity e : kampf.getKampfGegner())
-	    	ausgabe.println(e.getNumGen().getUnbest(0) + e.getName() + " nähert sich.");
+	    	ausgabe.println(e.getNumGen().getUnbest(NumerusGenus.NOMINATIV) + e.getName() + " nähert sich.");
 	    ausgabe.println();
 	}
 	
 	/**
 	 * Wenn der Spieler sich im Kampf befindet wird anstelle der normalen Abfrage die Eingabe
 	 * direkt an diese Methode uebergeben, die sich nur auf den Kampf konzentriert.
-	 * @param evt Die Eingabe des Spielers als StringEvent.
+	 * @param evt Die Eingabe des Spielers als String.
 	 */
-	private void kampf(StringEvent evt) {
+	private void kampf(String evt) {
 		// TODO neue Idee
 		Vector<KampfAktion> aktionen = new Vector<KampfAktion>();
 
 		Faehigkeit spielerF = null;
 		String str = "";
-		for(String s : evt.getCommand().split(" ")) {
+		for(String s : evt.split(" ")) {
 			str += s + " ";
 			if(spieler.getFaehigkeit(str.trim()) != null) {
 				spielerF = spieler.getFaehigkeit(str.trim());
@@ -277,14 +284,14 @@ public class SpielWelt implements Serializable, StringListener {
 
 		Gegner ziel = null;
 		try {
-			ziel = (Gegner) kampf.getGegner(evt.getCommand().substring(str.length()).trim());
+			ziel = (Gegner) kampf.getGegner(evt.substring(str.length()).trim());
 		} catch(StringIndexOutOfBoundsException e) {
 			ziel = null;
 		}
 
 		KampfAktion spielerAktion;
-		if(Gegenstand.getGegenstand(evt.getCommand()) instanceof VerwendbarerGegenstand)
-			spielerAktion = new KampfAktion(spieler, (VerwendbarerGegenstand) Gegenstand.getGegenstand(evt.getCommand()), spieler);
+		if(Gegenstand.getGegenstand(evt) instanceof VerwendbarerGegenstand)
+			spielerAktion = new KampfAktion(spieler, (VerwendbarerGegenstand) Gegenstand.getGegenstand(evt), spieler);
 		else
 			spielerAktion = new KampfAktion(spieler, spielerF, ziel);
 
@@ -297,7 +304,7 @@ public class SpielWelt implements Serializable, StringListener {
 		// Die Gegner adden
 		for(Entity g : kampf.getKampfGegner())
 			if(g.getLp() > 0)
-				aktionen.add(new KampfAktion(g, g.getFaehigkeit(evt.getCommand()), spieler));
+				aktionen.add(new KampfAktion(g, g.getFaehigkeit(evt), spieler));
 
 		Collections.sort(aktionen);
 
@@ -313,7 +320,7 @@ public class SpielWelt implements Serializable, StringListener {
 				for(KampfAktion a : aktionen.toArray(new KampfAktion[0]))
 					if(a.getAngreifer() == aktion.getZiel())
 						a.ungueltig();
-				ausgabe.println(aktion.getZiel().getNumGen().getBest(0) + aktion.getZiel().getName() + " ist gestorben.");
+				ausgabe.println(aktion.getZiel().getNumGen().getBest(NumerusGenus.NOMINATIV) + aktion.getZiel().getName() + " ist gestorben.");
 				if(kampf.alleTot()) {
 					kampfEndet(true);
 					return;
@@ -406,10 +413,10 @@ public class SpielWelt implements Serializable, StringListener {
 	/**
 	 * Wenn der Spieler sich im Gespraech befindet wird anstelle der normalen Abfrage die Eingabe
 	 * direkt an diese Methode uebergeben, die sich nur auf das Gespraech konzentriert.
-	 * @param evt Die Eingabe des Spielers als StringEvent.
+	 * @param evt Die Eingabe des Spielers als String.
 	 */
-	private void gespraech(StringEvent evt) {
-		if(!gespraechspartner.ansprechen(evt.getCommand()))
+	private void gespraech(String evt) {
+		if(!gespraechspartner.ansprechen(evt))
 			spricht = false;
 	}
 
@@ -506,14 +513,14 @@ public class SpielWelt implements Serializable, StringListener {
 		Stapel s = spielerPosition.getGegenstand(gegenstandName);
 	    RessourcenPunkt rp = spielerPosition.getRessourcenPunkt(gegenstandName);
 	    if(s != null) {
-	    	Gegenstand g = s.getGegenstand();
+	    	Gegenstand g = s.getGegenstand(); // getNameExtended(), damit Farben im Namen angezeigt werden!
 	    	switch(r.nextInt(6)) {
-	    		case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " eingesteckt."); break;
-	    		case(1): ausgabe.print("Du steckst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " ein."); break;
-	    		case(2): ausgabe.print("Du nimmst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " mit."); break;
-	    		case(3): ausgabe.print(g.getNumGen().getBest(0) + g.getName() + " könnte sich als nützlich erweisen, deshalb steckst du " + g.getNumGen().getPers(3).toLowerCase() + "ein."); break;
-	    		case(4): ausgabe.print("Du nimmst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " an dich, da " + g.getNumGen().getPers(0).toLowerCase() + "nützlich aussieht."); break;
-	    		case(5): ausgabe.print("Du steckst " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " in deine Tasche."); break;
+	    		case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " eingesteckt."); break;
+	    		case(1): ausgabe.print("Du steckst " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " ein."); break;
+	    		case(2): ausgabe.print("Du nimmst " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " mit."); break;
+	    		case(3): ausgabe.print(g.getNumGen().getBest(NumerusGenus.NOMINATIV) + g.getNameExtended() + " könnte sich als nützlich erweisen, deshalb steckst du " + g.getNumGen().getPers(NumerusGenus.AKKUSATIV).toLowerCase() + "ein."); break;
+	    		case(4): ausgabe.print("Du nimmst " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " an dich, da " + g.getNumGen().getPers(NumerusGenus.NOMINATIV).toLowerCase() + "nützlich aussieht."); break;
+	    		case(5): ausgabe.print("Du steckst " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " in deine Tasche."); break;
 	    	}
 	    	spieler.getInventar().addGegenstand(s);
 	    	spielerPosition.removeGegenstand(g);
@@ -528,7 +535,7 @@ public class SpielWelt implements Serializable, StringListener {
 	    		ausgabe.println("Du konntest nichts ernten.");
 	    		return;
 	    	}
-	    	ausgabe.println("Du findest " + rp.getNumGen().getUnbest(3).toLowerCase() + rp.getName() + " und du erntest ");
+	    	ausgabe.println("Du findest " + rp.getNumGen().getUnbest(NumerusGenus.AKKUSATIV).toLowerCase() + rp.getName() + " und du erntest ");
 	    	for(Stapel stapel : loot) {
 	    		spieler.getInventar().addGegenstand(stapel);
 	    		if(stapel.getAnzahl() > 1)
@@ -600,12 +607,12 @@ public class SpielWelt implements Serializable, StringListener {
 	    		switch(g.getEffekt().getTyp()) {
 	    		case(Effekt.HEILEN):
 	    			int lp = g.getEffekt().getBonus(spieler.getMaxLp());
-	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " und stellst " + Math.min(spieler.getMaxLp()-spieler.getLp(), lp) + " LP wieder her.");
+	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getName() + " und stellst " + Math.min(spieler.getMaxLp()-spieler.getLp(), lp) + " LP wieder her.");
 	    			spieler.addLp(lp);
 	    			break;
 	    		case(Effekt.MPREGENERATION):
 	    			int mp = g.getEffekt().getBonus(spieler.getMaxMp());
-	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " und stellst " + Math.min(spieler.getMaxMp()-spieler.getMp(), mp) + " MP wieder her.");
+	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getName() + " und stellst " + Math.min(spieler.getMaxMp()-spieler.getMp(), mp) + " MP wieder her.");
 	    			spieler.addMp(mp);
 	    			break;
 	    		}
@@ -630,9 +637,9 @@ public class SpielWelt implements Serializable, StringListener {
 		if(g == null)
 			return;
 		
-		if(spieler.ruesteAus(g)) {
+		if(g instanceof AusruestbarerGegenstand && spieler.ruesteAus((AusruestbarerGegenstand) g)) {
 			switch(r.nextInt(2)) {
-			case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(3).toLowerCase() + g.getName() + " ausgerüstet."); break;
+			case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getName() + " ausgerüstet."); break;
 			case(1): ausgabe.print("Du hast den Gegenstand ausgerüstet."); break;
 			}
 		} else {
@@ -653,7 +660,7 @@ public class SpielWelt implements Serializable, StringListener {
 		if(g == null)
 			return;
 	    
-		if(spieler.legeAb(g)) {
+		if(g instanceof AusruestbarerGegenstand && spieler.legeAb((AusruestbarerGegenstand) g)) {
 			switch(r.nextInt(3)) {
 			case(0): ausgabe.print("Du legst den Gegenstand ab."); break;
 			case(1): ausgabe.print("Du hast " + g.getName() + " abgelegt."); break;
@@ -664,7 +671,7 @@ public class SpielWelt implements Serializable, StringListener {
 			switch(r.nextInt(3)) {
 			case(0): ausgabe.print("Du hast diesen Gegenstand nicht ausgerüstet"); break;
 			case(1): ausgabe.print("Du kannst einen Gegenstand, den du nicht ausgerüstet hast, nicht ablegen."); break;
-			case(2): ausgabe.print(g.getName() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(3) + "nicht ausgerüstet hast."); break;
+			case(2): ausgabe.print(g.getName() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(NumerusGenus.AKKUSATIV) + "nicht ausgerüstet hast."); break;
 			}
 		}
 	}

@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Vector;
 
-import util.InventoryEvent;
-import util.InventoryListener;
-import util.StringEvent;
+import util.InventarListener;
 import util.StringListener;
 
 /**
@@ -291,16 +289,15 @@ public class Inventar implements Serializable {
 		// Bei allen Dingen, die kein Spieler sind werden die Listener nicht benoetigt und sind einfach null.
 		if(listeners == null)
 			return;
+		
 		for(Object listener : listeners) {			
-			if(listener instanceof InventoryListener) {
-				((InventoryListener) listener).inventoryUpdate(new InventoryEvent(this));
-			}
+			if(listener instanceof InventarListener)
+				((InventarListener) listener).inventarUpdate(this);
 			
 			if(listener instanceof StringListener && gegenstandsName.length > -1) {
 				StringListener sl = (StringListener)listener;
-				for(String s : gegenstandsName) {
-					sl.actionPerformed(new StringEvent(s));
-				}
+				for(String s : gegenstandsName)
+					sl.actionPerformed(s);
 			}
 	    }
 	}

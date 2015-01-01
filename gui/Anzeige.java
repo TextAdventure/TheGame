@@ -6,8 +6,7 @@ import game.Ort;
 import game.UntersuchbaresObjekt;
 import game.entity.EntityAttribut;
 import game.entity.EntityResistenz;
-import game.items.Gegenstand;
-
+import game.items.AusruestbarerGegenstand;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -21,44 +20,58 @@ import util.IPrintable;
 /**
  *  Diese Klasse ist das JTextPane, in dem dass Spielgeschehen angezeigt wird.
  */
+/**
+ * Ein veraendertes JTextPane, das die Moeglichkeit bietet Text einzufaerben, ihn fett, unterstrichen oder kursiv zu machen.
+ * @author Marvin
+ */
 public class Anzeige extends JTextPane {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
 
+	/* --- Variablen --- */
+	
 	// In diesem JScrollPane befindet sich die Anzeige, dadurch kann beliebig weit nach oben gescrollt werden.
 	protected JScrollPane scroll;
 	// Das StyledDocument dieser Anzeige, dadurch laesst sich Farbe und aehnliches einfuegen.
 	protected StyledDocument document;
 
+	/* --- Konstruktor --- */
+	
 	/**
-	 *  Eine neue Anzeige wird erstellt, indem man ihr einen PipedInputStream uebergibt, der die Befehle uebermittelt.
+	 * Eine Anzeige unterstuetzt die Darstellung von formatiertem Text und eine Vielzahl anderer Funktionen,
+	 * wie das darstellen von IPrintables. Sie kann auch nicht von Hand veraendert werden und hat Scrollbars,
+	 * damit mehr Text angezeigt werden kann.
+	 * @param breite Die Breite der Anzeige.
+	 * @param hoehe Die Hoehe der Anzeige.
 	 */
-	public Anzeige() {
+	public Anzeige(int breite, int hoehe) {
 		scroll = new JScrollPane(this);
 	    document = this.getStyledDocument();
 
-	    scroll.setSize(690, 370);
+	    scroll.setSize(breite, hoehe);
 
 	    setEditable(false);
 	}
+	
+	/* --- Methoden --- */
 
 	/**
-	 *  Diese Methode fuegt den uebergebenen String der Anzeige hinzu, davor ist ein Zeilenumbruch.
-	 *  text: der neue Text, der hinzugefuegt werden soll.
+	 * Fuegt den Text der Anzeige hinzu, davor befindet sich aber ein Zeilenumbruch.
+	 * @param text Der Text, der der Anzeige hinzugefuegt werden soll.
 	 */
 	public void println(String text) {
 		print("\n" + text);
 	}
 
 	/**
-	 *  Diese Methode fuegt den uebergebenen String der Anzeige hinzu, davor ist KEIN Zeilenumbruch.
-	 *  text: der neue Text, der hinzugefuegt werden soll.
+	 * Fuegt den Text direkt an den bereits vorhandenen hinzu, ohne einen Zeilenumbruch.
+	 * @param text Der Text, der der Anzeige hinzugefuegt werden soll.
 	 */
 	public void print(String text) {
-		if(text.contains("<c=") && !text.contains("<b"))
+		if(text.contains("<c=") && !text.contains("<b>"))
 			colorText(text, false);
-		else if(text.contains("<c=") && text.contains("<b"))
+		else if(text.contains("<c=") && text.contains("<b>"))
 			colorText(text, true);
 		else
 			try {
@@ -87,6 +100,9 @@ public class Anzeige extends JTextPane {
 	 *  Diese Methode fuegt den uebergebenen String der Anzeige hinzu, davor ist ein Zeilenumbruch.
 	 *  text: der neue Text, der hinzugefuegt werden soll.
 	 */
+	/**
+	 * Fuegt der Anzeige eine Leerzeile hinzu.
+	 */
 	public void println() {
 		println("");
 	}
@@ -94,24 +110,25 @@ public class Anzeige extends JTextPane {
 	/**
 	 * Gibt ein IPrintable aus, zuerst den Namen(fett), dann neue Zeile und zu Schluss die Beschreibung.
 	 * Dabei werden Farben ersetzt und auch Parameter.
+	 * @param print Das auszugebende Objekt.
 	 */
 	public void printPrintable(IPrintable print) {
 		String name = print.getNameExtended();
-		String description = print.getDescription();
+		String beschreibung = print.getBeschreibung();
 
 
 		// Alle Parameter ersetzen
 		for(String s : print.getParams()) {
 			name = name.replaceAll("<p=" + s + ">" , print.getParam(s));
-			description = description.replaceAll("<p=" + s + ">", print.getParam(s));
+			beschreibung = beschreibung.replaceAll("<p=" + s + ">", print.getParam(s));
 		}
 		
 		// faerben
 		colorText(name, true);
 
 		// Evtl. Werte ausgeben
-		if(print instanceof Gegenstand) {
-			Gegenstand g = (Gegenstand)print;
+		if(print instanceof AusruestbarerGegenstand) {
+			AusruestbarerGegenstand g = (AusruestbarerGegenstand)print;
 			if(g.hasWerte()) {
 				println();
 				for(EntityAttribut ea : g.getAttribute()) {
@@ -137,16 +154,16 @@ public class Anzeige extends JTextPane {
 				((Ort) print).besuchen();
 			if(print instanceof UntersuchbaresObjekt)
 				((UntersuchbaresObjekt) print).untersuchen();
-			colorText("\n" + description, false);
+			colorText("\n" + beschreibung, false);
 		} else {
-			colorText("\n\n" + description, false);
+			colorText("\n\n" + beschreibung, false);
 		}
 	}
 
 	/**
-	 *
-	 * @param text
-	 * @param bold
+	 * Faerbt den Text mit Farbcodes, die darin stehen und fuegt ihn direkt hinzu, ohne Zeilenumbruch.
+	 * @param text Der hinzuzufuegende Text.
+	 * @param bold True, wenn er fett sein soll, ansonsten false.
 	 */
 	protected void colorText(String text, boolean bold) {
 		String[] split = text.split("<c=");
@@ -160,13 +177,8 @@ public class Anzeige extends JTextPane {
 				document.setCharacterAttributes(this.document.getLength() - s.length(), s.length(), boldText, false);
 				continue;
 			}
-
-			Color c = new Color(0, 0, 0);
-			try {
-				c = new Color(Integer.decode("0x" + s.substring(0, 6).toLowerCase()));
-			} catch (NumberFormatException e) {
-				c = Farbe.getFarbe(s.substring(0, s.indexOf('>'))).getColor();
-			}
+			
+			Color c = Farbe.getFarbe(s.substring(0, s.indexOf('>'))).getColor();
 
 			String actual = s.substring(s.indexOf(">") + 1, s.indexOf("</c>"));
 			int index = actual.length();
@@ -183,7 +195,7 @@ public class Anzeige extends JTextPane {
 	}
 
 	/**
-	 *  Die Anzeige wird geloescht, sodass sie neu beschrieben werden kann.
+	 * Loescht den gesamten Inhalt der Anzeige, dadurch kann sie wieder beschrieben werden.
 	 */
 	public void clear() {
 		try {
@@ -194,7 +206,8 @@ public class Anzeige extends JTextPane {
 	}
 
 	/**
-	 *  Diese Methode gibt das JScrollPane zurueck.
+	 * Gibt das JScrollPane zurueck, in dem sich diese Anzeige befindet.
+	 * @return Das JScrollPane, in dem diese Anzeige ist.
 	 */
 	public JScrollPane getJScrollPane() {
 	    return scroll;

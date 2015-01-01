@@ -132,7 +132,7 @@ public class Ort implements Serializable, IPrintable {
 	 * @return Die Beschreibung.
 	 */
 	@Override
-	public String getDescription() {
+	public String getBeschreibung() {
 		return beschreibung;
 	}
 	
@@ -150,38 +150,28 @@ public class Ort implements Serializable, IPrintable {
 	/**
 	 * Gibt den String fuer einen Parameter zurueck.
 	 * @param param Der Parameter, nach dem gefragt wurde.
-	 * @return Der Inhalt des Parameters in diesem Ort.
+	 * @return Der Inhalt des Parameters an diesem Ort, wenn es kein gueltiger Parameter ist, wird "Ungueltig" zurueckgegeben.
 	 */
 	@Override
 	public String getParam(String param) {
-		// Alle Parameter muessen von Hand in getParams() registriert werden!
-		/*
-		switch(param) {
-		case "name": return this.getNameExtended();
-		case "anzahlAusgänge": return Integer.toString(this.getAusgaenge().size());
-		case "anzahlGegenstände": return Integer.toString(this.gegenstaende.getAlleGegenstaende().length);
-		case "anzahlUntersuchbaresObjekt": return Integer.toString(this.untersuchbareObjekte.size());
-		case "anzahlNichtUntersucht":
+		if(param == "name") return this.getNameExtended();
+		if(param == "anzahlAusgänge") return Integer.toString(this.ausgaenge.size());
+		if(param == "anzahlUntersuchbarerObjekte") return Integer.toString(this.untersuchbareObjekte.size());
+		if(param == "anzahlNichtUntersucht") {
 			int i = 0;
-			for(UntersuchbaresObjekt o : this.untersuchbareObjekte)
-				if(!o.isUntersucht())
+			for(UntersuchbaresObjekt obj : this.untersuchbareObjekte)
+				if(!obj.isUntersucht())
 					i++;
 			return Integer.toString(i);
-		case "anzahlNPC": return Integer.toString(this.npcs.size());
-		case "alleNPCs":
-			String s = "";
-			for(NPC npc : this.npcs)
-				s += npc.getName() + ", ";
-			if(s.equals(""))
-				return "";
-			return s.substring(0, s.length() - 2);
 		}
-		// Alle moeglichen Zielorte und Richtungen.
-		for(Ausgang a : this.getAusgaenge().toArray(new Ausgang[0]))
-			if(a.getRichtungsName().toLowerCase().equals(param))
+		if(param == "anzahlGegenstände") return Integer.toString(this.gegenstaende.getAlleGegenstaende().length);
+		if(param == "anzahlNPCs") return Integer.toString(this.npcs.size());
+		
+		for(Ausgang a : this.ausgaenge)
+			if(a.getRichtungsName().equalsIgnoreCase(param) || a.getAbkuerzung().equalsIgnoreCase(param))
 				return a.getZielort().getNameExtended();
-		*/
-		return "test";
+		
+		return "Ungültig";
 	}
 	
 	/**
@@ -190,22 +180,20 @@ public class Ort implements Serializable, IPrintable {
 	 */
 	@Override
 	public String[] getParams() {
-		/*
-		Vector<String> params = new Vector<String>();
-		params.add("name");
-		params.add("anzahlAusgänge");
-		params.add("anzahlUntersuchbaresObjekt");
-		params.add("anzahlNichtUntersucht");
-		params.add("anzahlGegenstände");
-		params.add("anzahlNPC");
-		params.add("alleNPCs");
+		Vector<String> s = new Vector<String>();
+		s.add("name");
+		s.add("anzahlAusgänge");
+		s.add("anzahlUntersuchbarerObjekte");
+		s.add("anzahlNichtUntersucht");
+		s.add("anzahlGegenstände");
+		s.add("anzahlNPCs");
 
-		for(Ausgang a : ausgaenge)
-			params.add(a.getRichtungsName().toLowerCase());
+		for(Ausgang a : ausgaenge) {
+			s.add(a.getRichtungsName().toLowerCase());	
+			s.add(a.getAbkuerzung().toLowerCase());
+		}		
 
-		return params.toArray(new String[0]);
-		*/
-		return new String[]{"test"};
+		return s.toArray(new String[0]);
 	}
 
 	/* Besucht */

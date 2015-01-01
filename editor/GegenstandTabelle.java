@@ -19,7 +19,7 @@ public class GegenstandTabelle extends JTable {
 		Gegenstand[] geg = Gegenstand.GEGENSTAENDE;
 		for(Gegenstand g : geg) {
 			String eigenschaften = "";
-			String[] row = {"", g.getName(), g.getNumGen().toString(), g.getDescription(), eigenschaften};
+			String[] row = {"", g.getName(), g.getNumGen().toString(), g.getBeschreibung(), eigenschaften};
 			model.addRow(row);
 		}	
 		
@@ -27,7 +27,7 @@ public class GegenstandTabelle extends JTable {
 	
 	void addGegenstand(Gegenstand g) {
 		String eigenschaften = "";
-		String[] row = {"", g.getName(), g.getNumGen().toString(), g.getDescription(), eigenschaften};
+		String[] row = {"", g.getName(), g.getNumGen().toString(), g.getBeschreibung(), eigenschaften};
 		model.addRow(row);
 	}
 	

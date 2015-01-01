@@ -16,7 +16,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import util.StringEvent;
 import util.StringListener;
 
 public class Eingabefeld extends JTextArea implements StringListener, DocumentListener {
@@ -159,12 +158,13 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    modus = Mode.EINFUEGEN;
 	}
 
-	/** @override
+	/**
 	 *  Immer wenn ein Event auftritt wird das neue Wort ueberprueft und ggf der Liste hinzugefuegt.
 	 */
-	public void actionPerformed(StringEvent evt) {
-		if(!woerter.contains(evt.getCommand())) {
-			woerter.add(evt.getCommand());
+	@Override
+	public void actionPerformed(String string) {
+		if(!woerter.contains(string)) {
+			woerter.add(string);
 			Collections.sort(woerter);
 	    }
 	}
@@ -295,7 +295,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	/**
 	 *  Diese Subklasse holt das naechste eingegebene Kommando zurueck.
 	 */
-	private class AktionNaechstesKommando extends AbstractAction{
+	private class AktionNaechstesKommando extends AbstractAction {
 		// Die serielle Versionsnummer
 		private static final long serialVersionUID = 1L;
 

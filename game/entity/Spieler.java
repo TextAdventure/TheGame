@@ -2,7 +2,7 @@ package game.entity;
 
 import game.SpielWelt;
 import game.items.Accessoire;
-import game.items.Gegenstand;
+import game.items.AusruestbarerGegenstand;
 import game.items.Ausruestung;
 import game.items.Inventar;
 import game.items.Ruestung;
@@ -12,9 +12,7 @@ import game.items.Waffenart;
 import java.util.Vector;
 
 import util.NumerusGenus;
-import util.PlayerEvent;
-import util.PlayerListener;
-import util.StringEvent;
+import util.SpielerListener;
 import util.StringListener;
 
 /**
@@ -178,10 +176,10 @@ public class Spieler extends Entity {
 	 * @param gegenstand Der Gegenstand, welcher ausgeruestet werden soll.
 	 * @return True, wenn es ausgeruestet wurde, ansonsten false.
 	 */
-	public boolean ruesteAus(Gegenstand gegenstand) {
+	public boolean ruesteAus(AusruestbarerGegenstand gegenstand) {
 	    if(!inventar.containsGegenstand(gegenstand))
 	    	return false;
-	    Gegenstand[] alt2 = new Gegenstand[1];
+	    AusruestbarerGegenstand[] alt2 = new AusruestbarerGegenstand[1];
 	    inventar.removeGegenstand(gegenstand, 1);
 	    if(gegenstand instanceof Waffe) {
 	    	Waffe test = (Waffe)gegenstand;
@@ -195,7 +193,7 @@ public class Spieler extends Entity {
 	    } else {
 	    	return false;
 	    }
-	    for(Gegenstand g : alt2) {
+	    for(AusruestbarerGegenstand g : alt2) {
 	    	if(g != null) {
 	    		inventar.addGegenstand(g, 1);
 	    		maxLp -= g.getLp();
@@ -223,10 +221,10 @@ public class Spieler extends Entity {
 	 * @param gegenstand Der abzulegende Gegenstand.
 	 * @return True, wenn er abgelegt ist, ansonsten false.
 	 */
-	public boolean legeAb(Gegenstand gegenstand) {
+	public boolean legeAb(AusruestbarerGegenstand gegenstand) {
 	    if(!ausruestung.istAusgeruestet(gegenstand))
 	    	return false;
-	    Gegenstand[] alt2 = new Gegenstand[1];
+	    AusruestbarerGegenstand[] alt2 = new AusruestbarerGegenstand[1];
 	    if(gegenstand instanceof Waffe) {
 	    	Waffe test = (Waffe)gegenstand;
 	    	if(test.getHand() == Waffe.SCHWERTHAND) alt2[0] = ausruestung.tauscheSchwerthand(null);
@@ -239,7 +237,7 @@ public class Spieler extends Entity {
 	    } else {
 	    	return false;
 	    }
-	    for(Gegenstand g : alt2) {
+	    for(AusruestbarerGegenstand g : alt2) {
 	    	inventar.addGegenstand(g, 1);
 	    	maxLp -= g.getLp();
 	    	if(lp > maxLp) lp = maxLp;
@@ -314,12 +312,12 @@ public class Spieler extends Entity {
 	 */
 	public void notifyListeners(Faehigkeit... faehigkeit) {
 		for(Object listener : listeners) {			
-			if(listener instanceof PlayerListener)
-				((PlayerListener)listener).playerChanged(new PlayerEvent(this));
+			if(listener instanceof SpielerListener)
+				((SpielerListener)listener).spielerUpdate(this);
 			
 			if(listener instanceof StringListener)
 				for(Faehigkeit f : faehigkeit)
-					((StringListener)listener).actionPerformed(new StringEvent(f.getName()));
+					((StringListener)listener).actionPerformed(f.getName());
 				
 		
 	    }

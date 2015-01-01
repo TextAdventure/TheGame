@@ -1,18 +1,21 @@
 package game.items;
 
+import java.util.Vector;
+
 import game.entity.Attribut;
 import game.entity.EntityAttribut;
 import util.NumerusGenus;
 
 /**
- *  Diese Klasse repraesentiert alle Ruestungsteile fuer den Spieler.
+ * Eine Ruestung kann ausgeruestet werden und verbessert die Attribute eines Spielers.
+ * @author Marvin
  */
-public class Ruestung extends Gegenstand {
+public class Ruestung extends AusruestbarerGegenstand {
 	
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
 	
-	/* --- Die statischen Konstanten --- */
+	/* --- statische Konstanten --- */
 	
 	// Der Wert fuer einen Helm.
 	public static final byte HELM = 0;
@@ -25,19 +28,23 @@ public class Ruestung extends Gegenstand {
 	// Der Wert fuer Schuhe.
 	public static final byte SCHUHE = 4;
 	  
-	/* --- Die Variable --- */  
+	/* --- Variablen --- */  
 	
 	// Der Typ der Ruestung.
 	private byte typ;
 	  
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Eine neue Ruestung wird wie ein Gegenstand erstellt, aber es werden noch die Attributsboni uebergeben.
 	 * @param nameRuestung Der Name der Ruestung.
+	 * @param plural Der Plural der Ruestung.
 	 * @param numerusGenus Der Numerus und Genus.
 	 * @param beschreibung Die Beschreibung fuer diese Ruestung.
-	 * @param typ Der Typ dieser Ruestung.
+	 * @param typ Der Typ dieser Ruestung und in welchem Ausruestungsplatz sie getragen werden kann.
+	 * @param lebenspunkte Der Lebenspunktebonus beim Tragen dieser Ruestung.
+	 * @param magiepunkte Der Magiepunktebonus beim Tragen dieser Ruestung.
+	 * @param attributswerte Die Attributsboni beim Tragen dieser Ruestung.
 	 */
 	public Ruestung(String[] nameRuestung, String plural, NumerusGenus numerusGenus, String beschreibung, byte typ, int lebenspunkte, int magiepunkte,
 			int... attributswerte) {		
@@ -50,11 +57,11 @@ public class Ruestung extends Gegenstand {
 			attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], attributswerte[i]);
 	}
 	  
-	/* --- Die Methode --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Typ der Ruestung zurueck.
-	 * @return Den Typ dieser Rustung.
+	 * @return Den Typ dieser Rustung, diese werden durch die Konstanten in dieser Klasse festgelegt: HELM, BRUSTPANZER, HANDSCHUHE, HOSE, SCHUHE.
 	 */
 	public byte getTyp() {
 	    return typ;
@@ -68,11 +75,38 @@ public class Ruestung extends Gegenstand {
 		return "Rüstung";
 	}
 	
-	/* --- Die statische Methode --- */
+	@Override
+	public String getParam(String param) {
+		if(super.getParam(param) != "Ungültig")
+			return super.getParam(param);
+		
+		if(param == "typ") return Ruestung.getTypNamen(this.getTyp());
+		
+		return "Ungültig";
+	}
+	
+	@Override
+	public String[] getParams() {
+		Vector<String> s = new Vector<String>();
+		
+		for(String param : super.getParams())
+			s.add(param);
+		
+		s.add("typ");
+		
+		return s.toArray(new String[0]);
+	}
+	
+	/* --- statische Methode --- */
 	
 	/**
 	 *  Diese statische Methode gibt entsprechend des Typs eines Ruestungsteils, den Namen dieses Typs zurueck.
 	 *  typ: der Typ der Ruestung.
+	 */
+	/**
+	 * Gibt den ausgeschriebenen Namen des Typs einer Ruestung zurueck.
+	 * @param typ Eine der statischen Konstanten in dieser Klasse: HELM, BRUSTPANZER, HANDSCHUHE, HOSE, SCHUHE.
+	 * @return Deb ausgeschrieben Namen des Typs der Ruestung.
 	 */
 	public static String getTypNamen(byte typ) {
 		switch(typ) {

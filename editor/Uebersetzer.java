@@ -36,7 +36,7 @@ public class Uebersetzer {
 		//Orte hizufügen
 		OrtErweitert[] orte = welt.getOrte();
 		for(int i = 0; i < orte.length; i++) {
-			String ortKonstruktor = "Ort o" + i + " = new Ort(\"" + orte[i].ort.getName() + "\", \"" + orte[i].ort.getDescription() + "\");\n"; 
+			String ortKonstruktor = "Ort o" + i + " = new Ort(\"" + orte[i].ort.getName() + "\", \"" + orte[i].ort.getBeschreibung() + "\");\n"; 
 			code = code.replaceFirst("#O#", ortKonstruktor + "#O#");
 		}
 		code = code.replaceFirst("#O#", "\n");

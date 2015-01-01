@@ -33,6 +33,7 @@ Ort.class:
  -Umlaute korrigiert
  -kleinere Änderungen innerhalb der Methodenstruktur
  -Parameter Methoden Inhalt auskommentiert
+  -neu Gestaltung der Parameter Methoden(keine switch(String)-Anweisungen mehr)
  -Methode umbennant: boolean istBesucht() in isBesucht()
  -Methode umbennant: boolean istNPCda() int isNPCda()
 
@@ -117,3 +118,55 @@ Schadensart.class:
 Spieler.class:
  -formatiert und Autor hinzugefügt
  -unnötige geschweifte Klammern entfernt
+
+Accessoire.class:
+ -Klasse umbennant: Accesoire.class in Accessoire.class (Schreibfehler)
+ -extended nicht mehr Gegenstand.class sondern AusruestbarerGegenstand.class
+ -formatiert und Autor hinzugefügt
+ -Beschreibungen hinzugefügt
+
+AusruestbarerGegenstand.class:
+ -hinzugefügt und erweitert Gegenstand.class
+ -hier werden jetzt alle Werte und Attribute gespeichert und nicht mehr in Gegenstand.class
+
+Gegenstand.class:
+ -Variablen und Methoden in AusruestbarerGegenstand.class abgegeben, die Werte betreffen
+  -int lp
+  -int mp
+  -EntityAttribut[] attribut
+  -EntityResistenz[] resistenzen
+  -int getAttribut(String nameOderParam)
+  -float getResistenz(String nameOderParam)
+  -Gegenstand addResistenz(Schadensart schadensart, float wert)
+  -int getLp()
+  -int getMp()
+  -EntityAttribut[] getAttribute()
+  -EntityResistenz[] getResistenzen()
+  -boolean hasWerte()
+ -Parameter Methoden aktualisiert
+
+Ruestung.class:
+ -extended AusruestbarerGegenstand.class anstatt Gegenstand.class
+ -formatiert und Autor hinzugefügt
+ -Beschreibungen hinzugefügt
+
+Waffe.class:
+ -extended AusruestbarerGegenstand.class anstatt Gegenstand.class
+ -formatiert und Autor hinzugefügt
+ -Beschreibungen hinzugefügt
+
+
+Anzeige.class:
+ -formatiert und Autor hinzugefügt
+ -Konstruktor geändert: Anzeige() in Anzeige(int breite, int hoehe)
+
+
+Farbe.class:
+ -formatiert und Autor und Beschreibung hinzugefügt
+
+FarbigeSchrift.class:
+ -gelöscht
+
+IPrintable.class:
+ -formatiert und Autor hinzugefügt
+ -Methode umbenannt: String getDescription() int getBeschreibung()

@@ -5,24 +5,30 @@ import java.io.Serializable;
 import java.util.Vector;
 
 /**
- * Eine Farbe, die man fuer die Faerbung von Text verwenden kann, sie enthaelt alle wichtigen Informationen.
+ * Eine Farbe hat einen Namen, der mit dem Befehl "<c=name>text</c>" den Text faerben kann.
+ * Die Farbe wird einmal erstellt und kann dann ueberall im ganzen Abenteuer verwendet
+ * werden, nicht alle Texte unterstuetzen Farben.
+ * @author Marvin
  */
 public class Farbe implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	// Statischer Vektor mit allen Farben
+	// Statischer Vektor mit allen Farben mit "schwarz" vordefiniert als Schwarz.
 	private static Vector<Farbe> farben = new Vector<Farbe>();
+	static {
+		new Farbe("schwarz", 0, 0, 0);
+	}
 	
+	/* --- Variablen --- */
 	
 	// Der Name der Farbe.
-	private String name;
-	
+	private String name;	
 	// Die Farbe der Farbe.
 	private Color farbe;
 	
-	/* --- Die Konstruktoren --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Eine neue Farbe, basierend auf der Hexadezimalschreibweise.
@@ -48,7 +54,7 @@ public class Farbe implements Serializable {
 		farben.add(this);
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Gibt den Namen der Farbe zurueck.
@@ -56,7 +62,8 @@ public class Farbe implements Serializable {
 	 */
 	public String getName() {
 		return name;
-	}	
+	}
+	
 	/**
 	 * Gibt die Farbe zurueck, die gespeichert ist.
 	 * @return Die Farbe der Farbe.
@@ -65,26 +72,20 @@ public class Farbe implements Serializable {
 		return farbe;
 	}
 	
-	/* --- Die statischen Methoden --- */
+	/* --- statische Methoden --- */
 	
 	/**
 	 * Gibt eine Farbe aufgrund des Namens zurueck.
 	 * @param name Der Name der gesuchten Farbe.
-	 * @return Die gesuchte Farbe, falls es diese gibt, ansonsten null.
+	 * @return Die gesuchte Farbe, falls es diese gibt, ansonsten schwarz.
 	 */
 	public static Farbe getFarbe(String name) {
 		for(Farbe f : farben)
 			if(f.getName().equalsIgnoreCase(name))
 				return f;
-		return null;
+		return getFarbe("schwarz");
 	}
-	/* TODO
-	 * Giibt alle Farben als ein Vector auf einmal zurueck.
-	 * @return Alle Farben.
-	 *
-	public static Vector<Farbe> getAlleFarben() {
-		return farben;
-	}*/
+
 	/**
 	 * Ersetzt die Liste aller Farben durch eine neue(wird benoetigt, um die Farben zu laden und zu speichern).
 	 * @param neueFarben Die neuen Farben.
@@ -92,4 +93,13 @@ public class Farbe implements Serializable {
 	public static void setAlleFarben(Vector<Farbe> neueFarben) {
 		farben = neueFarben;
 	}
+	
+	/**
+	 * Gibt die Liste aller Farben zurueck, wird benoetigt, um die Farben zu laden und zu speichern.
+	 * @return Die Liste mit allen Farben.
+	 */
+	public static Vector<Farbe> getAlleFarben() {
+		return farben;
+	}
+	
 }

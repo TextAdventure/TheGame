@@ -8,3 +8,6 @@
 /PlayerListener.class
 /StringEvent.class
 /StringListener.class
+/InventarEvent.class
+/InventarListener.class
+/SpielerListener.class

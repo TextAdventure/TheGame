@@ -1,14 +1,16 @@
 package game.items;
 
+import java.util.Vector;
+
 import game.entity.Attribut;
 import game.entity.EntityAttribut;
 import util.NumerusGenus;
 
 /**
- * Ein ausruestbares Accessoire, das Attributsboni und Resistenzen fuer den Traegergibt.
+ * Ein ausruestbares Accessoire, das dem Traeger Attributsboni und Resistenzen gibt.
  * @author Marvin
  */
-public class Accessoire extends Gegenstand {
+public class Accessoire extends AusruestbarerGegenstand {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
@@ -26,7 +28,7 @@ public class Accessoire extends Gegenstand {
 	// Der Wert fuer ein Armband.
 	public static final byte ARMBAND = 5;	// Hat auch noch Platz 6
 	
-	/* --- Variable --- */
+	/* --- Variablen --- */
 	
 	// Der Typ des Accesoires.
 	private byte typ;
@@ -36,9 +38,13 @@ public class Accessoire extends Gegenstand {
 	/**
 	 * Ein neues Accessoire wir mit Namen, NumerusGenus, Beschreibung, einem Typ und den Attributsboni erstellt.
 	 * @param namenAccessoire Der Name fuer dieses Accessoire.
+	 * @param plural Der Plural des Accessoires.
 	 * @param numerusGenus Der Numerus und Genus.
 	 * @param beschreibung Die Beschreibung fuer dieses Accessoire.
 	 * @param typ Der Typ dieses Accessoires.
+	 * @param lebenspunkte Der Lebenspunktebonus beim Tragen des Accessoires.
+	 * @param magiepunkte Der Magiepunktebonus beim Tragen des Accessoires.
+	 * @param attributswerte Die Attributsboni beim Tragen des Accessoires.
 	 */
 	public Accessoire(String[] namenAccessoire, String plural, NumerusGenus numerusGenus, String beschreibung, byte typ, int lebenspunkte, int magiepunkte,
 			int... attributswerte) {		
@@ -67,6 +73,28 @@ public class Accessoire extends Gegenstand {
 	 */
 	public String getGegenstandsart() {
 		return "Accessoire";
+	}
+	
+	@Override
+	public String getParam(String param) {
+		if(super.getParam(param) != "Ungültig")
+			return super.getParam(param);
+		
+		if(param == "typ") return Accessoire.getTypNamen(this.getTyp());
+		
+		return "Ungültig";
+	}
+	
+	@Override
+	public String[] getParams() {
+		Vector<String> s = new Vector<String>();
+		
+		for(String param : super.getParams())
+			s.add(param);
+		
+		s.add("typ");
+		
+		return s.toArray(new String[0]);
 	}
 	
 	/* --- statische Methode --- */

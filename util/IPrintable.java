@@ -10,7 +10,7 @@ public interface IPrintable {
 	// Gibt den Namen MIT allen Modifikatoren zurueck.
 	public String getNameExtended();
 	// Gibt eine naehere Beschreibung des Objekts zurueck.
-	public String getDescription();
+	public String getBeschreibung();
 	
 	// Gibt den Parameter fuer das byte param zurueck(wird individuell verwaltet).
 	// Parameter werden prinzipiell mit '<p=WERT>' eingefuegt.
@@ -33,7 +33,7 @@ public interface IPrintable {
 	
 	/**
 	 * <p=WERT> Parameter einfuegen
-	 * <c=ffffff>TEXT</c>  farbig
+	 * <c=Farbe.class.getName()>TEXT</c>  farbig
 	 * <b>TEXT</b> fett
 	 * <u>TEXT</u> unterstrichen
 	 */

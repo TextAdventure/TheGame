@@ -11,8 +11,6 @@ import java.io.ObjectOutputStream;
 import java.util.Random;
 import java.util.Vector;
 
-import util.StringEvent;
-
 /**
  * Interpretiert die Eingabe des Spielers und uebermittelt sie an die SpielWelt.
  * @author Marvin
@@ -72,7 +70,7 @@ public class Interpreter {
 		// Wenn der Spieler sich im Kampf oder im Gespraech mit einem NPC befindet, dann wird der Befehl direkt
 		// an die Welt weitergegeben.
 	    if(welt.spielerKaempft() || welt.spielerSpricht()) {
-	    	welt.actionPerformed(new StringEvent(befehl));
+	    	welt.actionPerformed(befehl);
 	    	return;
 	    }
 

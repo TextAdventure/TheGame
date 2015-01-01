@@ -3,51 +3,68 @@ package util;
 import java.io.Serializable;
 
 /**
- *  Diese Klasse bietet die Moeglichkeiten fuer das erkennen und richtige
- *  auslesen von Artikeln und Pronomen entsprechend des Genus und Numerus.
+ * Mit dieser Klasse koennen die entsprechenden Artikel fuer einen bestimmten
+ * Fall automatisch ergaenzt werden und das entsprechend des Numerus und Genus.
+ * @author Marvin
  */
-public class NumerusGenus implements Serializable {
+public final class NumerusGenus implements Serializable {
+	
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
+	/* --- Variablen --- */
+	
 	// Der Wert fuer Numerus/Genus
 	private byte numGen;
 
-	// Die Werte: 0 maskulin, 1 feminin, 2 neutral, 3 plural
+	/* --- Konstruktor --- */
+	
+	/**
+	 * Privater Konstruktor, der nur innehalb dieser Klasse verwendet werden darf, um die Konstanten zu erstellen.
+	 * @param numGen 0 = maskulin, 1 = feminin, 2 = neutrum, 3 = plural
+	 */
 	private NumerusGenus(byte numGen) {
 		this.numGen = numGen;
 	}
 
+	/* --- Methoden --- */
+	
 	/**
-	 *  Diese Methode gibt den bestimmten Artikel zurueck.
-	 *  Nominativ: 0; Genitiv: 1; Dativ: 2; Akkusativ: 3
+	 * Gibt den bestimmten Artikel fuer einen Fall zurueck.
+	 * @param fall Der Fall, fuer den der Artikel bestimmt werden soll.
+	 * @return Gibt den bestimmten Artikel fuer diesen Fall zurueck.
 	 */
-	public String getBest(int fall) {
+	public String getBest(byte fall) {
 	    return best[numGen][fall];
 	}
 
 	/**
-	 *  Diese Methode gibt den unbestimmten Artikel zurueck.
-	 *  Nominativ: 0; Genitiv: 1; Dativ: 2; Akkusativ: 3
+	 * Gibt den unbestimmten Artikel fuer einen Fall zurueck.
+	 * @param fall Der Fall, fuer den der Artikel bestimmt werden soll.
+	 * @return Gibt den unbestimmten Artikel fuer diesen Fall zurueck.
 	 */
-	public String getUnbest(int fall) {
+	public String getUnbest(byte fall) {
 		return unbest[numGen][fall];
 	}
 
 	/**
-	 *  Diese Methode gibt das Personalpronomen zurueck.
-	 *  Nominativ: 0; Genitiv: 1; Dativ: 2; Akkusativ: 3
+	 * Gibt das Personalpronomen fuer einen Fall zurueck.
+	 * @param fall Der Fall, fuer den das Pronomen bestimmt werden soll.
+	 * @return Gibt den unbestimmten Artikel fuer diesen Fall zurueck.
 	 */
-	public String getPers(int fall) {
+	public String getPers(byte fall) {
 	    return pers[numGen][fall];
 	}
 
 	/**
-	 *  Diese Methode gibt true aus, wenn das Wort im Plural steht.
+	 * Testet, ob das Wort im Plural ist oder nicht.
+	 * @return True, wenn es im Plural ist, ansonsten false.
 	 */
 	public boolean isPlural() {
-	    if(numGen == 3) return true;
-	    else return false;
+	    if(numGen == 3)
+	    	return true;
+	    else
+	    	return false;
 	}
 
 	/**
@@ -67,15 +84,11 @@ public class NumerusGenus implements Serializable {
 		return "invalid"; //  Dieser Fall darf eigentlich nicht eintreten, wenn man die Konstanten benutzt.
 	}
 
-	// Dieses statische 2D-Array enthaelt alle Personalpronomen fuer alle Faelle.
-	private static String[][] pers = new String[][] {                                 // Zeile fuer Zeile
-		{"Er ", "Seiner ", "Ihm ", "Ihn "},
-		{"Sie ", "Ihrer ", "Ihr ", "Sie "},
-		{"Es ", "Seiner ", "Ihm ", "Es "},
-		{"Sie ", "Ihrer ", "Ihnen ", "Sie "}
-	};
+	/* --- Konstanten --- */
 
-	// Dieses statische 2D-Array enthaelt alle bestimmtne Artikel fuer alle Faelle.
+	/**
+	 * Diese Array enthaelt alle bestimmten Artikel fuer [Genus][Fall].
+	 */
 	private static String[][] best = new String[][] {                                 // Zeile fuer Zeile
 		{"Der ", "Des ", "Dem ", "Den "},
 		{"Die ", "Der ", "Der ", "Die "},
@@ -83,7 +96,9 @@ public class NumerusGenus implements Serializable {
 		{"Die ", "Der ", "Den ", "Die "}
 	};
 
-	// Dieses statische 2D-Array enthaelt alle unbestimmtne Artikel fuer alle Faelle.
+	/**
+	 * Dieses Array enthaelt alle unbestimmten Artikel fuer [Genus][Fall].
+	 */
 	private static String[][] unbest = new String[][] {                                 // Zeile fuer Zeile
 		{"Ein ", "Eines ", "Einem ", "Einen "},
 		{"Eine ", "Einer ", "Einer ", "Eine "},
@@ -91,14 +106,51 @@ public class NumerusGenus implements Serializable {
 		{"", "", "", ""}
 	};
 
+	/**
+	 * Dieses Array enthaelt alle Personalpronomen fuer [Genus][Fall].
+	 */
+	private static String[][] pers = new String[][] {                                 // Zeile fuer Zeile
+		{"Er ", "Seiner ", "Ihm ", "Ihn "},
+		{"Sie ", "Ihrer ", "Ihr ", "Sie "},
+		{"Es ", "Seiner ", "Ihm ", "Es "},
+		{"Sie ", "Ihrer ", "Ihnen ", "Sie "}
+	};
+	
 
 	// statisches Feld fuer Numerus und Genus
-	// maskulin
+	/**
+	 * Die statische Konstante fuer ein maskulines Wort.
+	 */
 	public static final NumerusGenus MASKULIN = new NumerusGenus((byte)0);
-	// feminin
+	/**
+	 * Die statische Konstante fuer ein feminines Wort.
+	 */
 	public static final NumerusGenus FEMININ = new NumerusGenus((byte)1);
-	// neutrum
+	/**
+	 * Die statusche Konstante fuer ein Neutrum.
+	 */
 	public static final NumerusGenus NEUTRUM = new NumerusGenus((byte)2);
-	// plural
+	/**
+	 * Die statische Konstante fuer den Plural.
+	 */
 	public static final NumerusGenus PLURAL = new NumerusGenus((byte)3);
+	
+	//statisches Feld mit allen Faellen als Konstanten.
+	/**
+	 * Die statische Konstante fuer den Nominativ.
+	 */
+	public static final byte NOMINATIV = 0;
+	/**
+	 * Die statische Konstante fuer den Genitiv.
+	 */
+	public static final byte GENITIV = 1;
+	/**
+	 * Die statische Konstante fuer den Dativ.
+	 */
+	public static final byte DATIV = 2;
+	/**
+	 * Die statische Konstante fuer den Akkusativ.
+	 */
+	public static final byte AKKUSATIV = 3;
+	
 }

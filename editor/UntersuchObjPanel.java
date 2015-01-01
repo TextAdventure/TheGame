@@ -116,7 +116,7 @@ public class UntersuchObjPanel extends JPanel implements ActionListener {
 			int index = list.getSelectedIndex();
 			UntersuchbaresObjekt obj = objekte.get(index);
 			name.setText(obj.getName());
-			desription.setText(obj.getDescription());
+			desription.setText(obj.getBeschreibung());
 			
 			int result = JOptionPane.showConfirmDialog(this, dialog, "Untersuchb. Obj.", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(result == JOptionPane.OK_OPTION) {

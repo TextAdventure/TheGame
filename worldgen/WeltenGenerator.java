@@ -38,10 +38,10 @@ public final class WeltenGenerator {
 		new Farbe("heiﬂ", 220, 100, 50);
 		
 		Gegenstand hallo = new Gegenstand(new String[] { "Hallo" }, "Hallos", NumerusGenus.NEUTRUM, "Ein freundliches Hallo.");
-		Waffe flammenwerfer = new Waffe(new String[] { "Napalmwerfer", "Flammenwerfer" }, "Napalmwerfer", NumerusGenus.MASKULIN, "Er ist ziemlich <c=heiﬂ>heiﬂ</c>.",
-				Waffe.ZWEIHAENDIG, flammen, 0, 0, 666);
+		Waffe flammenwerfer = new Waffe(new String[] { "<c=heiﬂ>Flammenwerfer</c>" }, "Flammenwerfer", NumerusGenus.MASKULIN,
+				"Er ist ziemlich <c=heiﬂ>heiﬂ</c>.\n+<p=st‰rke> St‰rke", Waffe.ZWEIHAENDIG, flammen, 0, 0, 100);
 		
-		Ort ort1 = new Ort("<c=heiﬂ>Ort 1</c>", "Das ist der erste Ort.");
+		Ort ort1 = new Ort("<c=heiﬂ>Ort 1</c>", "Das ist ein <c=heiﬂ>heiﬂer</c> Ort.");
 		ort1.addGegenstand(hallo, 1);
 		ort1.addGegenstand(flammenwerfer, 1);
 		Ort ort2 = new Ort("Ort 2", "Das ist der 2. Ort.");
@@ -62,6 +62,8 @@ public final class WeltenGenerator {
 		
 		
 		welt.setAktuellePositon(ort1);
+		
+		welt.speichereListen();
 	    
 	    /**
 	     *  Das Programm schreibt die SpielWelt in die angegebene Datei.

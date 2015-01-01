@@ -1,9 +1,13 @@
 package util;
 
 /**
- * Der Listener empfaengt einen String von einem Event.
+ * Kann von einer Klasse implementiert werden, sodass diese Strings empfangen kann und diese dann verarbeiten.
+ * @author Marvin
  */
 public interface StringListener {
-	// Diese Methode muss ueberschrieben werden.
-	public abstract void actionPerformed(StringEvent evt);
+	/**
+	 * Wird immer aufgerufen, wenn ein String weitergegeben werden soll.
+	 * @param evt Der String, der uebergeben werden soll.
+	 */
+	public abstract void actionPerformed(String string);
 }

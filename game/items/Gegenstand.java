@@ -1,12 +1,7 @@
 package game.items;
 
-import game.entity.Attribut;
-import game.entity.EntityAttribut;
-import game.entity.EntityResistenz;
-import game.entity.Resistenz;
-import game.entity.Schadensart;
-
 import java.io.Serializable;
+import java.util.Vector;
 
 import util.IPrintable;
 import util.NumerusGenus;
@@ -38,18 +33,6 @@ public class Gegenstand implements Serializable, IPrintable {
 	private String beschreibung;
 	// Die ID des Gegenstands.
 	private short id;
-	
-	/* --- Variablen fuer alle Subklassen --- */	
-	
-	// Der Lebenspunktebonus des Gegenstands.
-	protected int lp;	
-	// Der Magiepunktebonus des Gegenstands.
-	protected int mp;
-	
-	// Alle Statuswerte und Attribute in einem Array.
-	protected EntityAttribut[] attribute;
-	// Alle Resistenzen des Gegenstands.
-	protected EntityResistenz[] resistenzen;
 		  
 	/* --- Konstruktor --- */
 	
@@ -67,13 +50,6 @@ public class Gegenstand implements Serializable, IPrintable {
 	    this.numGen = numerusGenus;
 	    this.beschreibung = beschreibung;
 	    
-	    attribute = new EntityAttribut[Attribut.getMaxId()];
-	    for(int i = 0; i < Attribut.getMaxId(); i++)
-	    	attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], 0);
-	    resistenzen = new EntityResistenz[Resistenz.getMaxId()];
-	    for(int i = 0; i < Resistenz.getMaxId(); i++)
-	    	resistenzen[i] = new EntityResistenz(Resistenz.RESISTENZEN[i], 0.0f);
-	    
 	    Gegenstand[] g = GEGENSTAENDE;
 	    GEGENSTAENDE = new Gegenstand[g.length + 1];
 	    
@@ -89,14 +65,6 @@ public class Gegenstand implements Serializable, IPrintable {
 	}
 	  
 	/* --- Methoden --- */
-	
-	/**
-	 * Diese Methode aendert den Namen des Gegenstands.
-	 * @param neuerName Der neue Name fuer den Gegenstand.
-	 *
-	public void setName(String neuerName) {
-	    name = neuerName;
-	}*/
 	  
 	/**
 	 * Diese Methode gibt den Namen des Gegenstands zurueck, OHNE Modifikatoren.
@@ -154,15 +122,15 @@ public class Gegenstand implements Serializable, IPrintable {
 	 * @return Die Beschreibung des Gegenstands.
 	 */
 	@Override
-	public String getDescription() {
+	public String getBeschreibung() {
 		// Subklassen koennen hier noch genauer definiert werden.
 		return beschreibung;
 	}
 	  
 	/**
-	 * Diese Methode ueberprueft, ob es sich um ein Synonym fuer den Name des Gegenstands handelt.
+	 * Ueberprueft, ob es sich um ein Synonym fuer den Name des Gegenstands handelt.
 	 * @param synonym Das Synonym, welches ueberprueft werden soll.
-	 * @return Gibt zurueck, ob es sich um ein Synonyme handelt.
+	 * @return True, falls es sich um ein Synonym handelt, ansonsten false.
 	 */
 	public boolean isSynonym(String synonym) {
 	    for(String s : synonyme) {
@@ -173,7 +141,7 @@ public class Gegenstand implements Serializable, IPrintable {
 	}
 	  
 	/**
-	 * Diese Methode gibt den NumerusGenus des Gegenstands zurueck.
+	 * Gibt den NumerusGenus des Gegenstands zurueck.
 	 * @return Gibt den NumerusGenus des Gegenstands zurueck.
 	 */
 	public NumerusGenus getNumGen() {
@@ -181,46 +149,31 @@ public class Gegenstand implements Serializable, IPrintable {
 	}
 
 	/**
-	 * Gibt den Parameter fuer einen Byte-Wert zurueck.
-	 * @param param Der Wert des Parameters.
-	 * @return Der String fuer den Parameter.
+	 * Gibt den ausgeschriebenen Parameter fuer einen Parameter zurueck, dies koennen verschieden Eigenschaften des Gegenstandes sein.
+	 * @param param Der geuschte Parameter.
+	 * @return Der ausgeschriebene Wert fuer den Parameter.
 	 */
 	@Override
 	public String getParam(String param) {
-		/*
-		// Alle Parameter muessen von Hand int getParams() registriert werden!
-		switch(param) {
-		case "lp": return Integer.toString(lp);
-		case "mp": return Integer.toString(mp);
-		}
-		for(EntityAttribut ea : attribute)
-			if(ea.getAttribut().getParam().equals(param))
-				return Integer.toString(ea.getWert());
-		for(EntityResistenz er : resistenzen)
-			if(er.getResistenz().getParam().equals(param))
-				return Float.toString(er.getWert());
-		return "";
-		*/
-		return "test";
+		if(param == "name") return this.getNameExtended();
+		if(param == "plural") return this.getPlural();
+		if(param == "numerusGenus") return this.getNumGen().toString();
+		if(param == "id") return Short.toString(this.getId());
+		return "Ungültig";
 	}
 
 	/**
 	 * Gibt alle Parameter des Gegenstands zurueck.
-	 * @return Alle Parameter.
+	 * @return Eine Liste mit allen gueltigen Parametern.
 	 */
 	@Override
 	public String[] getParams() {
-		/*
 		Vector<String> s = new Vector<String>();
-		s.add("lp");
-		s.add("mp");
-		for(EntityAttribut ea : attribute)
-			s.add(ea.getAttribut().getParam());
-		for(EntityResistenz er : resistenzen)
-			s.add(er.getResistenz().getParam());
+		s.add("name");
+		s.add("plural");
+		s.add("numerusGenus");
+		s.add("id");
 		return s.toArray(new String[0]);
-		*/
-		return new String[]{"test"};
 	}
 
 	/**
@@ -252,6 +205,7 @@ public class Gegenstand implements Serializable, IPrintable {
 				return g;
 	    return null;
 	}
+	
 	/**
 	 * Gibt einen Gegenstand basierend auf seiner ID zurueck.
 	 * @param id Die ID des Gegenstands.
@@ -263,82 +217,20 @@ public class Gegenstand implements Serializable, IPrintable {
 		return GEGENSTAENDE[id];
 	}
 	
-	/* --- Die Methoden fuer die Subklassen --- */
-	
 	/**
-	 * Gibt den Wert eines Attributs basierend auf dem Namen oder des Parameters zurueck.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Attributs.
-	 * @return Den Wert des gesuchten Attributs und -1, wenn es dieses nicht gibt.
+	 * Gibt die Liste mit allen Gegenstaenden zurueck, wird benoetigt, um die Gegenstaende zu speichern und zu laden,
+	 * @return Die Liste mit allen Gegenstaenden.
 	 */
-	public int getAttribut(String nameOderParam) {
-		for(EntityAttribut ea : attribute)
-			if(ea.getAttribut().getName().equals(nameOderParam) || ea.getAttribut().getParam().equals(nameOderParam))
-				return ea.getWert();
-		return -1;
-	}
-	/**
-	 * Gibt den Wert einer Resistenz basierend auf dem Namen oder des Parameters zurueck.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise der Resistenz.
-	 * @return Den Wert der gesuchten Resistenz und -1.0, wenn es diese nicht gibt.
-	 */
-	public float getResistenz(String nameOderParam) {
-		for(int i = 0; i < Resistenz.getMaxId(); i++)
-			if(Resistenz.RESISTENZEN[i].getName().equals(nameOderParam) || Resistenz.RESISTENZEN[i].getParam().equals(nameOderParam))
-				return resistenzen[i].getWert();
-		return -1.0f;
-	}
-	/**
-	 * Fuegt dem Gegenstand eine Resistenz hinzu, die den Traeger vor der uebergebenen Schadensart schuetzt.
-	 * @param schadensart Die Schadensart, vor der der Gegenstand schuetzt.
-	 * @param wert Die prozentuale Reduktion des Schadens.
-	 * @return Sich selbst.
-	 */
-	public Gegenstand addResistenz(Schadensart schadensart, float wert) {
-		for(EntityResistenz er : resistenzen)
-			if(er != null && er.getResistenz().getSchadensart().equals(schadensart)) {
-				er.addWert(wert);
-				return this;
-			}		
-		return this;
+	public static Gegenstand[] getAlleGegenstaende() {
+		return GEGENSTAENDE;
 	}
 	
 	/**
-	 * Gibt die zusaetzlichen Lebenspunkte des Gegenstands zurueck.
-	 * @return Die zusaetzlichen Lebenspunkte fuer den Traeger.
+	 * Legt die Liste aller Gegenstaende fest, wird benoetigt um die Gegenstaende zu speichern und zu laden.
+	 * @param gegenstaende Die neue Liste aller Gegenstaende.
 	 */
-	public int getLp() { return lp; }
-	/**
-	 * Gibt die zusaetzlichen Magiepunkte des Gegenstands zurueck.
-	 * @return Die zusaetzlichen Magiepunkte fuer den Traeger.
-	 */
-	public int getMp() { return mp; }
-	
-	/**
-	 * Gibt das gesamte Attributsarray zurueck.
-	 * @return Ein Array mit allen Attributen.
-	 */
-	public EntityAttribut[] getAttribute() { return attribute; }
-	
-	/**
-	 * Gibt das gesmate Resistenzenarray zurueck.
-	 * @return Ein Array mit allen Resistenzen.
-	 */
-	public EntityResistenz[] getResistenzen() { return resistenzen; }
-	
-	/**
-	 *  Gibt zurueck, ob der Gegenstand Statuswerte hat oder nicht.
-	 *  @return gibt wahr zurueck, falls der Gegenstand Statuswerte hat.
-	 */
-	public boolean hasWerte() {
-		if(lp != 0 || mp != 0)
-			return true;
-		for(EntityAttribut ea : attribute)
-			if(ea.getWert() != 0)
-				return true;
-		for(EntityResistenz er : resistenzen)
-			if(er.getWert() != 0)
-				return true;
-		return false;
+	public static void setAlleGegenstaende(Gegenstand[] gegenstaende) {
+		GEGENSTAENDE = gegenstaende;
 	}
 	
 }

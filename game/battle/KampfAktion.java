@@ -1,5 +1,6 @@
 package game.battle;
 
+import util.NumerusGenus;
 import game.SpielWelt;
 import game.entity.Entity;
 import game.entity.Faehigkeit;
@@ -123,7 +124,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 			
 			for(char c : ausgabe.toCharArray()) {
 	    		if(c == '§') {
-	    			int fall = Integer.valueOf(ausgabe.substring(ausgabe.indexOf(c) + 1, ausgabe.indexOf(c) + 2));
+	    			byte fall = Byte.valueOf(ausgabe.substring(ausgabe.indexOf(c) + 1, ausgabe.indexOf(c) + 2));
 	    			ausgabe = ausgabe.replaceFirst(String.valueOf(fall), "");
 	    			
 	    			if(ausgabe.startsWith("§"))
@@ -132,7 +133,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	    				ausgabe = ausgabe.replaceFirst("§", angreifer.getNumGen().getBest(fall).toLowerCase() + angreifer.getName());
 	    		}
 	    		if(c == '&') {
-	    			int fall = Integer.valueOf(ausgabe.substring(ausgabe.indexOf(c) + 1, ausgabe.indexOf(c) + 2));
+	    			byte fall = Byte.valueOf(ausgabe.substring(ausgabe.indexOf(c) + 1, ausgabe.indexOf(c) + 2));
 	    			ausgabe = ausgabe.replaceFirst(String.valueOf(fall), "");
 	    			
 	    			if(ausgabe.startsWith("&"))
@@ -146,7 +147,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 			return;
 		}
 		
-		SpielWelt.WELT.println("Es konnte keine Aktion für " + angreifer.getNumGen().getBest(2).toLowerCase() + angreifer.getName() + " ausgeführt werden.");
+		SpielWelt.WELT.println("Es konnte keine Aktion für " + angreifer.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + angreifer.getName() + " ausgeführt werden.");
 	}
 
 	/**

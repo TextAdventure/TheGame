@@ -79,7 +79,7 @@ public class UntersuchbaresObjekt implements Serializable, IPrintable {
 	 * @return Die Beschreibung des Objekts.
 	 */
 	@Override
-	public String getDescription() {
+	public String getBeschreibung() {
 	    return beschreibung;
 	}
 	

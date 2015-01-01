@@ -13,18 +13,16 @@ public class InfoPanel extends Anzeige {
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Erstellt ein neues InfoPanel.
 	 */
-	public InfoPanel() {
-		super();
-		
-		this.scroll.setSize(345, 220);
+	public InfoPanel(int breite, int hoehe) {
+		super(breite, hoehe);
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	
 	/**
 	 * Zeigt die Informationen zu einem IPrintable in dem InfoPanel an.
@@ -51,18 +49,6 @@ public class InfoPanel extends Anzeige {
 		
 		println("Schadensart: " + faehigkeit.getSchadensart().getName());		
 		println("Schaden: " +  faehigkeit.getBonusExtended(spieler));
-		
-		//faehigkeit.isSchadensart(Schadensart.PHYSISCH) ? println("Schaden: " + fahigkeit.getBonus(spieler.getAng())) : println("Schaden: " + 
-		//faehigkeit.getBonus(attribut));
-		
-		/*if(faehigkeit.isPhysisch()) {
-			println("Physische Fähigkeit");			
-			println("Angriffskraft: " + faehigkeit.getBonus(spieler.getAng()));			
-		}
-		else {
-			println("Magische Fähigkeit");
-			println("Zauberkraft: " + faehigkeit.getBonus(spieler.getMagAng()));
-		}*/
 		println("\nKosten: " + faehigkeit.getKosten(spieler.getMaxMp()) + " MP");
 		println("\nMögliche Waffen:");
 		for(Waffenart wa : faehigkeit.getGueltigeWaffen()) {
