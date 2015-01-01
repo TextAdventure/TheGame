@@ -92,6 +92,13 @@ public class UntersuchObjPanel extends JPanel implements ActionListener {
 	}
 	
 
+	/**
+	 * Realisiert den add-, remove- und modify Button.
+	 *  - add: Offnet einen neuen Dialog, in dem die Informationen für ein neues untersuchbares Objekt abgefragt werden.
+	 *  - remove: löscht alle ausgewählten Untersuchbaren Objekte.
+	 *  - modify: öffnet den gleichen Dialog wie add, trägt aber die alten Informationen des Untersuchbaren Objekt schon ein.
+	 *  Änderungen werden gleich im Untersuchbaren Objekt gespeichert.  
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();

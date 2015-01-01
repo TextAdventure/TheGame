@@ -19,10 +19,9 @@ import javax.swing.undo.UndoManager;
  * 
  * - Übersetzer Menü
  * 
- * TODO:
- *  - Undo/Redo
- *  - Edit Menü überarbeiten
- *  - Exception Handling
+ * TODO: Undo/Redo
+ * TODO: Edit Menü überarbeiten
+ * TODO: Exception Handling + Dokumentation
  *  
  * @author Felix
  *
@@ -60,10 +59,10 @@ public class IDE extends JFrame implements ChangeListener {
 		setJMenuBar(menu);		
 		
 		//the central TabbedPane
-		JPanel p = new JPanel(new BorderLayout());
+		JPanel right = new JPanel(new BorderLayout());
 		tabbedPane = new BFTabbedPane();
 		tabbedPane.addChangeListener(this);
-		p.add(tabbedPane, BorderLayout.CENTER);
+		right.add(tabbedPane, BorderLayout.CENTER);
 		
 		//Toolbar
 		tools = new WorldToolbar();
@@ -75,12 +74,15 @@ public class IDE extends JFrame implements ChangeListener {
 					new GegenstandTabelleDialog(currentWS.getWorld()).setVisible(true);
 			}
 		});
-		p.add(tools, BorderLayout.NORTH);
-		add(p, BorderLayout.CENTER);
+		right.add(tools, BorderLayout.NORTH);
+		
 		
 		//FileTree
 		tree = new FileTree(this, new File(System.getProperty("user.dir")));
-		add(tree, BorderLayout.WEST);
+		
+		JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tree, right);
+		mainPane.setDividerSize(4);
+		add(mainPane, BorderLayout.CENTER);
 		
 		
 	}
@@ -343,11 +345,17 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	/* * * IO-Methods End * * */
 	
+	/**
+	 * Ruft updateTitle() auf.
+	 */
 	@Override
 	public void stateChanged(ChangeEvent evt) {
 		updateTitle();
 	}
 	
+	/**
+	 * Pass den Titel des Frames an den Titel des aktuell anusgewählten Workspaces an.
+	 */
 	public void updateTitle() {
 		File currentFile = tabbedPane.getCurrentFile();
 		if(currentFile != null) 
@@ -357,7 +365,10 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	
 	/* * * Construction-Methods * * */
-	
+	/**
+	 * Initialisiert das Datei-Menü.
+	 * @return Das fertige Menü.
+	 */
 	private JMenu createFileMenu() {
 		JMenu menu = new JMenu("Datei");
 		
@@ -402,6 +413,11 @@ public class IDE extends JFrame implements ChangeListener {
 		return menu;
 	}
 	
+	/**
+	 * Initialisiert das Bearbeiten-Menü.
+	 * 
+	 * @return Das fertige Menü.
+	 */
 	private JMenu createEditMenu() {
 		JMenu menu = new JMenu("Bearbeiten");
 		
@@ -447,6 +463,10 @@ public class IDE extends JFrame implements ChangeListener {
 		return menu;
 	}
 	
+	/**
+	 * Erstellt das Menü mit den Optionen zum Übersetzen der aktuellen Welt.
+	 * @return Das fertige Menü.
+	 */
 	public JMenu createRunMenu() {
 		JMenu menu = new JMenu("Übersetzen");
 
@@ -469,11 +489,18 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	
 	
+	/**
+	 * Gibt das aktuell ausgewählte Tool der Toolbar zurück.
+	 * @return Das aktuell ausgewählte Tool. 
+	 */
 	Tools getSelectedTool() {
 		return tools.getSelectedTool();
 	}
 	
-
+	/**
+	 * Startet den Editor.
+	 * @param args Keine Bedeutung.
+	 */
 	public static void main(String[] args) {
 		new IDE().setVisible(true);
 	}

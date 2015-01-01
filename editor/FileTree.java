@@ -20,9 +20,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  * GUI-Componente der IDE. Stellt den Datei-Baum links in der IDE dar.
+ * Der FileTree ermöglicht es eine Datei durch Doppelclick auf diese in einen neuen Tab zu laden - falls dise Datei
+ * eine gültige Codierung einer Welt enthält.
+ * 
+ * Über Buttons kann man das angezeigte Verzeichnis ändern.
  * 
  * TODO:
- *  - Datei öffnen durch Doppelclick
  *  - CurrentDirectory ändern
  *  
  * @author Felix
@@ -81,7 +84,7 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 		add(button, BorderLayout.NORTH);
 		
 		
-		tree = new JTree(addNodes(null, currDir));
+		tree = new JTree(addNodes(currDir));
 		tree.addMouseListener(this);
 		center = new JScrollPane(tree); 
 		add(center, BorderLayout.CENTER);
@@ -89,21 +92,19 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 	}
 
 	/**
-	 * Erstellt den FileTree für die Wurzel dir. Die Methode arbeitet rekursiv, d.h. zum starten currTop = null
-	 * eingeben.
+	 * Erstellt den FileTree für die Wurzel dir. 
 	 * 
-	 * @param curTop
-	 * @param dir
-	 * @return
+	 * @param dir Wurzelverzeichnis des angezeigten Datei-Baumes.
+	 * @return Wurzel des erstellten Baumes.
 	 */
-	static DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir) {
+	static DefaultMutableTreeNode addNodes(File dir) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dir.getName());
 		
 		File[] list = dir.listFiles();
 		if(list != null) {
 			Arrays.sort(list, new FileComparator());			
 			for(int i = 0; i < list.length; i++)
-				node.add(addNodes(node, list[i]));
+				node.add(addNodes(list[i]));
 		}
 		
 		return node;
@@ -112,6 +113,9 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 
 	
 	/* * * MouseListener * * */
+	/**
+	 * Registriert Doppelclicks auf Dateien und gibt die gewählte Datei an die IDE zm Öffnen weiter.
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getClickCount() == 2) {
@@ -142,6 +146,9 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 	public void mouseReleased(MouseEvent e) {}
 	
 	
+	/**
+	 * Realisert die Fuktionalität der Buttons up und browse.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object src = arg0.getSource();
@@ -167,7 +174,7 @@ public class FileTree extends JPanel implements MouseListener, ActionListener {
 	 */
 	void update() {
 		remove(center);				
-		tree = new JTree(addNodes(null, currDir));
+		tree = new JTree(addNodes(currDir));
 		tree.addMouseListener(this);
 		center = new JScrollPane(tree);
 		add(center, BorderLayout.CENTER);

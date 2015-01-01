@@ -18,7 +18,9 @@ import javax.swing.JTabbedPane;
  *  - festlegen von Name/Beschreibung
  *  - Untersuchbare Objekte
  *  - Gegenstände
- *  - NPCs
+ *  TODO: - NPCs
+ *  
+ *  Änderungen werden mittels des ok-Buttons gespeichert.
  *  
  * @author Felix
  *
@@ -31,7 +33,6 @@ public class OrtDialog extends JDialog implements ActionListener {
 	private UntersuchObjPanel untersuchObj;
 	private OrtAllgemeinPanel allgemein;
 	private NPCPanel npcs;
-	private EffektePanel effekte;
 	private GegenstandPanel gegenstaende;
 	
 	private Ort ort;
@@ -86,7 +87,9 @@ public class OrtDialog extends JDialog implements ActionListener {
 	}
 
 	
-	/* * * ActionListener * * */
+	/**
+	 * Realisiert den ok-Button.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ort.setName(allgemein.getOrtName());

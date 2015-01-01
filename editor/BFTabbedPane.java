@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.swing.undo.UndoManager;
 
 /**
- * Custom Component auf Basis des JTabbedPane.
+ * Custom Component auf Basis des JTabbedPane. Stellt Informationen über den aktuellen Workspace bereit.
  * 
  * Recycled von BrainFuck IDE.
  * 
@@ -19,6 +19,11 @@ public class BFTabbedPane extends JTabbedPane {
 	//A custom TabbedPane with close-Buttons on each tab!	
 	private static final long serialVersionUID = 1L;
 		
+	/**
+	 * Hilfsklsse. Realisiert den X-Button in dem Tabs, mit dem man einen Tab schließen kann.
+	 * @author Felix
+	 *
+	 */
 	private class BFTabButton extends JButton implements ActionListener {
 		//the close-Button
 		private static final long serialVersionUID = 1L;
@@ -28,6 +33,9 @@ public class BFTabbedPane extends JTabbedPane {
 			addActionListener(this);
 		}
 		
+		/**
+		 * Schließt den aktuellen Tab.
+		 */		
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			int pos = BFTabbedPane.this.indexOfTabComponent(getParent());
@@ -37,6 +45,9 @@ public class BFTabbedPane extends JTabbedPane {
 				System.err.println("Error: the tab was not found at the TabbedPane");
 		}
 			
+		/**
+		 * Zeichnet das rote X im Button.
+		 */
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponents(g);
@@ -47,6 +58,7 @@ public class BFTabbedPane extends JTabbedPane {
 			g2d.drawLine(getWidth()-2, 2, 2, getHeight()-2);
 		}
 	}
+	
 	
 	protected class ChangeTabLeftAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
@@ -65,6 +77,9 @@ public class BFTabbedPane extends JTabbedPane {
 		}
 	}
 	
+	/**
+	 * Erstellt einen neuen Tab mit Titel title und Inhalt comp. Der Tab bekommt auch einen Button zum schließen.
+	 */
 	@Override
 	public void addTab(String title, Component comp) {
 		super.addTab(title, comp);
@@ -100,10 +115,18 @@ public class BFTabbedPane extends JTabbedPane {
 			System.err.println("Error: the tab has not been added to the JTabbedPane");
 	}
 	
+	/**
+	 * Wählt den nächsten Tab als aktiven Tab aus. Falls gerade der letzte Tab ausgewählt war, 
+	 * so wird als nächstes der erste Tab ausgewählt.
+	 */
 	public void nextTab() {
 		setSelectedIndex((getSelectedIndex() + 1) % getTabCount());
 	}
 	
+	/**
+	 * Wählt den Tab links vom aktuell ausgewählten als aktiv aus. Falls der erste Tab ausgewählt war, so wird
+	 * durch previousTab() der letzt Tab als aktiv ausgewählt. 
+	 */
 	public void previousTab() {
 		setSelectedIndex((getTabCount() + getSelectedIndex() -1) % getTabCount());
 	}
@@ -119,24 +142,47 @@ public class BFTabbedPane extends JTabbedPane {
 		return null;
 	}
 	
+	/**
+	 * Gibt die Datei zurück, in der der aktuelle Workspace gespeichert ist.
+	 * @return Die Datei, in der der aktuelle Workspace gespeichert ist. Falls der Workspace noch nie gespeichert wurde 
+	 * und nicht aus einer Datei geladen wurde, so ist noch keine Datei festgelegt und es wird null zurück gegeben.
+	 */
 	public File getCurrentFile() {
 		if(getCurrentWorkspace() == null) return null;
 		return getCurrentWorkspace().getFile();
 	}
 	
+	/**
+	 * Legt die Datei fest, die zu dem aktuellen Workspace gehören soll.
+	 * @param file Die Datei, in der der Workspace beim Speichern (nicht Soeichern unter, d.h. ohne Auswahl einer Datei) 
+	 * gespeichert werden soll.
+	 */
 	public void setCurrentFile(File file) {
 		if(getCurrentWorkspace() == null) return;
 		getCurrentWorkspace().setFile(file);
 	}
 	
+	/**
+	 * Gibt den Aktuell aktiven Workspace zurück.
+	 * @return Den Workspace im aktuell ausgewählten Tab. Falls kein Tab geöffnet ist, oder im aktuellen Tab
+	 * kein Workspace in einem JScrollPane angezeigt wird, so wird null zurück gegeben. 
+	 */
 	public Workspace getCurrentWorkspace() {
 		Component c = getSelectedComponent();
-		if(c instanceof JScrollPane)
-			return (Workspace)((JScrollPane)c).getViewport().getComponent(0);
-		else
+		if(c instanceof JScrollPane) {
+			Component comp = ((JScrollPane)c).getViewport().getComponent(0); 
+			if(comp instanceof Workspace)
+				return (Workspace)comp;
+			else 
+				return null;
+		} else
 			return null;
 	}
 	
+	/**
+	 * Setzt den Titel des aktuell ausgewählten Tabs auf den Namen der Datei, in der der aktuelle Workspace gesoeichert ist.
+	 * Falls getCurrentFile() null liefert, so wird nichts getan.
+	 */
 	public void updateCurrentTitle() {
 		if(getCurrentFile() == null) return;
 		setTitleAt(getSelectedIndex(), getCurrentFile().getName());

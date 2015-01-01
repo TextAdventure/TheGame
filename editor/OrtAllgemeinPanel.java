@@ -64,11 +64,18 @@ public class OrtAllgemeinPanel extends JPanel {
 	}
 	
 	
-	
+	/**
+	 * Gibt den eingegebenen Namen für diesen Ort zurück.
+	 * @return Den eingegebenen Namen für diesen Ort.
+	 */
 	String getOrtName() {
 		return name.getText();
 	}
 	
+	/**
+	 * Gibt die eingegebene Beschreibung für diesen Ort zurück.
+	 * @return Die eingegebene Beschreibung für diesen Ort.
+	 */
 	String getBeschreibung() {
 		return beschreibung.getText();
 	}
@@ -76,6 +83,7 @@ public class OrtAllgemeinPanel extends JPanel {
 
 	/**
 	 * Fordert das JTextField, in das der Name des Orts eingetragen wird, dazu auf, sich den Focus zu beschaffen.
+	 * Wird beim Öffnen des OrtDialogs aufgerufen.
 	 */
 	void setFocus() {
 		name.requestFocusInWindow();		

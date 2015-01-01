@@ -56,15 +56,27 @@ public class Workspace extends JPanel{
 		addMouseMotionListener(world);
 	}
 	
+	/**
+	 * Gibt die Datei zrück, in der dieser Workspace gespeichert ist, oder null, wenn dieser Workspace noch nie
+	 * gespeichert wurde.
+	 * @return
+	 */
 	File getFile() {
 		return file;
 	}
+	/**
+	 * Legt fest, in welcher Datei dieser Workspace von nun an gespeichert werden soll.
+	 * @param file
+	 */
 	void setFile(File file) {
 		this.file = file;
 	}
 	
 	
-	
+	/**
+	 * Gibt die aktuell bearbeitete Welt zurück.
+	 * @return
+	 */
 	WeltObjekt getWorld() {
 		return welt;
 	}
@@ -76,6 +88,11 @@ public class Workspace extends JPanel{
 	}
 	
 	
+	/**
+	 * Gibt die Position des hotizontalen Rollbalkens an, falls dieser Workspace in einem JSccrollPane angezeigt wird.
+	 * 0 andernfalls.
+	 * @return
+	 */
 	int getXPos() {		
 		//if this panel is displayed in a scroll pane just draw the necessary part of it
 		//--> increase performance!!!
@@ -87,6 +104,11 @@ public class Workspace extends JPanel{
 		return 0;
 	}
 	
+	/**
+	 * Gibt die Position des vertikalen Rollbalkens an, falls dieser Workspace in einem JSccrollPane angezeigt wird.
+	 * 0 andernfalls.
+	 * @return
+	 */
 	int getYPos() {		
 		//if this panel is displayed in a scroll pane just draw the necessary part of it
 		//--> increase performance!!!
@@ -104,6 +126,9 @@ public class Workspace extends JPanel{
 		paint(g);
 	}
 	
+	/**
+	 * Zeichne die Welt auf Basisi der Informationen des WeltObjekts.
+	 */
 	@Override
 	public void paint(Graphics g) {
 		int width = getWidth();
@@ -161,7 +186,15 @@ public class Workspace extends JPanel{
 	}
 	
 	
-	
+	/**
+	 * Zeichne einen Ort.
+	 * @param ort Der Ort, der gezeichnet werden soll.
+	 * @param graph Das Graphics-Objekt, mit dem gezeichnet werden soll.
+	 * @param xPos Position der Horizontalen ScrollBar.
+	 * @param yPos Position der Vertikalen ScrollBar.
+	 * @param width	Breite des angezeigten Bildausschnitts.
+	 * @param height Höhe des angezeigten Bildausschnitts.
+	 */
 	private void paintOrt(OrtErweitert ort, Graphics graph, int xPos, int yPos, int width, int height) {
 		int x = ort.position.x;
 		int y = ort.position.y;

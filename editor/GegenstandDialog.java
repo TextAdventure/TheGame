@@ -17,6 +17,11 @@ import javax.swing.*;
 
 import util.NumerusGenus;
 
+/**
+ * Dialog zum Erstellen eines neuen Gegenstands eines beliebigen Typs.
+ * 
+ * @author Felix
+ */
 public class GegenstandDialog extends JDialog implements ActionListener, ItemListener {
 	private static final long serialVersionUID = 1L;
 
@@ -61,6 +66,11 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 		
 	}
 	
+	/**
+	 * Initialisiert das Panel mit der Eingabemaske für die allgemeinene Informationen zu einem Gegenstand. Dies sind
+	 * Bezeichner, Genus, Name im Plural, Beschreibung und Typ.
+	 * @return Das fertige Panel.
+	 */
 	private JPanel createAllgemeinPanel() {
 		JPanel allgemein = new JPanel(new GridBagLayout());
 		
@@ -117,11 +127,11 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 		beschreibung = new JTextArea();
 		beschreibung.setWrapStyleWord(true);
 		beschreibung.setLineWrap(true);
-		beschreibung.setPreferredSize(new Dimension(beschreibung.getPreferredSize().width, 50));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 3;
 		JScrollPane scroll = new JScrollPane(beschreibung);
+		scroll.setPreferredSize(new Dimension(beschreibung.getPreferredSize().width, 200));
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		allgemein.add(scroll, c);
 		
@@ -182,6 +192,9 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 
 
 
+	/**
+	 * Funktionalität des ok-Buttons.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		switch(typ.getSelectedIndex()) {
@@ -211,6 +224,9 @@ public class GegenstandDialog extends JDialog implements ActionListener, ItemLis
 		
 	}
 	
+	/**
+	 * Funktionalität des CardLayout. Wechselt das angezeigte Panel, wenn in der typ-ComboBox ein anderer Eintrag ausgewählt wurde.
+	 */
 	public void itemStateChanged(ItemEvent evt) {
         CardLayout cl = (CardLayout)(eigenschaften.getLayout());
         cl.show(eigenschaften, typen[typ.getSelectedIndex()]);

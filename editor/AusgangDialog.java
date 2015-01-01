@@ -1,7 +1,6 @@
 package editor;
 
 import game.Ausgang;
-import game.Ort;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -14,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -23,7 +21,9 @@ import javax.swing.event.ChangeListener;
 /**
  * Dialog, der die Funktionalität, einen Ausgang zu bearbeit, bietet. Dazu gehören
  *  - festlegen, welche Richtungen angeboten werden
- *  - Richtungsbezeichner
+ *  - Richtungsbezeichner (auch eigene möglich)
+ *  
+ *  TODO: Schlüssel hinzufügen
  *   
  * @author Felix
  *
@@ -47,6 +47,7 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		setSize(300, 250);
 		setLayout(new BorderLayout());
 		
+		//Orte mit Doppelpfeilen erstellen, sowie ComboBoxes
 		JPanel p = new JPanel(null);
 		
 		JLabel label1 = new JLabel(ausgang.ort1.getName());
@@ -67,6 +68,7 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		else 
 			von2nach1Richtung.setSelectedItem(ausgang.bez_von2nach1);
 		
+		//PreferredSize berechnen
 		Dimension d1 = label1.getPreferredSize();
 		Dimension d2 = label2.getPreferredSize();
 		Dimension pf = pfeile.getPreferredSize();
@@ -94,7 +96,7 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		add(p, BorderLayout.NORTH);
 		
 		
-		
+		//Checkboxes, welche Richtung genutzt werden soll
 		p = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		von1nach2Bool = new JCheckBox("Weg von " + ausgang.ort1.getName() + " nach " + ausgang.ort2.getName(), ausgang.von1nach2);
 		von1nach2Bool.addChangeListener(this);
@@ -112,19 +114,11 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		add(p, BorderLayout.SOUTH);
 		
 	}
-	
-	public static void main(String[] args) {
-		System.out.println("test");
-		JFrame f = new JFrame("test");
-		f.setVisible(true);
-		Ort ort1 = new Ort("Ort1", "Ein Ort.");
-		Ort ort2 = new Ort("Ort2", "Noch ein Ort.");
-		AusgangErweitert ae = new AusgangErweitert();
-		ae.ort1 = ort1;
-		ae.ort2 = ort2;
-		new AusgangDialog(ae).setVisible(true);
-	}
 
+	/**
+	 * Realisiert die Funktionalität des ok-Buttons. Das heißt im Detail:
+	 * Auslesen der Richtungsbezeichner und Checkboxes und gewählte Optionen im AusgangErweitert-Objekt speichern.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ausgang.bez_von1nach2 = (byte)von1nach2Richtung.getSelectedIndex();
@@ -138,6 +132,9 @@ public class AusgangDialog extends JDialog implements ActionListener, ChangeList
 		dispose();
 	}
 
+	/**
+	 * Setzt die Editierbarkeit der ComboBoxes falls eine Richtung (de)aktiviert wurde. 
+	 */
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if(e.getSource() == von1nach2Bool) {
