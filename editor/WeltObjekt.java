@@ -59,6 +59,9 @@ public class WeltObjekt implements Serializable {
 		return gegenstaende.toArray(new Gegenstand[0]);
 	}
 	void removeGegenstand(Gegenstand g) {
+		Gegenstand.GEGENSTAENDE = getGegenstaende();
+		for(OrtErweitert oe : getOrte()) 
+			oe.ort.removeGegenstand(g);
 		gegenstaende.remove(g);
 	}
 	

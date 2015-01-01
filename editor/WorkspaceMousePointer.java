@@ -2,18 +2,18 @@ package editor;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JFrame;
 
 /**
  * Unterklasse von MouseAdapter, die die Funktionalitäten des Zeiger-Tools realisert. Jeder Workspace sollte einen
  * WorkspaceMousePointer sowohl als MouseListener, als auch als MouseMotionListener adden, sonst hat das Zeiger-
  * Werkzeug keine Funktion!
  * 
- * TODO:
- *  - Größe und Position von Orten variieren durch Drag and Drop
+ * Größe und Position von Orten variieren durch Drag and Drop
+ * -> TODO: Ausgänge nicht zerstören
  * 
  * @author Felix
  *
@@ -21,13 +21,21 @@ import javax.swing.JFrame;
 public class WorkspaceMousePointer extends MouseAdapter {
 
 	private WeltObjekt welt;
-	private JFrame frame;
 	private Component parent;
 	private IDE ide;
 	
-	WorkspaceMousePointer(WeltObjekt welt, JFrame frame, Component parent, IDE ide) {
+	//Wird der Mauszeiger an den Rand eines Ortes geführt, so wird in den bits von mausPos gespeichert, welcher Rand es war.
+	//1. Bit = oben
+	//2. Bit = links
+	//3. Bit = unten
+	//4. Bit = rechts
+	private byte mausPos = 0;
+
+	private int mouseX, mouseY;
+	private OrtErweitert inBearbeitung = null;
+	
+	WorkspaceMousePointer(WeltObjekt welt, Component parent, IDE ide) {
 		this.welt = welt;
-		this.frame = frame;
 		this.parent = parent;
 		this.ide = ide;
 	}
@@ -44,16 +52,31 @@ public class WorkspaceMousePointer extends MouseAdapter {
 		 */
 		OrtErweitert ort = welt.ortAt(e.getX(), e.getY());
 		if(ort != null) {
-			new OrtDialog(frame, welt, ort.ort).setVisible(true);
+			OrtDialog dialog = new OrtDialog(parent, welt, ort.ort);
+			dialog.setVisible(true);
+			dialog.setFocus();
 			
 		} else {
 			AusgangErweitert ausgang = welt.ausgangAt(e.getX(), e.getY());
 			if(ausgang != null) {
-				new AusgangDialog(frame, ausgang).setVisible(true);;
+				new AusgangDialog(ausgang).setVisible(true);;
 			}
 		}
 		
 		
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent evt) {
+		if(ide.getSelectedTool() != Tools.POINTER) return;
+		OrtErweitert ort = welt.ortAt(evt.getX(), evt.getY());
+		if(ort != null && mausPos != 0) {
+			inBearbeitung = ort;
+			mouseX = evt.getX();
+			mouseY = evt.getY();
+		} else {
+			inBearbeitung = null;
+		}
 	}
 
 	
@@ -62,45 +85,135 @@ public class WorkspaceMousePointer extends MouseAdapter {
 	// - - - MouseMotionListener  - - -
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
+	public void mouseDragged(MouseEvent evt) {
+		if(ide.getSelectedTool() != Tools.POINTER ||  inBearbeitung == null) return;
+		
+		Dimension groesse = inBearbeitung.groesse;
+		Point position = inBearbeitung.position;
+		int x = position.x, y = position.y, w = groesse.width, h = groesse.height;
+		
+		switch(mausPos) {
+		case 1:		//oben 
+			 h += mouseY - evt.getY();
+			 y -= mouseY - evt.getY();
+			 break;
+			 
+		case 2:		//links
+			w += mouseX- evt.getX();
+			x -= mouseX - evt.getX();
+			break;
+			
+		case 3:		//links - oben (bewegen)
+			x -= mouseX - evt.getX();
+			y -= mouseY - evt.getY();
+			break;
+			
+		case 4:		//unten
+			h -= mouseY - evt.getY();
+			break;
+			
+		case 6:		//unten-links
+			w += mouseX- evt.getX();
+			x -= mouseX - evt.getX();
+			h -= mouseY - evt.getY();
+			break;
+			
+		case 8:		//rechts
+			w -= mouseX - evt.getX();
+			break;
+
+		case 9:		//rechts-oben
+			h += mouseY - evt.getY();
+			y -= mouseY - evt.getY();
+			w -= mouseX - evt.getX();
+			break;
+
+		case 12:	//rechts-unten
+			w -= mouseX - evt.getX();
+			h -= mouseY - evt.getY();
+			break;
+			
+		default: 
+		}
+		
+		w = Math.max(w, 40);
+		h = Math.max(h, 40);
+		inBearbeitung.groesse = new Dimension(w, h);
+		inBearbeitung.position = new Point(x, y);
+		mouseX = evt.getX();
+		mouseY = evt.getY();
+		parent.repaint();
+		
+	}
+	
+	
+	@Override
+	public void mouseMoved(MouseEvent evt) {
 		if(ide.getSelectedTool() != Tools.POINTER) return;
 		
 		/*
 		 *  changes Cursor if
 		 *  	- mouse over border of Ort
-		 *  	- mouse over Ausgang
+		 *  	- TODO mouse over Ausgang
 		 */
-		OrtErweitert ort = welt.ortAt(arg0.getX(), arg0.getY());
+		OrtErweitert ort = welt.ortAt(evt.getX(), evt.getY());
 		int tol = 10;
 		if(ort != null) {
-			if(arg0.getX() - ort.position.x < tol) {
-				if(arg0.getY() - ort.position.y < tol) {
+			if(evt.getX() - ort.position.x < tol) {
+				if(evt.getY() - ort.position.y < tol) {
 					parent.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+					mausPos = 3;
 				} else {
-					if(ort.position.y+ort.groesse.height - arg0.getY() < tol)
+					if(ort.position.y+ort.groesse.height - evt.getY() < tol) {
 						parent.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
-					else
+						mausPos = 6;
+								
+					} else {
 						parent.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+						mausPos = 2;
+					}
+						
 				}
 				
 				
-			} else if(ort.position.x+ort.groesse.width - arg0.getX() < tol) {
-				if(arg0.getY() - ort.position.y < tol) {
+			} else if(ort.position.x+ort.groesse.width - evt.getX() < tol) {
+				if(evt.getY() - ort.position.y < tol) {
 					parent.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
-				} else if(ort.position.y+ort.groesse.height - arg0.getY() < tol)
-					parent.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
-				else 
-					parent.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+					mausPos = 9;
+					
+				} else {
+					if(ort.position.y+ort.groesse.height - evt.getY() < tol) {
+						parent.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+						mausPos = 12;
+						
+					} else {
+						parent.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+						mausPos = 8;
+					}
+				} 
 				
 				
-			} else if(arg0.getY() - ort.position.y < tol || ort.position.y+ort.groesse.height - arg0.getY() < tol) {
-				parent.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-			} else
-				parent.setCursor(Cursor.getDefaultCursor());
+			} else {
+				if(evt.getY() - ort.position.y < tol) {
+					parent.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+					mausPos = 1;
+					
+				} else if(ort.position.y+ort.groesse.height - evt.getY() < tol) {
+					parent.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+					mausPos = 4;  
+							
+				} else {
+					parent.setCursor(Cursor.getDefaultCursor());
+					mausPos = 0;
+				}				
+			}				
 			
 			
-		} else 
+		} else {
 			parent.setCursor(Cursor.getDefaultCursor());
+			mausPos = 0;
+		}
+			
 		
 	}
 

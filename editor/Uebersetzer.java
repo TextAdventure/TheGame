@@ -2,23 +2,31 @@ package editor;
 
 import game.Ausgang;
 import game.Ort;
+import game.SpielWelt;
+import game.items.Gegenstand;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
 
 /**
- * Übersetzt ein WeltObjekt in eine Java-Klasse, die bei der Ausführung die durch das WeltObejkt dargestellte Welt
- * erzeugt und speichert.
- * 
- * TODO:
- *  - Übersetzung direkt in .dat-Datei
+ * Stellt Methoden bereit, um ein WeltObjekt in JavaCode für einen WeltenGenerator zu übersetzen, oder gleich in eine
+ * .dat-Datei.
+ *  
+ * TODO: toJava: Directory, Code anpassen, etc.
+ * TODO: toSpielWelt: Ausgäng nich doppelt adden!
  *  
  * @author Felix
  *
  */
 public class Uebersetzer {
 
+	/**
+	 * Übersetzt das übergeben WeltObjekt in Java-Code für einen WeltenGenerator.
+	 * @param welt Die Welt, die übersetzt werden soll.
+	 * @return Den fertigen Java Code.
+	 * @throws IOException Falls das Lese der Code-Vorlage gescheitert ist.
+	 */
 	public static String toJavaCode(WeltObjekt welt) throws IOException {
 		//Code einlesen
 		FileInputStream fis = new FileInputStream("WeltenGenerator.java");
@@ -65,9 +73,52 @@ public class Uebersetzer {
 	}
 	
 	
+	/**
+	 * Hilfsmethode. Gibt den Index i zurück, sodass orte[i].ort == o.
+	 * @param orte Das Array der Ort, das durchsucht werden soll.
+	 * @param o Der Ort, der gefunden werden soll.
+	 * @return Der Index i.
+	 */
 	private static int indexOf(OrtErweitert[] orte, Ort o) {
 		int index = 0;
 		while(index < orte.length && orte[index].ort != o) index++;
 		return index == orte.length ? -1 : index;
+	}
+	
+	/**
+	 * Übersetzt ein WeltObjekt in ein SpielWelt Okjekt, welches an anderer Stelle in eine .dat-Datei gespeichert werden kann.
+	 * TODO: Ausgänge nur einmal adden
+	 * @param welt Die Welt, die übersetzt werden soll.
+	 * @return Das fertige SpielWelt-Objekt.
+	 */
+	public static SpielWelt toSpielWelt(WeltObjekt welt) {
+		//1. Neue SpielWelt vorbereiten.
+		SpielWelt spielWelt = new SpielWelt();
+		
+		//2. Gegenstände eintragen
+		Gegenstand.GEGENSTAENDE = welt.getGegenstaende();
+		
+		//3. Ausgänge bauen
+		AusgangErweitert[] ausgaenge = welt.getAusgaenge();
+		for(AusgangErweitert ae : ausgaenge) {
+			if(ae.von1nach2) {
+				Ausgang a = new Ausgang(ae.bez_von1nach2, ae.ort2);
+				if(ae.bez_von1nach2 == Ausgang.EIGENE)
+					a.setRichtungsName(ae.eigeneBez_von1nach2);
+				ae.ort1.addAusgang(a);
+			}
+			
+			if(ae.von2nach1) {
+				Ausgang a = new Ausgang(ae.bez_von2nach1, ae.ort1);
+				if(ae.bez_von2nach1 == Ausgang.EIGENE)
+					a.setRichtungsName(ae.eigeneBez_von2nach1);
+				ae.ort2.addAusgang(a);
+			}
+		}
+		
+		//4. Startposition festlegen
+		spielWelt.setAktuellePositon(welt.getStartOrt().ort);
+		
+		return spielWelt;		
 	}
 }

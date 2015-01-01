@@ -52,6 +52,7 @@ public class OrtAllgemeinPanel extends JPanel {
 		this.beschreibung = new JTextArea(ort.getBeschreibung());
 		beschreibung.setSize(beschreibung.getMaximumSize());
 		beschreibung.setLineWrap(true);
+		beschreibung.setWrapStyleWord(true);
 		scroll = new JScrollPane(this.beschreibung);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -63,12 +64,29 @@ public class OrtAllgemeinPanel extends JPanel {
 	}
 	
 	
-	
+	/**
+	 * Gibt den eingegebenen Namen für diesen Ort zurück.
+	 * @return Den eingegebenen Namen für diesen Ort.
+	 */
 	String getOrtName() {
 		return name.getText();
 	}
 	
+	/**
+	 * Gibt die eingegebene Beschreibung für diesen Ort zurück.
+	 * @return Die eingegebene Beschreibung für diesen Ort.
+	 */
 	String getBeschreibung() {
 		return beschreibung.getText();
 	}
+
+
+	/**
+	 * Fordert das JTextField, in das der Name des Orts eingetragen wird, dazu auf, sich den Focus zu beschaffen.
+	 * Wird beim Öffnen des OrtDialogs aufgerufen.
+	 */
+	void setFocus() {
+		name.requestFocusInWindow();		
+	}
+	
 }

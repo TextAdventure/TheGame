@@ -41,18 +41,18 @@ public class UntersuchObjPanel extends JPanel implements ActionListener {
 	
 	private JPanel dialog;
 	private JTextField name = new JTextField();
-	private JTextArea desription = new JTextArea();
+	private JTextArea description = new JTextArea();
 	
 	private Ort ort;
 	
-	UntersuchObjPanel(UntersuchbaresObjekt[] obj, Ort ort) {
+	UntersuchObjPanel(Ort ort) {
 		setLayout(new BorderLayout());
 		this.ort = ort;
 		
 		//List
 		objekte = new Vector<UntersuchbaresObjekt>();
 		model = new DefaultListModel<String>();		
-		for(UntersuchbaresObjekt o : obj) {
+		for(UntersuchbaresObjekt o : ort.getUnteruschbareObjekte()) {
 			objekte.add(o);
 			model.addElement(o.getName());		
 		}
@@ -75,6 +75,8 @@ public class UntersuchObjPanel extends JPanel implements ActionListener {
 		
 		
 		//prepare create-new-dialog
+		description.setWrapStyleWord(true);
+		description.setLineWrap(true);
 		dialog = new JPanel(new BorderLayout());
 		p = new JPanel(new BorderLayout());
 		p.add(new JLabel("Bezeichnung:"), BorderLayout.WEST);
@@ -82,23 +84,30 @@ public class UntersuchObjPanel extends JPanel implements ActionListener {
 		dialog.add(p, BorderLayout.NORTH);
 		p = new JPanel(new BorderLayout());
 		p.add(new JLabel("Beschreibung:"), BorderLayout.NORTH);
-		scroll = new JScrollPane(desription);
-		scroll.setPreferredSize(new Dimension(500, 200));
+		scroll = new JScrollPane(description);
+		scroll.setPreferredSize(new Dimension(300, 200));
 		p.add(scroll, BorderLayout.CENTER);
 		dialog.add(p, BorderLayout.CENTER);
 						
 	}
 	
 
+	/**
+	 * Realisiert den add-, remove- und modify Button.
+	 *  - add: Offnet einen neuen Dialog, in dem die Informationen für ein neues untersuchbares Objekt abgefragt werden.
+	 *  - remove: löscht alle ausgewählten Untersuchbaren Objekte.
+	 *  - modify: öffnet den gleichen Dialog wie add, trägt aber die alten Informationen des Untersuchbaren Objekt schon ein.
+	 *  Änderungen werden gleich im Untersuchbaren Objekt gespeichert.  
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 		if(src == add) {
 			name.setText("");
-			desription.setText("");
+			description.setText("");
 			int result = JOptionPane.showConfirmDialog(this, dialog, "Untersuchb. Obj.", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(result == JOptionPane.OK_OPTION) {
-				UntersuchbaresObjekt obj = new UntersuchbaresObjekt(name.getText(), desription.getText());
+				UntersuchbaresObjekt obj = new UntersuchbaresObjekt(name.getText(), description.getText());
 				objekte.add(obj);
 				model.addElement(obj.getName());
 				ort.addUntersuchbaresObjekt(obj);
@@ -116,12 +125,13 @@ public class UntersuchObjPanel extends JPanel implements ActionListener {
 			int index = list.getSelectedIndex();
 			UntersuchbaresObjekt obj = objekte.get(index);
 			name.setText(obj.getName());
+
 			desription.setText(obj.getBeschreibung());
 			
 			int result = JOptionPane.showConfirmDialog(this, dialog, "Untersuchb. Obj.", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(result == JOptionPane.OK_OPTION) {
 				obj.setName(name.getText());
-				obj.setBeschreibung(desription.getText());
+				obj.setBeschreibung(description.getText());
 				model.remove(index);
 				model.add(index, name.getText());
 			}

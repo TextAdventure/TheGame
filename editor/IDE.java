@@ -1,5 +1,7 @@
 package editor;
 
+import game.SpielWelt;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,11 +17,11 @@ import javax.swing.undo.UndoManager;
 /**
  * Hauptklasse des Editors. Repräsentiert den Main-Frame erzeugt die Menüleiste und stellt deren Funktionalität bereit.
  * 
- * TODO:
- *  - Undo/Redo
- *  - Übersetzer Menü
- *  - Edit Menü überarbeiten
- *  - Exception Handling
+ * - Übersetzer Menü
+ * 
+ * TODO: Undo/Redo
+ * TODO: Edit Menü überarbeiten
+ * TODO: Exception Handling + Dokumentation
  *  
  * @author Felix
  *
@@ -29,6 +31,7 @@ public class IDE extends JFrame implements ChangeListener {
 
 	private BFTabbedPane tabbedPane;
 	private WorldToolbar tools;
+	private FileTree tree;
 	
 	//io stuff
 	private JFileChooser fileDialog = new JFileChooser(System.getProperty("user.dir"));
@@ -56,10 +59,10 @@ public class IDE extends JFrame implements ChangeListener {
 		setJMenuBar(menu);		
 		
 		//the central TabbedPane
-		JPanel p = new JPanel(new BorderLayout());
+		JPanel right = new JPanel(new BorderLayout());
 		tabbedPane = new BFTabbedPane();
 		tabbedPane.addChangeListener(this);
-		p.add(tabbedPane, BorderLayout.CENTER);
+		right.add(tabbedPane, BorderLayout.CENTER);
 		
 		//Toolbar
 		tools = new WorldToolbar();
@@ -71,14 +74,15 @@ public class IDE extends JFrame implements ChangeListener {
 					new GegenstandTabelleDialog(currentWS.getWorld()).setVisible(true);
 			}
 		});
-		p.add(tools, BorderLayout.NORTH);
-		add(p, BorderLayout.CENTER);
+		right.add(tools, BorderLayout.NORTH);
+		
 		
 		//FileTree
-		add(new JScrollPane(new FileTree(new File(System.getProperty("user.dir")))), BorderLayout.WEST);
+		tree = new FileTree(this, new File(System.getProperty("user.dir")));
 		
-		
-		
+		JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tree, right);
+		mainPane.setDividerSize(4);
+		add(mainPane, BorderLayout.CENTER);
 		
 		
 	}
@@ -185,6 +189,44 @@ public class IDE extends JFrame implements ChangeListener {
 		}
 	}
 	
+	
+	@SuppressWarnings("serial")
+	private class ToDatAction extends AbstractAction {
+		ToDatAction() {
+			super("In .dat-Datei übersetzen");
+		}		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Workspace workspace = tabbedPane.getCurrentWorkspace();
+			if(workspace != null) {
+				
+				//speichern
+				JFileChooser fileChooser = new JFileChooser();
+				if(fileChooser.showSaveDialog(IDE.this) == JFileChooser.APPROVE_OPTION) {
+					try {
+						SpielWelt spielWelt = Uebersetzer.toSpielWelt(workspace.getWorld());
+						File file = fileChooser.getSelectedFile();
+						ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+						oos.writeObject(spielWelt);
+						oos.close();
+						
+					} catch (FileNotFoundException e1) {
+						JOptionPane.showMessageDialog(IDE.this, "Die ausgewählte Datei existiert nicht!", "Error", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(IDE.this, "Beim Schreiben der Datei ist ein Fehler aufgetreten.", "Error", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					}
+					
+				}
+				
+				
+			}
+			
+		}
+		
+	}
+	
 	@SuppressWarnings("serial")
 	private class QuitAction extends AbstractAction {
 		QuitAction() {
@@ -197,84 +239,123 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	
 	/* * * IO-Methods * * */	
+	/**
+	 * Öffnet einen neuen Tab mit einem neuen, leeren Workspace.
+	 */
 	private void newFile() {
 		JScrollPane bfComp = new JScrollPane(new Workspace(this, new WeltObjekt()));
 		/*KeyStroke altLeft = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK);
 		bfComp.textPane.getInputMap().put(altLeft, tabbedPane.getPreviousTabAction());
 		KeyStroke altRight = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK);
 		bfComp.textPane.getInputMap().put(altRight, tabbedPane.getNextTabAction());*/
-		tabbedPane.addTab("unnamed", bfComp);
+		tabbedPane.addTab("unbennant", bfComp);
 		updateTitle();
 	}
 	
+	/**
+	 * Speichert den aktuellen Workspace in dessen Datei. Falls der aktuelle Workspace noch keine zugehörige Datei hat,
+	 * d.h. der Workspace wurde noch nie gespeichert, dann wird saveAs() aufgerufen.
+	 */
 	private void save() {
 		File file = tabbedPane.getCurrentFile();
 		if(file == null) {
+			System.out.println("saveas");
 			saveAs();
 			return;
 		}
-		WeltObjekt welt = tabbedPane.getCurrentWorkspace().getWorld();
+		save(tabbedPane.getCurrentWorkspace(), file);		
+	}
+	
+	/**
+	 * Speichert den übergebenen Workspace in die Datei file.
+	 * @param workspace
+	 * @param file
+	 */
+	private void save(Workspace workspace, File file) {
+		WeltObjekt welt = workspace.getWorld();
 		ObjectOutputStream oos;
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream(file));
 			oos.writeObject(welt);
+			oos.close();
+			
+			tree.update();
+			
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Beim Schreiben der Datei ist ein Fehler aufgetreten.", "Fehler", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}		
 	}
 	
+	/**
+	 * Speichert einen Workspace zum ersten Mal, bzw. in eine neue Datei. Der Benutzer kann über einen File-Dialog
+	 * auswählen, wo und unter welchem Namen der Workspace gespeichert werden soll.
+	 */
 	private void saveAs() {
 		if(fileDialog.showSaveDialog(IDE.this) == JFileChooser.APPROVE_OPTION) {
 			File file = fileDialog.getSelectedFile();
-			WeltObjekt welt = tabbedPane.getCurrentWorkspace().getWorld();
-			ObjectOutputStream oos;
-			try {
-				oos = new ObjectOutputStream(new FileOutputStream(file));
-				oos.writeObject(welt);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
+			System.out.println(file.getAbsolutePath());
+			save(tabbedPane.getCurrentWorkspace(), file);
 			tabbedPane.setCurrentFile(file);
 			tabbedPane.updateCurrentTitle();
 			updateTitle();
 		}
 	}
 	
+	/**
+	 * Öffnet einen File-Dialog und dann die gewählte Datei in einem neuen Tab. Falls die gewählte Datei keine gültige
+	 * Codierung einer Welt enthält, wird dies dem Benutzer mitgeteilt.  
+	 */
 	private void load() {
 		if(fileDialog.showOpenDialog(IDE.this) == JFileChooser.APPROVE_OPTION) {
 			File file = fileDialog.getSelectedFile();
-			ObjectInputStream ois;
-			try {
-				ois = new ObjectInputStream(new FileInputStream(file));
-				WeltObjekt ort = (WeltObjekt)ois.readObject();
-				JScrollPane bfComp =  new JScrollPane(new Workspace(this, file, ort));
-				/*KeyStroke altLeft = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK);
-				bfComp.textPane.getInputMap().put(altLeft, tabbedPane.getPreviousTabAction());
-				KeyStroke altRight = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK);
-				bfComp.textPane.getInputMap().put(altRight, tabbedPane.getNextTabAction());*/
-				tabbedPane.addTab(file.getName(), bfComp);
-				
-			} catch(IOException e1) {
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Fehler beim Lesen der Datei aufgetraten.", "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Sourcecode beschädigt! Klasse nicht gefunden!", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			updateTitle();
+			load(file);
 		}
+	}
+
+	/**
+	 * Öffnet die Datei file in einem neuen Tab. Falls die gewählte Datei keine gültige
+	 * Codierung einer Welt enthält, wird dies dem Benutzer mitgeteilt.  
+	 */	
+	void load(File file) {
+		ObjectInputStream ois;
+		try {
+			ois = new ObjectInputStream(new FileInputStream(file));
+			Object input = ois.readObject();
+			ois.close();
+			if(!(input instanceof WeltObjekt)) {
+				JOptionPane.showMessageDialog(this, "Die Datei " + file.getName() + " enthält keine Codierung einer Welt.", "Ungültige Datei", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			WeltObjekt ort = (WeltObjekt)input;
+			JScrollPane bfComp =  new JScrollPane(new Workspace(this, file, ort));
+			tabbedPane.addTab(file.getName(), bfComp);
+			tabbedPane.setCurrentFile(file);
+			
+		} catch(IOException e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Fehler beim Lesen der Datei aufgetraten.", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Sourcecode beschädigt! Klasse nicht gefunden!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		updateTitle();
 	}
 	/* * * IO-Methods End * * */
 	
+	/**
+	 * Ruft updateTitle() auf.
+	 */
 	@Override
 	public void stateChanged(ChangeEvent evt) {
 		updateTitle();
 	}
 	
+	/**
+	 * Pass den Titel des Frames an den Titel des aktuell anusgewählten Workspaces an.
+	 */
 	public void updateTitle() {
 		File currentFile = tabbedPane.getCurrentFile();
 		if(currentFile != null) 
@@ -284,7 +365,10 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	
 	/* * * Construction-Methods * * */
-	
+	/**
+	 * Initialisiert das Datei-Menü.
+	 * @return Das fertige Menü.
+	 */
 	private JMenu createFileMenu() {
 		JMenu menu = new JMenu("Datei");
 		
@@ -314,8 +398,8 @@ public class IDE extends JFrame implements ChangeListener {
 		menu.add(save);
 		//saveAs
 		JMenuItem saveAs = new JMenuItem(new SaveAsAction());
-		KeyStroke ctrlShiftS = KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK);
-		saveAs.setAccelerator(ctrlShiftS);
+		//KeyStroke ctrlShiftS = KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK);
+		//saveAs.setAccelerator(ctrlShiftS);
 		menu.add(saveAs);
 		
 		menu.addSeparator();
@@ -329,6 +413,11 @@ public class IDE extends JFrame implements ChangeListener {
 		return menu;
 	}
 	
+	/**
+	 * Initialisiert das Bearbeiten-Menü.
+	 * 
+	 * @return Das fertige Menü.
+	 */
 	private JMenu createEditMenu() {
 		JMenu menu = new JMenu("Bearbeiten");
 		
@@ -374,13 +463,17 @@ public class IDE extends JFrame implements ChangeListener {
 		return menu;
 	}
 	
+	/**
+	 * Erstellt das Menü mit den Optionen zum Übersetzen der aktuellen Welt.
+	 * @return Das fertige Menü.
+	 */
 	public JMenu createRunMenu() {
 		JMenu menu = new JMenu("Übersetzen");
 
 		JMenuItem translateJava = new JMenuItem(new ToJavaAction());
 		menu.add(translateJava);
 		
-		JMenuItem translateDat = new JMenuItem("In .dat-Datei übersetzen");
+		JMenuItem translateDat = new JMenuItem(new ToDatAction());
 		menu.add(translateDat);
 		
 		
@@ -396,11 +489,18 @@ public class IDE extends JFrame implements ChangeListener {
 	}
 	
 	
+	/**
+	 * Gibt das aktuell ausgewählte Tool der Toolbar zurück.
+	 * @return Das aktuell ausgewählte Tool. 
+	 */
 	Tools getSelectedTool() {
 		return tools.getSelectedTool();
 	}
 	
-
+	/**
+	 * Startet den Editor.
+	 * @param args Keine Bedeutung.
+	 */
 	public static void main(String[] args) {
 		new IDE().setVisible(true);
 	}
