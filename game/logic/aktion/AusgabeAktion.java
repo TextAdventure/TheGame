@@ -1,15 +1,18 @@
 package game.logic.aktion;
 
+import game.SpielWelt;
+
 public class AusgabeAktion extends Aktion {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	// Die Meldung wird von Aktion uebernommen und ausser dieser ist nichts noetig.
-	// Die SpielWelt ebenfalls.
+	// Die Meldung, die ausgegeben werden soll.
+	private String meldung;
+	// Die SpielWelt ist static.
 	
 	/**
-	 * Eine AusgabeAktion gibt lediglich eine @meldung aus.
+	 * Eine AusgabeAktion gibt lediglich eine Meldung aus.
 	 * @param meldung Die Meldung, die dem Spieler angezeigt wird.
 	 */
 	public AusgabeAktion(String meldung) {
@@ -17,11 +20,12 @@ public class AusgabeAktion extends Aktion {
 	}
 	
 	/**
-	 * Diese Methode fuehrt die Aktion aus(gibt nur eine Meldung aus).
+	 * Diese Methode fuehrt die Aktion aus(gibt nur eine Meldung aus mit einer Leerzeile danach).
 	 */
 	public void ausfuehren() {
-		// Falls keine richtige Meldung vorhanden ist, wird nichts ausgegeben.
-		super.ausfuehren();
+		// Falls keine richtige Meldung vorhanden ist, wird nichts ausgegeben, ansonsten wird die Meldung ausgegeben.
+		if(!meldung.equalsIgnoreCase(""))
+			SpielWelt.WELT.print(meldung);
 	}
 	
 }

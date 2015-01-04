@@ -1,3 +1,22 @@
+Ereignisse globalisieren
+========================
+
+-neues Package game.logic.Ereginis
+-Ereignis.class in das Package verschoben
+ *ist jetzt abstract
+-IEreignis.class, OrtEreignis.class, UntersuchbaresObjektEreginis.class, KommandoGegenstand.class und   OrtAddKommandoGegenstandAktion.class gelöscht
+ *daraus entstehende Fehler behoben
+-Ausgabe fuer Aktionen entfernt, kann jetzt nur noch mit der AusgabeAktion.class realisiert werden
+ *alle Aktionen angepasst
+-Ereignis Konstruktor geändert, der Zähler wird hier bereits festgelegt.
+-OrtBetretenEreignis.class hinzugefügt
+-kleinere Änderungen bei eigenen Kommandos
+-neues Ereignis System in SpielWelt integriert
+
+
+Korrektur der Formatierung und Methoden aufräumen
+=================================================
+
 Ausgang.class:
  -formatiert und Autor hinzugefügt
  -Umlaute korrigiert

@@ -12,30 +12,24 @@ public class SpielerAddGegenstandAktion extends Aktion {
 	private short gegenstand;
 	// Die Anzahl die dem Spieler hinzugefuegt wird.
 	private int anzahl;
-	// Die Meldung wird von Aktion uebernommen.
-	// Die SpielWelt ebenfalls.
+	// Die SpielWelt ist static.
 	
 	/**
-	 * Eine SpielerAddGegenstandAktion fuegt dem Inventar des Spieler eine @anzahl von @gegenstand hinzu 
-	 * und dabei wird die @meldung angezeigt.
-	 * @param gegenstand
-	 * @param anzahl
-	 * @param meldung
+	 * Eine SpielerAddGegenstandAktion fuegt dem Inventar des Spieler eine Anzahl von Gegenstand hinzu.
+	 * @param gegenstand Der Gegenstand, der dem Inventar des Spielers hinzugefuegt werden soll.
+	 * @param anzahl Die Anzahl des Gegenstands.
 	 */
-	public SpielerAddGegenstandAktion(Gegenstand gegenstand, int anzahl, String meldung) {
+	public SpielerAddGegenstandAktion(Gegenstand gegenstand, int anzahl) {
 		this.gegenstand = (short) gegenstand.getId();
 		this.anzahl = anzahl;
-		this.meldung = meldung;
 	}
 	
 	/**
-	 * Diese Methode fuehrt die Aktion aus(fuegt dem Inventar des Spielers einen Gegenstand hinzu) und gibt danach eine Meldung aus.
+	 * Diese Methode fuehrt die Aktion aus(fuegt dem Inventar des Spielers einen Gegenstand hinzu).
 	 */
 	@Override
 	public void ausfuehren() {
 		SpielWelt.WELT.getInventar().addGegenstand(Gegenstand.getGegenstand(gegenstand), anzahl);
-		// Falls keine richtige Meldung vorhanden ist, wird nichts ausgegeben.
-		super.ausfuehren();
 	}
 	
 }

@@ -75,7 +75,7 @@ public class Interpreter {
 	    }
 
 	    // Die Position des Spielers anzeigen.
-	    welt.spielerPositionAnzeigen();
+	    welt.spielerPositionAnzeigen(false);
 
 	    // Die Booleans werden zurueckgesetzt.
 	    gueltigesKommando = false;
@@ -191,11 +191,12 @@ public class Interpreter {
 	    for(Ausgang a : ausgaenge.toArray(new Ausgang[0])) {
 	    	if(a.getRichtungsName().equalsIgnoreCase(befehl) || a.getAbkuerzung().equalsIgnoreCase(befehl)) {
 	    		// Der Spieler "bewegt" sich durch den Ausgang zu dem Zielort.
+	    		
 	    		welt.setAktuellePositon(a.getZielort());
-
+	    		
 	    		// Die Position des Spielers anzeigen, da sie sich veraendert hat, ausser der Spieler befindet sich im Kampf.
 	    		if(!welt.spielerKaempft())
-	    			welt.spielerPositionAnzeigen();
+		    		welt.spielerPositionAnzeigen(true);
 
 	    		// Ein gueltiges Kommando wurde eingelesen.
 	    		gueltigesKommando = true;

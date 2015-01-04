@@ -12,29 +12,24 @@ public class OrtAddAusgangAktion extends Aktion {
 	private Ort ort;
 	// Der neue Ausgang fuer den Ort.
 	private Ausgang ausgang;
-	// Die Meldung wird von Aktion uebernommen.
-	// Die SpielWelt ebenfalls.
+	// Die SpielWelt ist static.
 	
 	/**
-	 * Eine AddAusgangAktion fuegt @ort den @ausgang hinzu und dabei wird die @meldung angezeigt.
+	 * Eine AddAusgangAktion fuegt einem Ort den Ausgang hinzu.
 	 * @param ort Der Ort, dem ein Ausgang hinzugefuegt wird.
 	 * @param ausgang Der neue Ausgang fuer den Ort.
-	 * @param meldung Die Meldung, die dem Spieler nach der Ausfuehrung angezeigt wird.
 	 */
-	public OrtAddAusgangAktion(Ort ort, Ausgang ausgang, String meldung) {
+	public OrtAddAusgangAktion(Ort ort, Ausgang ausgang) {
 		this.ort = ort;
 		this.ausgang = ausgang;
-		this.meldung = meldung;
 	}
 	
 	/**
-	 * Diese Methode fuehrt die Aktion aus(fuegt einem Ort einen Ausgang hinzu) und gibt danach eine Meldung aus.
+	 * Diese Methode fuehrt die Aktion aus(fuegt einem Ort einen Ausgang hinzu).
 	 */	
 	@Override
 	public void ausfuehren() {
 		ort.addAusgang(ausgang);
-		// Falls keine richtige Meldung vorhanden ist, wird nichts ausgegeben.
-		super.ausfuehren();
 	}
 	
 }

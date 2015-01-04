@@ -7,13 +7,13 @@ import java.io.ObjectOutputStream;
 import game.*;
 import game.entity.Attribut;
 import game.items.Gegenstand;
-import game.items.KommandoGegenstand;
 import game.items.Waehrung;
 import game.items.Waffe;
 import game.items.Waffenart;
 import game.logic.*;
 import game.logic.aktion.*;
 import game.logic.bedingung.*;
+import game.logic.ereignis.OrtBetretenEreignis;
 import util.Farbe;
 import util.NumerusGenus;
 
@@ -60,6 +60,8 @@ public final class WeltenGenerator {
 		ort4.addAusgang(Ausgang.NORDEN, ort1);
 		ort1.addAusgang(Ausgang.SUEDEN, ort4);
 		
+		new OrtBetretenEreignis(ort4, 3, new SpielerHatGegenstandBedingung(hallo, 1), new SpielerAddGegenstandAktion(hallo, 1)
+								, new AusgabeAktion("Dein Hallo hat ein weiteres angezogen und es geht direkt in dein Inventar!"));
 		
 		welt.setAktuellePositon(ort1);
 		

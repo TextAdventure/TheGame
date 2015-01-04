@@ -3,15 +3,13 @@ package game;
 import game.battle.Kampf;
 import game.items.Gegenstand;
 import game.items.Inventar;
-import game.items.KommandoGegenstand;
 import game.items.Stapel;
-import game.logic.Ereignis;
+import game.logic.ereignis.Ereignis;
 
 import java.io.Serializable;
 import java.util.Vector;
 
 import util.IPrintable;
-
 import npc.NPC;
 
 /**
@@ -40,9 +38,6 @@ public class Ort implements Serializable, IPrintable {
 	
 	// Alle Gegenstaende an diesem Ort.
 	private Inventar gegenstaende;
-	
-	// Alle Gegenstaende, die bei einer Benutzung eine Aktion ausloesen koennen.
-	private Vector<KommandoGegenstand> kommandoGegenstaende;
 	
 	// Alle Custom Commands fuer diesen Ort.
 	private Vector<Kommando> kommandos;
@@ -78,7 +73,6 @@ public class Ort implements Serializable, IPrintable {
 	    ausgaenge = new Vector<Ausgang>();
 	    untersuchbareObjekte = new Vector<UntersuchbaresObjekt>();
 	    gegenstaende = new Inventar();
-	    kommandoGegenstaende = new Vector<KommandoGegenstand>();
 	    kommandos = new Vector<Kommando>();
 	    kaempfe = new Vector<Kampf>();
 	    behaelter = new Vector<Behaelter>();
@@ -405,15 +399,7 @@ public class Ort implements Serializable, IPrintable {
 		return gegenstaende.getStapel(g).getAnzahl();
 	}
 
-	/* KommandoGegenstaende & Tuer */
-	
-	/**
-	 * Fuegt einen Gegenstand hinzu, der, wenn er verwendet wird, eine Aktion ausloesen kann.
-	 * @param gegenstand Der Gegenstand, der verwendet werden muss.
-	 */
-	public void addKommandoGegenstand(KommandoGegenstand gegenstand) {
-		kommandoGegenstaende.add(gegenstand);
-	}
+	/* Tuer */
 	
 	/**
 	 * Fuegt dem Ort eine verschlossene Tuer hinzu, die mit einem Schluessel einen Ausgang oeffnet.
@@ -441,12 +427,7 @@ public class Ort implements Serializable, IPrintable {
 	    		return true;
 	    	}
 	    }
-
-	    for(KommandoGegenstand kg : kommandoGegenstaende)
-	    	if(kg.equals(gegenstand))
-	    		if(((KommandoGegenstand) gegenstand).verwendet())
-	    			return true;
-
+	    
 	    return false;
 	}
 	
@@ -503,7 +484,7 @@ public class Ort implements Serializable, IPrintable {
 	public boolean kommandoEingegeben(String befehl) {
 	    for(Kommando k : kommandos.toArray(new Kommando[0])) {
 	    	if(k.istBefehl(befehl)) {
-	    		if(k.getEreignis().eingetreten())
+	    		if(k.eingetreten())
 	    			kommandos.remove(k);
 	    		return true;
 	    	}

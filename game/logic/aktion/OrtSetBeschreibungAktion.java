@@ -11,29 +11,24 @@ public class OrtSetBeschreibungAktion extends Aktion {
 	private Ort ort;
 	// Die neue Beschreibung, die den Ort beschreibt.
 	private String beschreibung;
-	// Die Meldung wird von Aktion uebernommen.
-	// Die SpielWelt ebenfalls.
+	// Die SpielWelt ist static.
 	
 	/**
-	 * Eine ChangeOrtBeschreibungAktion aendert die @beschreibung des @ort und dabei wird fuer den Spieler sichtbar die @meldung ausgegeben.
+	 * Eine OrtSetBeschreibungAktion aendert die Beschreibung eines Orts.
 	 * @param ort Der Ort fuer den die Beschreibung geaendert werden soll.
 	 * @param beschreibung Die neue Beschreibung fuer den Ort.
-	 * @param meldung Diese Meldung wird ausgegben, sobald die Aktion ausgefuehrt wurde.
 	 */
-	public OrtSetBeschreibungAktion(Ort ort, String beschreibung, String meldung) {
+	public OrtSetBeschreibungAktion(Ort ort, String beschreibung) {
 		this.ort = ort;
 		this.beschreibung = beschreibung;
-		this.meldung = meldung;
 	}
 	
 	/**
-	 * Diese Methode fuehrt die AKtion aus(anedert die Beschreibung eines Ortes) und gibt danach eine Meldung aus.
+	 * Diese Methode fuehrt die AKtion aus(anedert die Beschreibung eines Ortes).
 	 */
 	@Override
 	public void ausfuehren() {
 		ort.setBeschreibung(beschreibung);
-		// Falls keine richtige Meldung vorhanden ist, wird nichts ausgegeben.
-		super.ausfuehren();
 	}
 	
 }

@@ -18,7 +18,7 @@ import game.items.Kombination;
 import game.items.Stapel;
 import game.items.VerwendbarerGegenstand;
 import game.items.Waehrung;
-import game.logic.Ereignis;
+import game.logic.ereignis.Ereignis;
 import gui.Anzeige;
 import gui.GUI;
 import gui.MiniMap;
@@ -87,6 +87,8 @@ public class SpielWelt implements Serializable, StringListener {
 	public Gegenstand[] gegenstaende;
 	// Alle Kombinationen im Spiel(wird benoetigt, um die Kombinationen zu speichern und zu laden)
 	private ArrayList<Vector<Kombination>> kombinationen;
+	// Alle Ereignisse im Spiel(wird benoetigt, um die Ereignisse zu speichern und zu laden)
+	private Ereignis[] ereignisse;
 	// Alle Attribute im Spiel(wird benoetigt, um die Attribute zu speichern und zu laden)
 	private Attribut[] attribute;
 	// Alle Schadensarten im Spiel(wird benoetigt, um die Schadensarten zu speichern und zu laden)
@@ -116,8 +118,6 @@ public class SpielWelt implements Serializable, StringListener {
 	    farben = new Vector<Farbe>();
 
 	    kaempft = false;
-
-	    //this.speichereListen();
 
 	    setWelt(this);
 	}
@@ -155,6 +155,7 @@ public class SpielWelt implements Serializable, StringListener {
 
 	    Gegenstand.setAlleGegenstaende(this.gegenstaende);
 	    Kombination.setAlleKombinationen(this.kombinationen);
+	    Ereignis.setAlleEreignisse(ereignisse);
 	    Attribut.ATTRIBUTE = this.attribute;
 	    Schadensart.SCHADEN = this.schadensarten;
 	    Resistenz.RESISTENZEN = this.resistenzen;
@@ -167,6 +168,7 @@ public class SpielWelt implements Serializable, StringListener {
 	public void speichereListen() {
 		this.gegenstaende = Gegenstand.getAlleGegenstaende();
 	    this.kombinationen = Kombination.getAlleKombinationen();
+	    this.ereignisse = Ereignis.getAlleEreignisse();
 	    this.attribute = Attribut.ATTRIBUTE;
 	    this.schadensarten = Schadensart.SCHADEN;
 	    this.resistenzen = Resistenz.RESISTENZEN;
@@ -429,51 +431,51 @@ public class SpielWelt implements Serializable, StringListener {
 	 * Aendert die aktuelle Position des Spielers, dabei wird geprueft, ob ein Kampf stattfindet und aktualisiert die MiniMap.
 	 * @param zielort Der Ort an den sich der Spieler bewegt.
 	 */
-	public void setAktuellePositon(Ort zielort) {
-	    spielerPosition = zielort;
-	    if(map != null)
-	    	map.updateMiniMap(spielerPosition);
-	    Kampf k = spielerPosition.findetKampfStatt();
-	    if(k != null)
-	    	this.initKampf(k);
+	public void setAktuellePositon(Ort zielort) {		
+		spielerPosition = zielort;
+		if(map != null)
+			map.updateMiniMap(spielerPosition);
+		Kampf k = spielerPosition.findetKampfStatt();
+		if(k != null)
+			this.initKampf(k);
 	}
-	
+
 	/**
 	 * Gibt alle Informationen ueber die Spielerposition auf der Anzeige aus.
+	 * @param ereignisse Mit true werden alle Ereignisse beruecksichtigt, mit
+	 * false werden sie ignoriert und es wird nur der Text ausgegeben.
 	 */
-	public void spielerPositionAnzeigen() {
+	public void spielerPositionAnzeigen(boolean ereignisse) {
 		// Zuerst wird die Anzeige gereinigt.
 		ausgabe.clear();
-
-		if(spielerPosition instanceof IEreignis)
-			((OrtEreignis)spielerPosition).vorUntersuchung();
 
 		ausgabe.printPrintable(spielerPosition);
 		ausgabe.println();
 		
-	    if(!spielerPosition.getAusgaenge().isEmpty()) {
-	    	// Alle verfuegbaren Ausgaenge werden angezeigt.
-	    	ausgabe.println("Verfügbare Ausgänge:");
-	    	
-	    	// Es wird eine Kopie des Vectors aller Ausgaenge angefordert.
-	    	Vector<Ausgang> aktuelleAusgaenge = spielerPosition.getAusgaenge();
-	    	
-	    	// Es werden die Ausgaenge ueberprueft und ausgegeben.
-	    	for(Ausgang a : aktuelleAusgaenge) {
-	    		// Der Ausgang wird ausgegeben.
-	    		ausgabe.println(a.getRichtungsName() + "(" + a.getAbkuerzung() + ")");
-	    		
-	    		if(a.getZielort().isBesucht())
-	    			ausgabe.print(" - " + a.getZielort().getName());
-	    		else
-	    			ausgabe.print(" - ???");
-	    	}
-	    	
-	    	ausgabe.println("\n");
-	    }
-	    
-	    if(spielerPosition instanceof IEreignis)
-			((OrtEreignis)spielerPosition).nachUntersuchung();
+		if(!spielerPosition.getAusgaenge().isEmpty()) {
+			// Alle verfuegbaren Ausgaenge werden angezeigt.
+			ausgabe.println("Verfügbare Ausgänge:");
+			
+			// Es wird eine Kopie des Vectors aller Ausgaenge angefordert.
+			Vector<Ausgang> aktuelleAusgaenge = spielerPosition.getAusgaenge();
+			
+			// Es werden die Ausgaenge ueberprueft und ausgegeben.
+			for(Ausgang a : aktuelleAusgaenge) {
+				// Der Ausgang wird ausgegeben.
+				ausgabe.println(a.getRichtungsName() + "(" + a.getAbkuerzung() + ")");
+				
+				if(a.getZielort().isBesucht())
+					ausgabe.print(" - " + a.getZielort().getName());
+				else
+					ausgabe.print(" - ???");
+			}
+			
+			ausgabe.println("\n");
+			
+			// Die OrtBetretenEreignisse werden geprueft.
+			if(ereignisse)
+				Ereignis.ortBetreten(spielerPosition);
+		}
 	}
 
 	/**
@@ -483,14 +485,10 @@ public class SpielWelt implements Serializable, StringListener {
 	public void sucheUntersuchbaresObjekt(String objektName) {
 		UntersuchbaresObjekt o = spielerPosition.getUntersuchbaresObjekt(objektName);
 	    if(o != null) {
-	    	if(o instanceof IEreignis)
-				((UntersuchbaresObjektEreignis)o).vorUntersuchung();
 
 	    	ausgabe.println();
 	    	ausgabe.printPrintable(o);
-
-	    	if(o instanceof IEreignis)
-				((UntersuchbaresObjektEreignis)o).nachUntersuchung();
+	    	
 	    } else {
 	    	switch(r.nextInt(8)) {
 	    		case(0): ausgabe.print("An " + objektName + " ist nichts auffällig."); break;
@@ -693,7 +691,7 @@ public class SpielWelt implements Serializable, StringListener {
 	public boolean ueberpruefeKommandos(String befehl) {
 	    for(Kommando k : globaleKommandos)
 	    	if(k.istBefehl(befehl)) {
-	    		k.getEreignis().eingetreten();
+	    		k.eingetreten();
 	    		// Das true sagt nur aus, dass es so ein Kommando gibt.
 	    		return true;
 	    	}

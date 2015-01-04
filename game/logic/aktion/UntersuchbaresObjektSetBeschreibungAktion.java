@@ -11,30 +11,24 @@ public class UntersuchbaresObjektSetBeschreibungAktion extends Aktion {
 	private UntersuchbaresObjekt untersuchbaresObjekt;
 	// Die neue Beschreibung fuer das Objekt.
 	private String beschreibung;
-	// Die Meldung wird von Aktion uebernommen.
-	// Die SpielWelt ebenfalls.
+	// Die SpielWelt ist static.
 	
 	/**
-	 * Eine SetUntersuchbaresObjektBeschreibungAktion aendert die Beschreibung eines @untersuchbaresObjekt zu einer neuen @beschreibung
-	 * und dabie wird die @meldung angezeigt.
+	 * Eine SetUntersuchbaresObjektBeschreibungAktion aendert die Beschreibung eines UntersuchbaresObjekt zu einer neuen Beschreibung.
 	 * @param untersuchbaresObjekt Das UntersuchbareObjekt, dessen Beschreibung geaendert werden soll.
 	 * @param beschreibung Die neue Beschreibung fuer das UntersuchbareObjekt.
-	 * @param meldung Die Meldung, die dem Spieler nach der Ausfuehrung angezeigt wird.
 	 */
-	public UntersuchbaresObjektSetBeschreibungAktion(UntersuchbaresObjekt untersuchbaresObjekt, String beschreibung, String meldung) {
+	public UntersuchbaresObjektSetBeschreibungAktion(UntersuchbaresObjekt untersuchbaresObjekt, String beschreibung) {
 		this.untersuchbaresObjekt = untersuchbaresObjekt;
 		this.beschreibung = beschreibung;
-		this.meldung = meldung;
 	}
 	
 	/**
-	 * Diese Methode fuehrt die Aktion aus(aendert die Beschreibung eines UntersuchbarenObjekts) und gibt danach eine Meldung aus.
+	 * Diese Methode fuehrt die Aktion aus(aendert die Beschreibung eines UntersuchbarenObjekts).
 	 */
 	@Override
 	public void ausfuehren() {
 		untersuchbaresObjekt.setBeschreibung(beschreibung);
-		// Falls keine richtige Meldung vorhanden ist, wird nichts ausgegeben.
-		super.ausfuehren();
 	}
 	
 }

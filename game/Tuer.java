@@ -3,7 +3,7 @@ package game;
 import java.io.Serializable;
 
 import game.items.Gegenstand;
-import game.logic.Ereignis;
+import game.logic.ereignis.Ereignis;
 
 /**
  * Eine Tuer wird geoeffnet, wenn der richtige Schluessel verwendet wird, dabei tritt ein Ereignis ein.

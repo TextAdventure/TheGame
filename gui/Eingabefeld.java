@@ -49,7 +49,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	/**
 	 *  Ein neues Eingabefeld wird ohne Parameter initialisiert.
 	 */
-	public Eingabefeld(GUI gui){
+	public Eingabefeld(GUI gui) {
 		this.gui = gui;
 
 	    this.setSize(690, 20);
@@ -97,19 +97,19 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	// Die Listener Methoden
 
 	// @override                nichts tun
-	public void changedUpdate(DocumentEvent evt){}
+	public void changedUpdate(DocumentEvent evt) {}
 
 	// @override                nichts tun
-	public void removeUpdate(DocumentEvent evt){}
+	public void removeUpdate(DocumentEvent evt) {}
 
 	// @override
-	public void insertUpdate(DocumentEvent evt){
+	public void insertUpdate(DocumentEvent evt) {
 		// Wenn die Eingabe zu gross wird, wird sie abgeschnitten.
 		FontMetrics fm = getFontMetrics(getFont());
-	    if(fm.stringWidth(getText()) > maxLaenge){
+	    if(fm.stringWidth(getText()) > maxLaenge) {
 	    	SwingUtilities.invokeLater(new Vervollstaendigung("", getText().length() - evt.getLength(), evt.getLength(), true));
 	    }
-	    if(evt.getLength() != 1){
+	    if(evt.getLength() != 1) {
 	    	// nach Farbe ueberpruefen
 	    	return;
 	    }
@@ -120,9 +120,9 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 
 	    int pos = evt.getOffset();
 	    String text = null;
-	    try{
+	    try {
 	    	text = getText(0, pos + 1);
-	    }catch(BadLocationException e){
+	    } catch(BadLocationException e) {
 	    	System.err.println("Die Eingabe konnte nicht gelesen werden.");
 	    }
 
@@ -131,20 +131,19 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    // Herausfinden, wo das Wort beginnt.
 	    int beginn;
 	    // Rueckwaertssuche
-	    for(beginn = pos; beginn >= 0; beginn--){
+	    for(beginn = pos; beginn >= 0; beginn--) {
 	    	// Es wird solange gesucht, bis der erste nicht-Buchstabe gefunden wird.
 	    	if(!Character.isLetter(text.charAt(beginn))) break;
 	    }
 	    // Handelt es sich um midestens drei Buchstaben, dann wird eine Auto-Vervollstaendigung angesetzt, ansonsten ist hier Schluss.
-	    if(pos - beginn < 2){
+	    if(pos - beginn < 2)
 	    	return;
-	    }
 
 	    // Das Praefix wird in Kleinbuchstaben verglichen.
 	    String praefix = text.substring(beginn + 1);
 
 	    // Alternative Methode
-	    if(!getWord(praefix.toLowerCase()).equals("")){
+	    if(!getWord(praefix.toLowerCase()).equals("")) {
 	    	// Die fertige Vervollstaendigung wird gebildet.
 	    	letztesPraefix = praefix;
 	    	letztesWort = getWord(praefix);
@@ -170,7 +169,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	/**
 	 *  Diese Subklasse fuehrt die Textvervollstaendigung aus.
 	 */
-	private class Vervollstaendigung implements Runnable{
+	private class Vervollstaendigung implements Runnable {
 	    // Das Wort, welches vervollstaendigt wird.
 	    private String wort;
 	    // Der Beginn des Worts.
@@ -185,7 +184,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	     *  vervollstaendigung: die Vervollstaendigung, die noch an das Wort angebracht werden muss.
 	     *  beginn: der Beginn, der Vervollstaendigung.
 	     */
-	    public Vervollstaendigung(String vervollstaendigung, int beginn, int laenge, boolean ersetzen){
+	    public Vervollstaendigung(String vervollstaendigung, int beginn, int laenge, boolean ersetzen) {
 	    	wort = vervollstaendigung;
 	    	this.beginn = beginn;
 	    	this.laenge = laenge;
@@ -195,12 +194,12 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    /**
 	     *  Das Skript, das ausgefuehrt wird.
 	     */
-	    public void run(){
+	    public void run() {
 	    	// Der neue Text wird gebildet.
-	    	if(ersetzen){
+	    	if(ersetzen) {
 	    		// Der alte Text soll erstzt werden.
 	    		replaceRange(wort, beginn, Math.min(beginn + laenge, getText().length()));
-	    	}else{
+	    	} else {
 	    		insert(wort, beginn);
 	    	}
 	    	setCaretPosition(beginn + wort.length());
@@ -212,7 +211,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	/**
 	 *  Diese Subklasse fuehrt eine Aktion aus, wenn Enter gedrueckt wird.
 	 */
-	private class AktionAusfuehren extends AbstractAction{
+	private class AktionAusfuehren extends AbstractAction {
 
 		// Die serielle Versionsnummer
 		private static final long serialVersionUID = 1L;
@@ -221,26 +220,26 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    /**
 	     *  Diese Methode wird ausgefuehrt, wenn ein bestimtes Ereignis war.
 	     */
-		public void actionPerformed(ActionEvent evt){
-			if(modus == Mode.VERVOLLSTAENDIGEN){
+		public void actionPerformed(ActionEvent evt) {
+			if(modus == Mode.VERVOLLSTAENDIGEN) {
 				// Einfuegen der Auto-Vervollstaendigung.
 				int ende = getSelectionEnd();
 				insert(" ", ende);
 				setCaretPosition(ende + 1);
 				modus = Mode.EINFUEGEN;
-			}else{
+			} else {
 				String wort = getText().trim();
-				iterator = 0;
+				iterator = 0;				
 
 				// Das Kommando wird an das Spiel uebergeben.
 				gui.uebergebeBefehl(wort);
 
 				// Das eingegebene Kommando der Liste hinzufuegen.
-				if(!wort.equals("")){
+				if(!wort.equals("")) {					
 					// Zunaechst wird ueberprueft, ob sich das Kommando nicht schon in der Liste befindet.
 					boolean gefunden = false;
-					for(String s: kommandos.toArray(new String[0])){
-						if(s.equalsIgnoreCase(wort)){
+					for(String s : kommandos.toArray(new String[0])) {
+						if(s.equalsIgnoreCase(wort)) {
 							// Das ueberfluessige Kommando wird geloescht und an "erster"(eig. letzte) Stelle neu eingefuegt.
 							kommandos.remove(s);
 							// Es wird sichergestellt, dass auch alle Plaetze aufgefuellt werden.
@@ -259,7 +258,7 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	/**
 	 *  Diese Subklasse holt das letzte eingegebene Kommando zurueck.
 	 */
-	private class AktionLetztesKommando extends AbstractAction{
+	private class AktionLetztesKommando extends AbstractAction {
 
 		// Die serielle Versionsnummer
 		private static final long serialVersionUID = 1L;
@@ -268,19 +267,19 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	   	/**
 	   	 *  Diese Methode wird ausgefuehrt, wenn man die Pfeiltaste nach oben drueckt.
 	   	 */
-		public void actionPerformed(ActionEvent evt){
-			if(modus == Mode.VERVOLLSTAENDIGEN){
+		public void actionPerformed(ActionEvent evt) {
+			if(modus == Mode.VERVOLLSTAENDIGEN) {
 				int n = woerter.indexOf(getWord(letztesWort));
 				// Der Index ist zu gross.
 				if(n + 1 >= woerter.size()) return;
-				if(woerter.get(n + 1).toLowerCase().startsWith(letztesPraefix.toLowerCase())){
+				if(woerter.get(n + 1).toLowerCase().startsWith(letztesPraefix.toLowerCase())) {
 					letztesWort = woerter.get(n + 1);
 					String fertig = letztesWort.substring(letztesPraefix.length());
 					SwingUtilities.invokeLater(new Vervollstaendigung(fertig, getSelectionStart(), woerter.get(n).length() - 2, true));
 				}
 				return;
 			}
-			if(iterator != -1 && iterator < kommandos.size()){
+			if(iterator != -1 && iterator < kommandos.size()) {
 				String kommando = kommandos.get(kommandos.size() - iterator - 1);
 				setText(kommando);
 				setCaretPosition(0);
@@ -301,24 +300,24 @@ public class Eingabefeld extends JTextArea implements StringListener, DocumentLi
 	    /**
 	     *  Diese Methode wird ausgefuehrt, wenn man die Pfeiltaste nach unten drueckt.
 	     */
-	    public void actionPerformed(ActionEvent evt){
-	    	if(modus == Mode.VERVOLLSTAENDIGEN){
+	    public void actionPerformed(ActionEvent evt) {
+	    	if(modus == Mode.VERVOLLSTAENDIGEN) {
 	    		int n = woerter.indexOf(getWord(letztesWort));
 	    		// Das Wort ist nicht enthalten.
 	    		if(n - 1 < 0) return;
-	    		if(woerter.get(n - 1).toLowerCase().startsWith(letztesPraefix.toLowerCase())){
+	    		if(woerter.get(n - 1).toLowerCase().startsWith(letztesPraefix.toLowerCase())) {
 	    			letztesWort = woerter.get(n - 1);
 	    			String fertig = letztesWort.substring(letztesPraefix.length());
 	    			SwingUtilities.invokeLater(new Vervollstaendigung(fertig, getSelectionStart(), woerter.get(n).length() - 2, true));
 	    		}
 	    		return;
 	    	}
-	    	if(iterator - 1 == 0){
+	    	if(iterator - 1 == 0) {
 	    		iterator--;
 	    		setText(aktuellesKommando);
 	    		setCaretPosition(0);
 	    		moveCaretPosition(aktuellesKommando.length());
-	    	}else if(iterator - 1 > 0){
+	    	} else if(iterator - 1 > 0) {
 	    		iterator--;
 	    		String kommando = kommandos.get(kommandos.size() - iterator);
 	    		setText(kommando);

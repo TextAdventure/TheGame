@@ -2,7 +2,7 @@ package game;
 
 import java.io.Serializable;
 
-import game.logic.Ereignis;
+import game.logic.ereignis.Ereignis;
 
 /**
  *  Es gibt zwei Arten von Kommandos, erstens die, die ueberall verwendet werden koennen, wie untersuchen,
@@ -87,11 +87,11 @@ public class Kommando implements Serializable {
 	}
 	
 	/**
-	 * Gibt das Ereignis zurueck.
-	 * @return Das Ereginis.
+	 * Das Ereignis ist eingetreten und prueft nun, ob eine Aktion durchgefuehrt wird.
+	 * @return True, wenn das Ereignis geloescht werden kann, ansonsten false.
 	 */
-	public Ereignis getEreignis() {
-	    return ereignis;
+	public boolean eingetreten() {
+		return ereignis.eingetreten();
 	}
 	
 	/* --- statische Methoden --- */
