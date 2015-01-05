@@ -465,7 +465,7 @@ public class SpielWelt implements Serializable, StringListener {
 				ausgabe.println(a.getRichtungsName() + "(" + a.getAbkuerzung() + ")");
 				
 				if(a.getZielort().isBesucht())
-					ausgabe.print(" - " + a.getZielort().getName());
+					ausgabe.print(" - " + a.getZielort().getNameExtended());
 				else
 					ausgabe.print(" - ???");
 			}
@@ -486,8 +486,9 @@ public class SpielWelt implements Serializable, StringListener {
 		UntersuchbaresObjekt o = spielerPosition.getUntersuchbaresObjekt(objektName);
 	    if(o != null) {
 
-	    	ausgabe.println();
 	    	ausgabe.printPrintable(o);
+	    	
+	    	Ereignis.untersuchung(o);
 	    	
 	    } else {
 	    	switch(r.nextInt(8)) {
@@ -526,20 +527,20 @@ public class SpielWelt implements Serializable, StringListener {
 	    } else if (rp != null) {
 	    	Stapel[] loot = rp.ernte();
 	    	if(loot == null) {
-	    		ausgabe.println("Du kannst hier im Moment nichts mehr ernten, komm später vorbei.");
+	    		ausgabe.print("Du kannst hier im Moment nichts mehr ernten, komm später vorbei.");
 	    		return;
 	    	}
 	    	if(loot.length == 0) {
-	    		ausgabe.println("Du konntest nichts ernten.");
+	    		ausgabe.print("Du konntest nichts ernten.");
 	    		return;
 	    	}
-	    	ausgabe.println("Du findest " + rp.getNumGen().getUnbest(NumerusGenus.AKKUSATIV).toLowerCase() + rp.getName() + " und du erntest ");
+	    	ausgabe.print("Du findest " + rp.getNumGen().getUnbest(NumerusGenus.AKKUSATIV).toLowerCase() + rp.getName() + " und du erntest ");
 	    	for(Stapel stapel : loot) {
 	    		spieler.getInventar().addGegenstand(stapel);
 	    		if(stapel.getAnzahl() > 1)
-	    			ausgabe.print(stapel.getAnzahl() + " " + stapel.getGegenstand().getPlural() + ", ");
+	    			ausgabe.print(stapel.getAnzahl() + " " + stapel.getGegenstand().getPluralExtended() + ", ");
 	    		else
-	    			ausgabe.print(stapel.getName() + ", ");
+	    			ausgabe.print(stapel.getGegenstand().getNameExtended() + ", ");
 	    	}
 	    	ausgabe.print("du nimmst die Gegenstände an dich.");
 
@@ -605,12 +606,12 @@ public class SpielWelt implements Serializable, StringListener {
 	    		switch(g.getEffekt().getTyp()) {
 	    		case(Effekt.HEILEN):
 	    			int lp = g.getEffekt().getBonus(spieler.getMaxLp());
-	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getName() + " und stellst " + Math.min(spieler.getMaxLp()-spieler.getLp(), lp) + " LP wieder her.");
+	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " und stellst " + Math.min(spieler.getMaxLp()-spieler.getLp(), lp) + " LP wieder her.");
 	    			spieler.addLp(lp);
 	    			break;
 	    		case(Effekt.MPREGENERATION):
 	    			int mp = g.getEffekt().getBonus(spieler.getMaxMp());
-	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getName() + " und stellst " + Math.min(spieler.getMaxMp()-spieler.getMp(), mp) + " MP wieder her.");
+	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " und stellst " + Math.min(spieler.getMaxMp()-spieler.getMp(), mp) + " MP wieder her.");
 	    			spieler.addMp(mp);
 	    			break;
 	    		}
@@ -637,7 +638,7 @@ public class SpielWelt implements Serializable, StringListener {
 		
 		if(g instanceof AusruestbarerGegenstand && spieler.ruesteAus((AusruestbarerGegenstand) g)) {
 			switch(r.nextInt(2)) {
-			case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getName() + " ausgerüstet."); break;
+			case(0): ausgabe.print("Du hast " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " ausgerüstet."); break;
 			case(1): ausgabe.print("Du hast den Gegenstand ausgerüstet."); break;
 			}
 		} else {
@@ -661,15 +662,15 @@ public class SpielWelt implements Serializable, StringListener {
 		if(g instanceof AusruestbarerGegenstand && spieler.legeAb((AusruestbarerGegenstand) g)) {
 			switch(r.nextInt(3)) {
 			case(0): ausgabe.print("Du legst den Gegenstand ab."); break;
-			case(1): ausgabe.print("Du hast " + g.getName() + " abgelegt."); break;
-			case(2): ausgabe.print("Du hast " + g.getName() + " zurück in dein Inventar gelegt."); break;
+			case(1): ausgabe.print("Du hast " + g.getNameExtended() + " abgelegt."); break;
+			case(2): ausgabe.print("Du hast " + g.getNameExtended() + " zurück in dein Inventar gelegt."); break;
 			}
 			
 		} else {
 			switch(r.nextInt(3)) {
 			case(0): ausgabe.print("Du hast diesen Gegenstand nicht ausgerüstet"); break;
 			case(1): ausgabe.print("Du kannst einen Gegenstand, den du nicht ausgerüstet hast, nicht ablegen."); break;
-			case(2): ausgabe.print(g.getName() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(NumerusGenus.AKKUSATIV) + "nicht ausgerüstet hast."); break;
+			case(2): ausgabe.print(g.getNameExtended() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(NumerusGenus.AKKUSATIV) + "nicht ausgerüstet hast."); break;
 			}
 		}
 	}
@@ -719,9 +720,9 @@ public class SpielWelt implements Serializable, StringListener {
 
 	    			for(Stapel s: gegenstaende) {
 	    				if(s.getAnzahl() > 1)
-	    					ausgabe.print(s.getAnzahl() + " " + s.getGegenstand().getPlural() + ", ");
+	    					ausgabe.print(s.getAnzahl() + " " + s.getGegenstand().getPluralExtended() + ", ");
 	    				else
-	    					ausgabe.print(s.getName() + ", ");
+	    					ausgabe.print(s.getGegenstand().getNameExtended() + ", ");
 	    				spieler.getInventar().addGegenstand(s);
 	    			}
 	    			ausgabe.print("du nimmst die Gegenstände an dich.");

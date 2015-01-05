@@ -70,7 +70,10 @@ public class InventarAnzeige extends Anzeige implements InventarListener {
 		clear();
 	    printSize("Inventar:", 18);
 	    for(Stapel s: evt.getStapel())
-	    	printSize("\n" + s.getAnzahl() + " " + s.getGegenstand().getNameExtended(), 14);
+	    	if(s.getAnzahl() > 1)
+	    		printSize("\n" + s.getAnzahl() + " " + s.getGegenstand().getPluralExtended(), 14);
+	    	else
+	    		printSize("\n" + s.getGegenstand().getNameExtended(), 14);
 
 	    if(evt.getGeldbeutel().istLeer())
 	    	return;

@@ -12,6 +12,9 @@ Ereignisse globalisieren
 -OrtBetretenEreignis.class hinzugefügt
 -kleinere Änderungen bei eigenen Kommandos
 -neues Ereignis System in SpielWelt integriert
+-UntersuchungsEreignis.class hinzugefügt
+-es werden mehr Farben angezeigt, bei mehreren Methoden
+*es gibt einen Bug beim Ausrüsten von zwei gleichnamigen Waffen
 
 
 Korrektur der Formatierung und Methoden aufräumen

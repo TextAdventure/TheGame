@@ -33,7 +33,7 @@ public class OrtBetretenEreignis extends Ereignis {
 	 * die Logik geprueft und gegebenenfalls werden die Aktionen ausgefuehrt.
 	 * @param betreten Der Ort, den der Spieler betreten hat.
 	 */
-	public void eingetreten(Ort betreten) {
+	protected void eingetreten(Ort betreten) {
 		if(ort.equals(betreten))
 			// Falls super ein true zurueckgibt, muss das Ereignis geloescht werden.
 			if(super.eingetreten())

@@ -7,13 +7,11 @@ import java.io.ObjectOutputStream;
 import game.*;
 import game.entity.Attribut;
 import game.items.Gegenstand;
-import game.items.Waehrung;
 import game.items.Waffe;
 import game.items.Waffenart;
-import game.logic.*;
 import game.logic.aktion.*;
 import game.logic.bedingung.*;
-import game.logic.ereignis.OrtBetretenEreignis;
+import game.logic.ereignis.*;
 import util.Farbe;
 import util.NumerusGenus;
 
@@ -32,20 +30,26 @@ public final class WeltenGenerator {
 		new Attribut("St‰rke", "st‰rke");
 		
 		Waffenart flammen = new Waffenart("Flammenwerfer", "flammenwerfer");
+		Waffenart napalm = new Waffenart("Napalmwerfer",  "napalmwerfer");
 		
 		SpielWelt welt = new SpielWelt();
 		
 		new Farbe("heiﬂ", 220, 100, 50);
+		new Farbe("brennend", 200, 30, 25);
 		
 		Gegenstand hallo = new Gegenstand(new String[] { "Hallo" }, "Hallos", NumerusGenus.NEUTRUM, "Ein freundliches Hallo.");
-		Waffe flammenwerfer = new Waffe(new String[] { "<c=heiﬂ>Flammenwerfer</c>" }, "Flammenwerfer", NumerusGenus.MASKULIN,
+		Waffe flammenwerfer = new Waffe(new String[] { "<c=heiﬂ>Flammenwerfer</c>" }, "<c=heiﬂ>Flammenwerfer</c>", NumerusGenus.MASKULIN,
 				"Er ist ziemlich <c=heiﬂ>heiﬂ</c>.\n+<p=st‰rke> St‰rke", Waffe.ZWEIHAENDIG, flammen, 0, 0, 100);
+		Waffe napalmwerfer = new Waffe(new String[] { "<c=brennend>Napalmwerfer</c>" }, "<c=brennend>Napalmwerfer</c>", NumerusGenus.MASKULIN,
+				"Er ist mehr als nur <c=heiﬂ>heiﬂ</c>, er ist schon <c=brennend>brennend heiﬂ</c>!", Waffe.SCHWERTHAND, napalm, 0, 0, 175);
 		
 		Ort ort1 = new Ort("<c=heiﬂ>Ort 1</c>", "Das ist ein <c=heiﬂ>heiﬂer</c> Ort.");
 		ort1.addGegenstand(hallo, 1);
 		ort1.addGegenstand(flammenwerfer, 1);
 		Ort ort2 = new Ort("Ort 2", "Das ist der 2. Ort.");
-		Ort ort3 = new Ort("Der Ort", "Ein ganz besonderer Ort.");
+		Ort ort3 = new Ort("Der Ort", "Ein ganz besonderer Ort. Hier ist eine <c=brennend>Hitze</c>");
+		UntersuchbaresObjekt obj = new UntersuchbaresObjekt("<c=heiﬂ>Hitze</c>", "Sie ist <c=heiﬂ>heiﬂ</c>.");
+		ort3.addUntersuchbaresObjekt(obj);
 		Ort ort4 = new Ort("Ein weiterer Ort", "Ein Ort");
 		
 		ort1.addAusgang(Ausgang.NORDEN, ort2);
@@ -61,7 +65,12 @@ public final class WeltenGenerator {
 		ort1.addAusgang(Ausgang.SUEDEN, ort4);
 		
 		new OrtBetretenEreignis(ort4, 3, new SpielerHatGegenstandBedingung(hallo, 1), new SpielerAddGegenstandAktion(hallo, 1)
-								, new AusgabeAktion("Dein Hallo hat ein weiteres angezogen und es geht direkt in dein Inventar!"));
+								, new AusgabeAktion("Dein Hallo hat ein weiteres angezogen und es wandert direkt in dein Inventar!"));
+		
+		new UntersuchungsEreignis(obj, 1, new SpielerHatAusgeruestetBedingung(flammenwerfer), new LegeAbAktion(flammenwerfer)
+								, new SpielerAddGegenstandAktion(napalmwerfer, 1), new RuesteAusAktion(napalmwerfer)
+								, new AusgabeAktion("\nAn diesem besonderem Ort liegt ein paar <c=brennend>Napalmwerfer</c> auf dem Boden! "
+								+ "Du nimmst sie besser einmal mit."));
 		
 		welt.setAktuellePositon(ort1);
 		

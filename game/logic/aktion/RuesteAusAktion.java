@@ -18,7 +18,7 @@ public class RuesteAusAktion extends Aktion {
 	 * @param gegenstand Der Gegenstand, der dem Spieler ausgeruestet werden soll.
 	 */
 	public RuesteAusAktion(AusruestbarerGegenstand gegenstand) {
-		this.gegenstand = (short) gegenstand.getId();
+		this.gegenstand = gegenstand.getId();
 	}
 	
 	/**

@@ -155,7 +155,7 @@ public class Interpreter {
 	    		ObjectOutputStream oos = new ObjectOutputStream(fos);
 	    		oos.writeObject(welt);
 	    		oos.close();
-	    		welt.println("Der Spielstand wurde in " + pfad + " gespeichert.");
+	    		welt.print("Der Spielstand wurde in " + pfad + " gespeichert.");
 	    		gueltigesKommando = true;
 	    	} catch(IOException e) {
 	    	  System.err.println("Es trat ein Fehler beim Speichern eines Spielstands auf.");
@@ -172,7 +172,7 @@ public class Interpreter {
 	    		ois.close();
 	    		welt.updateListen();
 	    		welt.setGUI(gui);
-	    		welt.println("Es wurde das Spiel aus " + pfad + " geladen.");
+	    		welt.print("Es wurde das Spiel aus " + pfad + " geladen.");
 		    	welt.getSpieler().resetTemp();
 
 	    		gueltigesKommando = true;

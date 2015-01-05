@@ -175,30 +175,30 @@ public class Ausruestung implements Serializable {
 	 * @param welt Die SpielWelt, in der die Ausruestung angezeigt werden soll. 
 	 */
 	public void zeigeAn(SpielWelt welt) {
-	    welt.println("Ausrüstung:");
+	    welt.print("Ausrüstung:");
 	    if(haupthand == schildhand && haupthand != null && schildhand != null) 
-	    	welt.println("Beidhändig - " + haupthand.getName());	    
+	    	welt.println("Beidhändig - " + haupthand.getNameExtended());	    
 	    else {
 	    	if(haupthand != null) 
-	    		welt.println("Haupthand - " + haupthand.getName());
+	    		welt.println("Haupthand - " + haupthand.getNameExtended());
 	    	else 
 	    		welt.println("Haupthand - leer");
 	    	if(schildhand != null) 
-	    		welt.println("Schildhand - " + schildhand.getName());
+	    		welt.println("Schildhand - " + schildhand.getNameExtended());
 	    	else 
 	    		welt.println("Schildhand - leer");
 	    }
 	    welt.println();
 	    for(int i = 0; i < ruestung.length; i++) {
 	    	if(ruestung[i] != null) 
-	    		welt.println(Ruestung.getTypNamen((byte)i) + " - " + ruestung[i].getName());
+	    		welt.println(Ruestung.getTypNamen((byte)i) + " - " + ruestung[i].getNameExtended());
 	    	else
 	    		welt.println(Ruestung.getTypNamen((byte)i) + " - leer");
 	    }
 	    welt.println();
 	    for(int i = 0; i < accesoires.length; i++) {
 	    	if(accesoires[i] != null)
-	    		welt.println(Accessoire.getTypNamen((byte)i) + " - " + accesoires[i].getName());
+	    		welt.println(Accessoire.getTypNamen((byte)i) + " - " + accesoires[i].getNameExtended());
 	    	else
 	    		welt.println(Accessoire.getTypNamen((byte)i) + " - leer");
 	    }

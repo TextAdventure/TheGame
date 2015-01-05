@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Vector;
 
 import game.Ort;
+import game.UntersuchbaresObjekt;
 import game.logic.Logik;
 import game.logic.aktion.Aktion;
 
@@ -80,6 +81,9 @@ public abstract class Ereignis implements Serializable {
 	// Eine Liste mit allen OrtBetretenEreignissen.
 	private static Vector<OrtBetretenEreignis> ortBetreten = new Vector<OrtBetretenEreignis>();
 	
+	// Eine Liste mit allen VorUntersuchungEreignissen.
+	private static Vector<UntersuchungsEreignis> untersuchung = new Vector<UntersuchungsEreignis>();	
+	
 	/**
 	 * Fuegt der Liste der OrtBetretenEreignisse ein neues hinzu.
 	 * @param ereignis Das neue OrtBetretenEreignis.
@@ -98,6 +102,24 @@ public abstract class Ereignis implements Serializable {
 	}
 	
 	/**
+	 * Fuegt der Liste der VorUntersuchungEreignisse ein neues hinzu.
+	 * @param ereignis Das neue VorUntersuchungEreignis.
+	 */
+	protected static void addUntersuchungsEreignis(UntersuchungsEreignis ereignis) {
+		untersuchung.add(ereignis);
+	}
+	
+	/**
+	 * Der Spieler untersucht ein UntersuchbaresObjekt, dieses wird hier uebergeben, dananch
+	 * werden alle UntersuchungsEreignisse geprueft mit diesem UntersuchbarenObjekt.
+	 * @param untersuchbaresObjekt Das UntersuchbareObjekt, das untersucht wurden.
+	 */
+	public static synchronized void untersuchung(UntersuchbaresObjekt untersuchbaresObjekt) {
+		for(UntersuchungsEreignis ue : untersuchung.toArray(new UntersuchungsEreignis[0]))
+			ue.eingetreten(untersuchbaresObjekt);
+	}
+	
+	/**
 	 * Entfernt ein Ereignis aus der Liste aller Ereignisse, nachdem sein Zaehler 0
 	 * erreicht hat und es somit nicht mehr ausgeloest werden sollte.
 	 * @param ereignis Das Ereignis, das entfernt werden soll.
@@ -107,6 +129,10 @@ public abstract class Ereignis implements Serializable {
 			for(OrtBetretenEreignis obe : ortBetreten.toArray(new OrtBetretenEreignis[0]))
 				if(obe.equals(ereignis))
 					ortBetreten.remove(ereignis);
+		if(ereignis instanceof UntersuchungsEreignis)
+			for(UntersuchungsEreignis ue : untersuchung.toArray(new UntersuchungsEreignis[0]))
+				if(ue.equals(ereignis))
+					untersuchung.remove(ereignis);
 	}
 	
 	/**
@@ -117,6 +143,8 @@ public abstract class Ereignis implements Serializable {
 		Vector<Ereignis> e = new Vector<Ereignis>();
 		for(OrtBetretenEreignis obe : ortBetreten)
 			e.add(obe);
+		for(UntersuchungsEreignis ue : untersuchung)
+			e.add(ue);
 		return e.toArray(new Ereignis[0]);
 	}
 	
@@ -128,6 +156,8 @@ public abstract class Ereignis implements Serializable {
 		for(Ereignis e : ereignisse)
 			if(e instanceof OrtBetretenEreignis)
 				addOrtBetretenEreignis((OrtBetretenEreignis) e); 
+			else if(e instanceof UntersuchungsEreignis)
+				addUntersuchungsEreignis((UntersuchungsEreignis) e);
 	}
 
 }

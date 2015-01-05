@@ -274,7 +274,7 @@ public class Spieler extends Entity {
 	 * @param welt Die SpielWelt, in der es ausgegeben werden soll.
 	 */
 	public void zeigeStatusAn(SpielWelt welt) {
-	    welt.println("Statuswerte:");
+	    welt.print("Statuswerte:");
 	    welt.println("Leben " + lp + "/" + maxLp);
 	    welt.println("Magie " + mp + "/" + maxMp);
 	    welt.println("Level: " + level);
