@@ -95,7 +95,7 @@ public class Interpreter {
 	    	gueltigesKommando = true;
 
 	    Kommando kommando = Kommando.getKommando(befehl);
-	    String eingabe = Kommando.getEingabe();
+	    String eingabe = Kommando.getEingabe().trim();
 
 	    if(kommando != Kommando.INVALID && !gueltigesKommando) {
 	    	// Der Spieler hat den Untersuchen Befehl eingegeben.
@@ -135,9 +135,14 @@ public class Interpreter {
 	    		Gegenstand g = Gegenstand.getGegenstand(eingabe);
 	    		welt.zeigeGegenstandInfosAn(g);
 	    	}
+	    	
 	    	// Der Spieler hat den Oeffnen Befehl eingegeben.
 	    	if(kommando == Kommando.OEFFNEN)
 	    		welt.sucheBehaelter(eingabe);
+	    	
+	    	// Der Spieler hat den Wegwerfen Befehl eingegeben.
+	    	if(kommando == Kommando.WEGWERFEN)
+	    		welt.werfeWeg(eingabe);
 	    	
 	    	welt.println();
 	    	gueltigesKommando = true;

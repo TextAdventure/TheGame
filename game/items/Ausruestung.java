@@ -1,39 +1,40 @@
 package game.items;
 
-import game.SpielWelt;
+import gui.Anzeige;
 
 import java.io.Serializable;
 
 /**
- * Die Ausruestung des Spielers wird in einem Objekt dieser Klasse verwaltet.
+ * Hier ist die gesamte Ausruestung des Spielers gespeichert und wird auch verwaltet.
+ * @author Marvin
  */
 public class Ausruestung implements Serializable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
-	/* --- Die Variablen --- */
+	/* --- Variablen --- */
 	
 	// Alle Ruestungsteile werden in einem Array gehalten
 	private Ruestung[] ruestung;
-	// Alle Accesoires werden in einem Array gehalten.
-	private Accessoire[] accesoires;
+	// Alle Accessoires werden in einem Array gehalten.
+	private Accessoire[] accessoires;
 	// Der Haupthand-Slot
 	private Waffe haupthand;
 	// Der Schildhand-Slot
 	private Waffe schildhand;
 	  
-	/* --- Der Konstruktor --- */
+	/* --- Konstruktor --- */
 	
 	/**
 	 * Eine neue Ausruestung wird leer erstellt.
 	 */
 	public Ausruestung() {
 	    ruestung = new Ruestung[5];
-	    accesoires = new Accessoire[7];
+	    accessoires = new Accessoire[7];
 	}
 	
-	/* --- Die Methoden --- */
+	/* --- Methoden --- */
 	  
 	/**
 	 * Gibt die Waffe in der Haupthand zurueck.
@@ -52,32 +53,26 @@ public class Ausruestung implements Serializable {
 	}
 	  
 	/**	
-	 * Diese Methode tauscht ein Ruestungsteil gegen eine neue Ruestung aus und gibt die Alte zurueck.
+	 * Tauscht ein Ruestungsteil gegen eine neue Ruestung aus und gibt die Alte zurueck.
 	 * @param neueRuestung Das neue Ruestungsteil, das der Spieler ausruesten moechte.
 	 * @return Die alte Ruestung wird zurueckgegeben, sodass diese wieder dem Inventar des Spielers hinzugefuegt werden kann.
 	 */
 	public Ruestung tauscheRuestung(Ruestung neueRuestung) {
-		Ruestung alteRuestung = null;
-		switch(neueRuestung.getTyp()) {
-			case(Ruestung.HELM): alteRuestung = ruestung[Ruestung.HELM]; ruestung[Ruestung.HELM] = neueRuestung; break;
-			case(Ruestung.BRUSTPANZER): alteRuestung = ruestung[Ruestung.BRUSTPANZER]; ruestung[Ruestung.BRUSTPANZER] = neueRuestung; break;
-			case(Ruestung.HANDSCHUHE): alteRuestung = ruestung[Ruestung.HANDSCHUHE]; ruestung[Ruestung.HANDSCHUHE] = neueRuestung; break;
-			case(Ruestung.HOSE): alteRuestung = ruestung[Ruestung.HOSE]; ruestung[Ruestung.HOSE] = neueRuestung; break;
-			case(Ruestung.SCHUHE): alteRuestung = ruestung[Ruestung.SCHUHE]; ruestung[Ruestung.SCHUHE] = neueRuestung; break;
-		}
-	    return alteRuestung;
-	}	  
+		Ruestung alteRuestung = ruestung[neueRuestung.getTyp()];
+		ruestung[neueRuestung.getTyp()] = neueRuestung;		
+		return alteRuestung;
+	}
+
 	/**
-	 * Diese Methode legt eine alte Ruestung ab und gibt diese dann zurueck.
+	 * Legt eine alte Ruestung ab und gibt diese dann zurueck.
 	 * @param alteRuestung Die Ruestung, die abgelegt werden soll.
-	 * @return Die alte Ruestung wird zurueckgegeben, sodass diese wieder dem Inventar des Spielers hinzugefuegt werden kann.
+	 * @return Die alte Ruestung wird zurueckgegeben, sodass diese wieder dem Inventar des Spielers hinzugefuegt werden
+	 * kann, wenn der Gegenstand nicht ausgeruestet ist, dann wird null zurueckgegeben.
 	 */
 	public Ruestung legeRuestungAb(Ruestung alteRuestung) {
-		for(int i = 0; i < ruestung.length; i++) {
-			if(ruestung[i] == alteRuestung) {
-				ruestung[i] = null;
-				return alteRuestung;
-			}				
+		if(ruestung[alteRuestung.getTyp()].equals(alteRuestung)) {
+			ruestung[alteRuestung.getTyp()] = null;
+			return alteRuestung;
 		}
 	    return null;
 	}
@@ -132,23 +127,23 @@ public class Ausruestung implements Serializable {
 	public Accessoire tauscheAccesoire(Accessoire neuesAccesoire) {			// 0: Amulett 1: Ruecken 2: Guertel 3+4: Ring 5+6: Armband
 		Accessoire altesAccesoire = null;
 		switch(neuesAccesoire.getTyp()) {
-			case(Accessoire.AMULETT): altesAccesoire = accesoires[Accessoire.AMULETT]; accesoires[Accessoire.AMULETT] = neuesAccesoire; break;
-			case(Accessoire.RUECKEN): altesAccesoire = accesoires[Accessoire.RUECKEN]; accesoires[Accessoire.RUECKEN] = neuesAccesoire; break;
-			case(Accessoire.GUERTEL): altesAccesoire = accesoires[Accessoire.GUERTEL]; accesoires[Accessoire.GUERTEL] = neuesAccesoire; break;
+			case(Accessoire.AMULETT): altesAccesoire = accessoires[Accessoire.AMULETT]; accessoires[Accessoire.AMULETT] = neuesAccesoire; break;
+			case(Accessoire.RUECKEN): altesAccesoire = accessoires[Accessoire.RUECKEN]; accessoires[Accessoire.RUECKEN] = neuesAccesoire; break;
+			case(Accessoire.GUERTEL): altesAccesoire = accessoires[Accessoire.GUERTEL]; accessoires[Accessoire.GUERTEL] = neuesAccesoire; break;
 			case(Accessoire.RING):
-				if(accesoires[Accessoire.RING] != null && accesoires[Accessoire.RING + 1] == null) {
-					accesoires[Accessoire.RING + 1] = neuesAccesoire;
+				if(accessoires[Accessoire.RING] != null && accessoires[Accessoire.RING + 1] == null) {
+					accessoires[Accessoire.RING + 1] = neuesAccesoire;
 				} else {
-					altesAccesoire = accesoires[Accessoire.RING]; 
-					accesoires[Accessoire.RING] = neuesAccesoire;					
+					altesAccesoire = accessoires[Accessoire.RING]; 
+					accessoires[Accessoire.RING] = neuesAccesoire;					
 				}
 				break;
 			case(Accessoire.ARMBAND):
-				if(accesoires[Accessoire.ARMBAND] != null && accesoires[Accessoire.ARMBAND + 1] == null) {
-					accesoires[Accessoire.ARMBAND + 1] = neuesAccesoire;
+				if(accessoires[Accessoire.ARMBAND] != null && accessoires[Accessoire.ARMBAND + 1] == null) {
+					accessoires[Accessoire.ARMBAND + 1] = neuesAccesoire;
 				} else {
-					altesAccesoire = accesoires[Accessoire.ARMBAND]; 
-					accesoires[Accessoire.ARMBAND] = neuesAccesoire;
+					altesAccesoire = accessoires[Accessoire.ARMBAND]; 
+					accessoires[Accessoire.ARMBAND] = neuesAccesoire;
 				}					
 				break;
 		}
@@ -156,73 +151,71 @@ public class Ausruestung implements Serializable {
 	}
 	
 	/**
-	 * Legt ein Accesoire ab und gibt es zurueck.
-	 * @param altesAccesoire Das alte Accesoire, das abgelegt werden soll.
-	 * @return Das alte Accesoire, sodass es dem Spieler zurueck ins Inventar gelegt werden kann.
+	 * Legt ein Accessoire ab und gibt es zurueck.
+	 * @param altesAccessoire Das alte Accessoire, das abgelegt werden soll.
+	 * @return Das alte Accessoire, sodass es dem Spieler zurueck ins Inventar gelegt werden kann.
 	 */
-	public Accessoire legeAccesoireAb(Accessoire altesAccesoire) {
-		for(int i = 0; i < accesoires.length; i++) {
-			if(accesoires[i] == altesAccesoire) {
-				accesoires[i] = null;
-				return altesAccesoire;
+	public Accessoire legeAccessoireAb(Accessoire altesAccessoire) {
+		for(int i = 0; i < accessoires.length; i++) {
+			if(accessoires[i] == altesAccessoire) {
+				accessoires[i] = null;
+				return altesAccessoire;
 			}				
 		}
-		return altesAccesoire;
+		return altesAccessoire;
 	}
 	  
 	/**
 	 * Zeigt die Ausruestung des Spielers in der SpielWelt an. 
 	 * @param welt Die SpielWelt, in der die Ausruestung angezeigt werden soll. 
 	 */
-	public void zeigeAn(SpielWelt welt) {
-	    welt.print("Ausrüstung:");
+	public void zeigeAn(Anzeige anzeige) {
+		anzeige.printSize("Ausrüstung", 18);
 	    if(haupthand == schildhand && haupthand != null && schildhand != null) 
-	    	welt.println("Beidhändig - " + haupthand.getNameExtended());	    
+	    	anzeige.println("Beidhändig - " + haupthand.getNameExtended());	    
 	    else {
 	    	if(haupthand != null) 
-	    		welt.println("Haupthand - " + haupthand.getNameExtended());
+	    		anzeige.println("Haupthand - " + haupthand.getNameExtended());
 	    	else 
-	    		welt.println("Haupthand - leer");
+	    		anzeige.println("Haupthand - leer");
 	    	if(schildhand != null) 
-	    		welt.println("Schildhand - " + schildhand.getNameExtended());
+	    		anzeige.println("Schildhand - " + schildhand.getNameExtended());
 	    	else 
-	    		welt.println("Schildhand - leer");
+	    		anzeige.println("Schildhand - leer");
 	    }
-	    welt.println();
+	    anzeige.println();
 	    for(int i = 0; i < ruestung.length; i++) {
 	    	if(ruestung[i] != null) 
-	    		welt.println(Ruestung.getTypNamen((byte)i) + " - " + ruestung[i].getNameExtended());
+	    		anzeige.println(Ruestung.getTypNamen((byte)i) + " - " + ruestung[i].getNameExtended());
 	    	else
-	    		welt.println(Ruestung.getTypNamen((byte)i) + " - leer");
+	    		anzeige.println(Ruestung.getTypNamen((byte)i) + " - leer");
 	    }
-	    welt.println();
-	    for(int i = 0; i < accesoires.length; i++) {
-	    	if(accesoires[i] != null)
-	    		welt.println(Accessoire.getTypNamen((byte)i) + " - " + accesoires[i].getNameExtended());
+	    anzeige.println();
+	    for(int i = 0; i < accessoires.length; i++) {
+	    	if(accessoires[i] != null)
+	    		anzeige.println(Accessoire.getTypNamen((byte)i) + " - " + accessoires[i].getNameExtended());
 	    	else
-	    		welt.println(Accessoire.getTypNamen((byte)i) + " - leer");
+	    		anzeige.println(Accessoire.getTypNamen((byte)i) + " - leer");
 	    }
 	}
 	  
 	/**
 	 * Teset, ob der Spieler einen Gegenstand ausgeruestet hat.
-	 * @param gegenstand Der Gegenstand, den der Spieler ausgeruestet haben soll, sodass wahr zurueckgegeben wird.
-	 * @return Gibt true zurueck, falls der Spieler den Gegenstand ausgeruestet hat und false, wenn er ihn nicht ausgeruestet hat.
+	 * @param gegenstand Der Gegenstand, den der Spieler ausgeruestet haben soll, sodass true zurueckgegeben wird.
+	 * @return True, falls der Spieler den Gegenstand ausgeruestet hat und false, wenn er ihn nicht ausgeruestet hat.
 	 */
 	public boolean istAusgeruestet(Gegenstand gegenstand) {
-		if(haupthand != null && haupthand == gegenstand) 
+		if(haupthand != null && gegenstand.equals(haupthand))
 				return true; 
-	    if(schildhand != null && schildhand == gegenstand) 
+	    if(schildhand != null && gegenstand.equals(schildhand))
 	    	return true;
-	    for(Ruestung r : ruestung) {
-	    	if(r != null && r == gegenstand) 
+	    for(Ruestung r : ruestung)
+	    	if(r != null&& gegenstand.equals(r))
 	    		return true;
-	    }
-	    for(Accessoire a : accesoires) {
-	    	if(a != null && a == gegenstand)
+	    for(Accessoire a : accessoires)
+	    	if(a != null && gegenstand.equals(a))
 	    		return true;
-	    }
 	    return false;
 	}
-	
+
 }

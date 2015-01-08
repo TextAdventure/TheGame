@@ -69,8 +69,8 @@ public final class WeltenGenerator {
 		
 		new UntersuchungsEreignis(obj, 1, new SpielerHatAusgeruestetBedingung(flammenwerfer), new LegeAbAktion(flammenwerfer)
 								, new SpielerAddGegenstandAktion(napalmwerfer, 1), new RuesteAusAktion(napalmwerfer)
-								, new AusgabeAktion("\nAn diesem besonderem Ort liegt ein paar <c=brennend>Napalmwerfer</c> auf dem Boden! "
-								+ "Du nimmst sie besser einmal mit."));
+								, new AusgabeAktion("\nAn diesem besonderen Ort liegt ein <c=brennend>Napalmwerfer</c> auf dem Boden! "
+								+ "Du nimmst ihn besser mal mit."));
 		
 		welt.setAktuellePositon(ort1);
 		

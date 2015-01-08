@@ -47,18 +47,6 @@ public class InventarAnzeige extends Anzeige implements InventarListener {
 		document.setParagraphAttributes(0, document.getLength(), sas, false);
 	}
 
-	/**
-	 * Fuegt einen Text ohne Zeilenumbruch hinzu und aendert die Groesse dieses Texts.
-	 * @param text Der hinzuzufuegende Text.
-	 * @param size Die Groesse des Texts.
-	 */
-	private void printSize(String text, int size) {
-		this.print(text);
-	    SimpleAttributeSet sas = new SimpleAttributeSet();
-	    StyleConstants.setFontSize(sas, size);
-	    document.setCharacterAttributes(document.getLength() - text.length(), document.getLength(), sas, false);
-	}
-
 	// Listener Methode //
 
 	/**
@@ -68,20 +56,20 @@ public class InventarAnzeige extends Anzeige implements InventarListener {
 	@Override
 	public void inventarUpdate(Inventar evt) {
 		clear();
-	    printSize("Inventar:", 18);
-	    for(Stapel s: evt.getStapel())
+	    printSize("Inventar", 18);
+	    for(Stapel s : evt.getStapel())
 	    	if(s.getAnzahl() > 1)
-	    		printSize("\n" + s.getAnzahl() + " " + s.getGegenstand().getPluralExtended(), 14);
+	    		println(Integer.toString(s.getAnzahl()) + " " + s.getGegenstand().getPluralExtended());
 	    	else
-	    		printSize("\n" + s.getGegenstand().getNameExtended(), 14);
+	    		println(s.getGegenstand().getNameExtended());
 
 	    if(evt.getGeldbeutel().istLeer())
 	    	return;
 
 	    print("\n\n");
-	    printSize("Währungen:", 18);
+	    printSize("Währungen", 18);
 	    for(Waehrung w : evt.getGeldbeutel().getWaehrungen())
-	    	printSize("\n" + evt.getGeldbeutel().getMenge(w) + " " + evt.getGeldbeutel().getName(w), 14);
+	    	println(Integer.toString(evt.getGeldbeutel().getMenge(w)) + " " + evt.getGeldbeutel().getNameExtended(w));
 	}
 	
 }

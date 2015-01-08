@@ -45,18 +45,6 @@ public class FaehigkeitenAnzeige extends Anzeige implements SpielerListener {
 	    StyleConstants.setAlignment(sas, StyleConstants.ALIGN_CENTER);
 	    document.setParagraphAttributes(0, document.getLength(), sas, false);
 	}
-	  
-	/**
-	 * Fuegt einen Text ohne Zeilenumbruch hinzu und aendert die Groesse dieses Texts.
-	 * @param text Der hinzuzufuegende Text.
-	 * @param size Die Groesse des Texts.
-	 */
-	private void printSize(String text, int size) {
-		print(text);
-	    SimpleAttributeSet sas = new SimpleAttributeSet();
-	    StyleConstants.setFontSize(sas, size);
-	    document.setCharacterAttributes(document.getLength() - text.length(), document.getLength(), sas, false);
-	}
 	
 	// Listener Methode //
 	
@@ -67,11 +55,9 @@ public class FaehigkeitenAnzeige extends Anzeige implements SpielerListener {
 	@Override
 	public void spielerUpdate(Spieler evt) {
 		clear();
-	    printSize("Fähigkeiten:", 18);
-	    for(Faehigkeit f : evt.getFaehigkeiten()){
-	    	print("\n" + f.getName());
-	    }
-		
+	    printSize("Fähigkeiten", 18);
+	    for(Faehigkeit f : evt.getFaehigkeiten())
+	    	print("\n" + f.getName());		
 	}
-	
+
 }

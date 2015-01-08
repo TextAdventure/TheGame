@@ -51,8 +51,8 @@ public class Inventar implements Serializable {
 			return;
 		}
 		
-	    for(Stapel s: gegenstaende.toArray(new Stapel[0])) {
-	    	if(s.getGegenstand() == gegenstand) {
+	    for(Stapel s : gegenstaende.toArray(new Stapel[0])) {
+	    	if(s.getGegenstand().equals(gegenstand)) {
 	    		s.addAnzahl(anzahl);
 	    		notifyListeners(gegenstand.getName());
 	    		return;

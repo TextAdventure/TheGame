@@ -7,6 +7,7 @@ import game.UntersuchbaresObjekt;
 import game.entity.EntityAttribut;
 import game.entity.EntityResistenz;
 import game.items.AusruestbarerGegenstand;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -84,6 +85,18 @@ public class Anzeige extends JTextPane {
 				System.err.println(e.getStackTrace());
 			}
 	}
+	
+	/**
+	 * Fuegt einen Text ohne Zeilenumbruch hinzu und aendert die Groesse dieses Texts.
+	 * @param text Der hinzuzufuegende Text.
+	 * @param size Die Groesse des Texts.
+	 */
+	public void printSize(String text, int size) {
+		this.print(text);
+	    SimpleAttributeSet sas = new SimpleAttributeSet();
+	    StyleConstants.setFontSize(sas, size);
+	    document.setCharacterAttributes(document.getLength() - text.length(), document.getLength(), sas, false);
+	}
 
 	/**
 	 *  Diese Methode fuegt den uebergebenen String der Anzeige hinzu und er wird fett, davor ist KEIN Zeilenumbruch.
@@ -96,10 +109,6 @@ public class Anzeige extends JTextPane {
 	    document.setCharacterAttributes(document.getLength() - text.length(), document.getLength(), bold, false);
 	}*/
 
-	/**
-	 *  Diese Methode fuegt den uebergebenen String der Anzeige hinzu, davor ist ein Zeilenumbruch.
-	 *  text: der neue Text, der hinzugefuegt werden soll.
-	 */
 	/**
 	 * Fuegt der Anzeige eine Leerzeile hinzu.
 	 */

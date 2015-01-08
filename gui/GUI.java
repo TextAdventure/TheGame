@@ -44,6 +44,8 @@ public class GUI extends JFrame implements CaretListener {
 	private InventarAnzeige inventar;
 	// Die Faehigkeiten des Spielers werden hier angezeigt.
 	private FaehigkeitenAnzeige faehigkeiten;
+	// Die Ausruestung des Spielers wird hier angezeigt.
+	private AusruestungsAnzeige ausruestung;
 
 	// Die GUI, in der kombiniert werden kann.
 	private KombinationsGUI kombination;
@@ -60,9 +62,12 @@ public class GUI extends JFrame implements CaretListener {
 	    anzeige = new Anzeige(690, 370);
 	    eingabe = new Eingabefeld(this);
 	    info = new InfoPanel(345, 220);
+	    
 	    displays = new JTabbedPane();
 	    inventar = new InventarAnzeige(290, 400);
 	    faehigkeiten = new FaehigkeitenAnzeige(290, 400);
+	    ausruestung = new AusruestungsAnzeige(290, 400);
+	    
 	    map = new MiniMap();
 	    /*directions = new JPanel();
 	    playerInfo = new JPanel();*/
@@ -77,6 +82,7 @@ public class GUI extends JFrame implements CaretListener {
 	    add(info.getJScrollPane());
 	    displays.addTab("Inventar", inventar.getJScrollPane());
 	    displays.addTab("Fähigkeiten", faehigkeiten.getJScrollPane());
+	    displays.addTab("Ausrüstung", ausruestung.getJScrollPane());
 	    add(displays);
 
 	    add(map);
@@ -87,7 +93,6 @@ public class GUI extends JFrame implements CaretListener {
 	    eingabe.setLocation(5, 380);
 	    info.getJScrollPane().setLocation(5, 405);
 	    displays.setBounds(700, 5, 290, 395);
-	    //inventory.getJScrollPane().setLocation(700, 5);
 	    map.setLocation(355, 400);
 	    /*directions.setBounds(0, 400, 350, 250);
 	    playerInfo.setBounds(650, 400, 350, 250);*/
@@ -141,6 +146,8 @@ public class GUI extends JFrame implements CaretListener {
 	    inventar.addKeyListener(ka);
 	    faehigkeiten.addCaretListener(this);
 	    faehigkeiten.addKeyListener(ka);
+	    ausruestung.addCaretListener(this);
+	    ausruestung.addKeyListener(ka);
 	    info.addCaretListener(this);
 	    info.addKeyListener(ka);
 	    this.addKeyListener(ka);
@@ -166,13 +173,17 @@ public class GUI extends JFrame implements CaretListener {
 	}
 
 	// Diese Methode gibt das InventoryDisplay zurueck.
-	public InventarAnzeige getInventoryDisplay() {
+	public InventarAnzeige getInventarAnzeige() {
 	    return inventar;
 	}
 
 	// Diese Methode gibt das SkilDisplay zurueck.
-	public FaehigkeitenAnzeige getSkillDisplay() {
+	public FaehigkeitenAnzeige getFaehigkeitenAnzeige() {
 		return faehigkeiten;
+	}
+	
+	public AusruestungsAnzeige getAusruestungsAnzeige() {
+		return ausruestung;
 	}
 
 	// Diese Methode gibt das Eingabefeld zurueck.

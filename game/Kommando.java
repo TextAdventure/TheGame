@@ -218,6 +218,22 @@ public class Kommando implements Serializable {
 	    		return OEFFNEN;
 	    	}
 	    }
+	    
+	    for(int i = 0; i < WEGWERFEN.getPraefixe().length; i++) {
+	    	String praefix = WEGWERFEN.getPraefixe()[i];
+	    	String suffix = WEGWERFEN.getSuffix(i);
+	    	if(befehl.toLowerCase().startsWith(praefix))
+	    		beginnt = true;
+	    	if(beginnt && befehl.toLowerCase().endsWith(suffix)) {
+	    		if(!suffix.equals(""))
+	    			eingabe = befehl.substring(befehl.indexOf(' '), befehl.lastIndexOf(' ')).trim();
+	    		else
+	    			eingabe = befehl.substring(Math.max(befehl.indexOf(' '), 0)).trim();
+	    		return WEGWERFEN;
+	    	}
+	    	beginnt = false;
+	    }
+	    
 	    return INVALID;
 	}
 	
@@ -245,5 +261,7 @@ public class Kommando implements Serializable {
 	public static final Kommando INFO = new Kommando(new String[]{"info"}, new String[]{""});
 	// Der Wert fuer das Oeffnen Kommando.
 	public static final Kommando OEFFNEN = new Kommando(new String[]{"öffne", "plündere", "leere"}, new String[]{"", "", ""});
+	// Der Wert fuer das Wegwerfen Kommando.
+	public static final Kommando WEGWERFEN = new Kommando(new String[]{"wirf", "lass", "lass"}, new String[]{"weg", "fallen", "liegen"});
 
 }

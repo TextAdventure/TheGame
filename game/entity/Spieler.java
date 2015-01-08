@@ -152,7 +152,7 @@ public class Spieler extends Entity {
 	/**
 	 * Gibt die entsprechende Angriffsfaehigkeit zurueck, basierend auf dem Kommando.
 	 * @param kommando Das Kommando des Spielers.
-	 * @return Die gesuchte Faehigkeit, falls vorhanden.
+	 * @return Die gesuchte Faehigkeit, falls vorhanden, ansonsten null.
 	 */
 	@Override
 	public Faehigkeit getFaehigkeit(String kommando) {
@@ -213,6 +213,7 @@ public class Spieler extends Entity {
 	    for(Resistenz r : Resistenz.getResistenzen())
     			this.addResistenz(gegenstand.getResistenz(r.getName()), r.getName());
 	    resetTemp();
+	    this.notifyListeners(); // Fuer die AusruestungsAnzeige.
 	    return true;
 	}
 	  
@@ -233,7 +234,7 @@ public class Spieler extends Entity {
 	    } else if(gegenstand instanceof Ruestung) {
 	    	alt2[0] = ausruestung.legeRuestungAb((Ruestung)gegenstand);
 	    } else if(gegenstand instanceof Accessoire) {
-	    	alt2[0] = ausruestung.legeAccesoireAb((Accessoire)gegenstand);
+	    	alt2[0] = ausruestung.legeAccessoireAb((Accessoire)gegenstand);
 	    } else {
 	    	return false;
 	    }
@@ -249,6 +250,7 @@ public class Spieler extends Entity {
 	    		this.addResistenz(-g.getResistenz(r.getName()), r.getName());
 	    }
 	    resetTemp();
+	    this.notifyListeners(); // Fuer die AusruestungsAnzeige.
 	    return true;
 	}
 	  

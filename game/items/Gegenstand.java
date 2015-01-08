@@ -191,6 +191,24 @@ public class Gegenstand implements Serializable, IPrintable {
 	public String getGegenstandsart() {
 		return "Gegenstand";
 	}
+	
+	/**
+	 * Vergleicht, ob die beiden Gegenstaende identisch sind. Testet zunaechst die super
+	 * Methode und wenn diese nicht true zurueck gibt, dann werden die IDs verglichen,
+	 * sind diese gleich, so handelt es sich bei den Gegenstaenden um den Gleichen und die 
+	 * Methode gibt true zurueck. Tritt keiner dieser Faelle ein, so gibt die Methode false zurueck.
+	 * @param object Das andere Objekt, dabei handelt es sich meistens um einen Gegenstand, das getestet werden soll.
+	 * @return True, wenn die Gegenstaende oder ihre IDs identisch sind, ansonsten false.
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if(super.equals(object))
+			return true;
+		if(object instanceof Gegenstand)
+			if(((Gegenstand) object).getId() == this.getId())
+				return true;
+		return false;
+	}
 
 	/* --- statische Methoden --- */
 	

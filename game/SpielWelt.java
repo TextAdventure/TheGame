@@ -184,10 +184,11 @@ public class SpielWelt implements Serializable, StringListener {
 	    this.map = gui.getMap();
 	    this.map.updateMiniMap(spielerPosition);
 
-	    this.getInventar().addListener(gui.getInventoryDisplay());
+	    this.getInventar().addListener(gui.getInventarAnzeige());
 	    this.getInventar().addListener(gui.getEingabefeld());
-	    this.spieler.addListener(gui.getSkillDisplay());
+	    this.spieler.addListener(gui.getFaehigkeitenAnzeige());
 	    this.spieler.addListener(gui.getEingabefeld());
+	    this.spieler.addListener(gui.getAusruestungsAnzeige());
 	    this.spieler.notifyListeners(spieler.getFaehigkeiten());
 
 	    this.kampfEffekte = new Vector<KampfEffekt>();
@@ -560,8 +561,8 @@ public class SpielWelt implements Serializable, StringListener {
 	 * Zeigt alle ausgeruesteten Gegenstaende an.
 	 */
 	public void zeigeAusruestungAn() {
-		// Das Ausruestungs-Objekt gibt alles selber aus, braucht aber das Welt-Objekt dafuer.
-	    spieler.getAusruestung().zeigeAn(this);
+		// Das Ausruestungs-Objekt gibt alles selber aus, braucht aber das Anzeige-Objekt dafuer.
+	    spieler.getAusruestung().zeigeAn(this.ausgabe);
 	}
 
 	/**
@@ -670,7 +671,7 @@ public class SpielWelt implements Serializable, StringListener {
 			switch(r.nextInt(3)) {
 			case(0): ausgabe.print("Du hast diesen Gegenstand nicht ausgerüstet"); break;
 			case(1): ausgabe.print("Du kannst einen Gegenstand, den du nicht ausgerüstet hast, nicht ablegen."); break;
-			case(2): ausgabe.print(g.getNameExtended() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(NumerusGenus.AKKUSATIV) + "nicht ausgerüstet hast."); break;
+			case(2): ausgabe.print(g.getNameExtended() + " kann nicht abgelegt werden, da du " + g.getNumGen().getPers(NumerusGenus.AKKUSATIV).toLowerCase() + "nicht ausgerüstet hast."); break;
 			}
 		}
 	}
@@ -746,4 +747,34 @@ public class SpielWelt implements Serializable, StringListener {
 	    }
 	}
 	
+	/**
+	 * Wirft einen Gegenstand weg, falls er sich im Inventar des Spielers befindet.
+	 * @param eingabe Die Eingabe des Spielers, die den Gegenstand bennent, der weggeworfen werden soll.
+	 */
+	public void werfeWeg(String eingabe) {
+		int anzahl = eingabe.contains(" ") ? Integer.valueOf(eingabe.trim().substring(0, eingabe.indexOf(" "))) : -1;
+		Gegenstand g;
+		if(anzahl > 1)
+			g = Gegenstand.getGegenstand(eingabe.substring(eingabe.indexOf(" ")).trim());
+		else
+			g = Gegenstand.getGegenstand(eingabe);
+		
+		if(g == null) {
+			ausgabe.print("Dieser Gegenstand existiert nicht.");
+			return;
+		}
+
+		if(anzahl > 1 && getInventar().containsGegenstand(new Stapel(g, anzahl))) {
+			spielerPosition.addGegenstand(g, anzahl);
+			getInventar().removeGegenstand(g, anzahl);
+			ausgabe.print("Du legst " + Integer.toString(anzahl) + " " + g.getPluralExtended() + " hier ab.");
+		} else if(anzahl < 2 && getInventar().containsGegenstand(new Stapel(g, 1))){
+			spielerPosition.addGegenstand(g, 1);
+			getInventar().removeGegenstand(g, 1);
+			ausgabe.print("Du legst " + g.getNumGen().getUnbest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " hier ab.");
+		} else {
+			ausgabe.print("Es befindet sich dieser Gegenstand nicht in deinem Inventar.");
+		}
+	}
+
 }

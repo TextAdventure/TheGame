@@ -35,7 +35,7 @@ public class Geldbeutel implements Serializable {
 	 */
 	public int getMenge(Waehrung waehrung) {
 		for(Stapel s : geld) {
-			if(((Waehrung) s.getGegenstand()).getWaehrungsName().equals(waehrung.getWaehrungsName()) && s.getGegenstand() == waehrung) {
+			if(((Waehrung) s.getGegenstand()).getWaehrungsName().equals(waehrung.getWaehrungsName()) && s.getGegenstand().equals(waehrung)) {
 				Waehrung w = (Waehrung) s.getGegenstand();
 				
 				int resultat = getKleinsteWaehrung(w).getAnzahl();
@@ -47,7 +47,7 @@ public class Geldbeutel implements Serializable {
 					else
 						resultat = (int) Math.floor(resultat / w.getKurs());
 				}
-				if(w == waehrung)
+				if(w.equals(waehrung))
 					resultat = resultat % w.getKurs();
 				return resultat;
 			}				
@@ -93,6 +93,17 @@ public class Geldbeutel implements Serializable {
 		for(Stapel s : geld)
 			if(s.getGegenstand() == waehrung)
 				return this.getMenge(waehrung) != 1 ? waehrung.getPlural() : waehrung.getName();
+		return "";
+	}
+	/**
+	 * Gibt den erweiterten Namen einer Waehrung zurueck.
+	 * @param waehrung Die Waehrung fuer die der erweiterte Name gesucht wird.
+	 * @return Den erweiterten Namen der Waehrung mit Modifikatoren, dabei wird zwischen Plural und Singular entschieden.
+	 */
+	public String getNameExtended(Waehrung waehrung) {
+		for(Stapel s : geld)
+			if(s.getGegenstand().equals(waehrung))
+				return this.getMenge(waehrung) != 1 ? waehrung.getPluralExtended() : waehrung.getNameExtended();
 		return "";
 	}
 	/**

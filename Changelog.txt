@@ -3,18 +3,23 @@ Ereignisse globalisieren
 
 -neues Package game.logic.Ereginis
 -Ereignis.class in das Package verschoben
- *ist jetzt abstract
++ist jetzt abstract
 -IEreignis.class, OrtEreignis.class, UntersuchbaresObjektEreginis.class, KommandoGegenstand.class und   OrtAddKommandoGegenstandAktion.class gelöscht
- *daraus entstehende Fehler behoben
++daraus entstehende Fehler behoben
 -Ausgabe fuer Aktionen entfernt, kann jetzt nur noch mit der AusgabeAktion.class realisiert werden
- *alle Aktionen angepasst
++alle Aktionen angepasst
 -Ereignis Konstruktor geändert, der Zähler wird hier bereits festgelegt.
 -OrtBetretenEreignis.class hinzugefügt
 -kleinere Änderungen bei eigenen Kommandos
 -neues Ereignis System in SpielWelt integriert
 -UntersuchungsEreignis.class hinzugefügt
 -es werden mehr Farben angezeigt, bei mehreren Methoden
-*es gibt einen Bug beim Ausrüsten von zwei gleichnamigen Waffen
++es gibt einen Bug, der aber nicht sehr dramatisch ist, aber noch nicht behoben, beim Ausrüsten von zwei gleichnamigen Waffen, die BEIDHAENDIG sind, wird die Waffe ersetzt und die zurückgegebene Waffe nicht wieder dem Inventar hinzugefügt
+-Ausruestung überarbeitet und ein paar Methoden verbessert oder gelöscht
+-Gegenstand überschreibt die equals() Methode
+-AusruestungsAnzeige.class hinzugefügt, sie zeigt die Ausrüstung des Spielers an
+-kleine Änderungen in GUI, SpielWelt, Spieler und Ausruestung, sodass die Anzeige funktioniert
+-Wegwerfen Kommando hinzugefügt für Gegenstände, sie können an Orten abgelegt werden und da später wieder mitgenommen werden, die Anzahl kann sogar genau festgelegt werden mit "wirf x Gegenstand weg", "lass x Gegenstand fallen", "lass x Gegenstand liegen"
 
 
 Korrektur der Formatierung und Methoden aufräumen
