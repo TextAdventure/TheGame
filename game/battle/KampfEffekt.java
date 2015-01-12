@@ -16,7 +16,7 @@ public class KampfEffekt {
 	private int anfangsDauer;
 	private int aktuelleDauer;
 	// Der Bonus des Effekts.
-	private int bonus;
+	private float bonus;
 	
 	/* --- Konstruktor --- */
 	
@@ -36,7 +36,7 @@ public class KampfEffekt {
 	 * Gibt den reinen Bonus des Effekts zurueck.
 	 * @param wert Der aktuelle Wert des Attributs.
 	 */
-	public int getBonus(int wert) {
+	public float getBonus(int wert) {
 		if(aktuelleDauer == anfangsDauer) {
 			bonus = effekt.getBonus(wert);
 			aktuelleDauer--;
@@ -54,7 +54,7 @@ public class KampfEffekt {
 	 * Aus dem maximalen LP/MP-Wert wird der Bonus berechnet und der Bonus, der noch addiert werden muss, wird zurueckgegeben.
 	 * @param maxWert Der maximale Wert der LP/MP.
 	 */
-	public int getBonusLpMp(int maxWert){
+	public float getBonusLpMp(float maxWert){
 	    bonus = effekt.getBonus(maxWert);
 	    aktuelleDauer--;
 	    if(aktuelleDauer < 1)

@@ -1,12 +1,12 @@
 package game.entity;
 
-import game.Drop;
 import game.SpielWelt;
 import game.items.Stapel;
 
 import java.io.Serializable;
 import java.util.Vector;
 
+import util.Drop;
 import util.NumerusGenus;
 
 /**
@@ -26,27 +26,24 @@ public abstract class Entity implements Serializable {
 	// Die Beschreibung des Lebewesens.
 	protected String beschreibung;
 	
-	// Die Lebenspunkte.
-	protected int lp;
-	protected int maxLp;
-	
-	// Die Magiepunkte.
-	protected int mp;
-	protected int maxMp;
+	// Die aktuellen Ressourcen
+	protected float[] ressourcen;	
 	
 	// Alle Attribute des Entities.
-	protected EntityAttribut[] attribute;
+	protected EntityAttribut attribute;
 	// Alle Resistenzen des Entities.
-	protected EntityResistenz[] resistenzen;
+	protected EntityResistenz resistenzen;
 	// Alle Schadensmultiplikatoren des Entities.
 	protected EntityDamageAmplifier[] schadensMultiplikatoren;
 	
 	// Alle Faehigkeiten des Lebewesens.
 	protected Vector<Faehigkeit> faehigkeiten;
+	// Alle Faehigkeiten der Gegner.
+	protected Vector<Drop<Faehigkeit>> faehigkeitenG;
 
 	// Fuer Gegner.class
 	// Alle Drops, die der Gegner fallen lassen kann.
-	protected Vector<Drop> loot;
+	protected Vector<Drop<Stapel>> loot;
 	
 	/* --- Konstruktor --- */
 	
@@ -56,36 +53,30 @@ public abstract class Entity implements Serializable {
 	 * @param numerusGenus Das Geschlecht.
 	 * @param beschreibung Die Beschreibung.
 	 * @param lp Die Lebenspunkte des Entities.
-	 * @param mp Die Magiepunkte des Entities.
 	 * @param attributswerte ALLE Attribute muessen in der ID Reihenfolge(wann sie erstellt wurden) eingegeben werden.
 	 */
-	public Entity(String name, NumerusGenus numerusGenus, String beschreibung, int lp, int mp, int... attributswerte) {
+	public Entity(String name, NumerusGenus numerusGenus, String beschreibung, int... attributswerte) {
 		this.name = name;
 		this.numGen = numerusGenus;
 		this.beschreibung = beschreibung;
 		
-		this.maxLp = lp;
-		this.lp = maxLp;
-		this.maxMp = mp;
-		this.mp = maxMp;
+		attribute = new EntityAttribut(attributswerte);
 		
-		attribute = new EntityAttribut[Attribut.getMaxId()];
-		for(int i = 0; i < Attribut.getMaxId(); i++)
-			attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], attributswerte[i]);
+		this.ressourcen = new float[Ressource.getMaxId()];
+		for(Ressource r : Ressource.getRessourcen())
+			ressourcen[r.getId()] = Ressource.getMaxRessource(r, this);
+		
 		// Die Resistenzen sind von Haus aus leer.
-		resistenzen = new EntityResistenz[Resistenz.getMaxId()];
-		for(int i = 0; i < Resistenz.getMaxId(); i++)
-			resistenzen[i] = new EntityResistenz(Resistenz.RESISTENZEN[i], 0.0f);
+		resistenzen = new EntityResistenz(new int[0]);
 		// Die Schadensmultiplikatoren ebenfalls.
 		schadensMultiplikatoren = new EntityDamageAmplifier[Schadensart.getMaxId()];
 		for(int i = 0; i < Schadensart.getMaxId(); i++)
 			schadensMultiplikatoren[i] = new EntityDamageAmplifier(Schadensart.SCHADEN[i], 0.0f, 0);
-		
 		resetTemp();
 		
 		faehigkeiten = new Vector<Faehigkeit>();
 		
-		loot = new Vector<Drop>();
+		loot = new Vector<Drop<Stapel>>();
 	}
 	
 	
@@ -93,21 +84,23 @@ public abstract class Entity implements Serializable {
 	 * Ein zweiter Konstruktor fuer den Spieler, alle Attribute sind 0.
 	 */
 	protected Entity() {
-		attribute = new EntityAttribut[Attribut.ATTRIBUTE.length];
-		for(int i = 0; i < Attribut.getMaxId(); i++)
-			attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], 0);
+		attribute = new EntityAttribut(new int[0]);
+		
+		this.ressourcen = new float[Ressource.getMaxId()];
+		for(Ressource r : Ressource.getRessourcen())
+			ressourcen[r.getId()] = Ressource.getMaxRessource(r, this);
+		
 		// Die Resistenzen sind von Haus aus leer.
-		resistenzen = new EntityResistenz[Resistenz.getMaxId()];
-		for(int i = 0; i < Resistenz.getMaxId(); i++)
-			resistenzen[i] = new EntityResistenz(Resistenz.RESISTENZEN[i], 0.0f);
+		resistenzen = new EntityResistenz(new int[0]);
 		// Die Schadensmultiplikatoren ebenfalls.
 		schadensMultiplikatoren = new EntityDamageAmplifier[Schadensart.getMaxId()];
 		for(int i = 0; i < Schadensart.getMaxId(); i++)
 			schadensMultiplikatoren[i] = new EntityDamageAmplifier(Schadensart.SCHADEN[i], 0.0f, 0);
+		resetTemp();
 		
 		faehigkeiten = new Vector<Faehigkeit>();
 		
-		loot = new Vector<Drop>();
+		loot = new Vector<Drop<Stapel>>();
 	}
 	
 	/* --- Methoden --- */
@@ -139,83 +132,75 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Gibt die maximalen LP zurueck.
-	 * @return Die maximalen LP.
+	 * Gibt die temporaeren maximalen LP zurueck.
+	 * @return Die temporaeren maximalen LP.
 	 */
-	public int getMaxLp() {
-		return maxLp;
+	public float getMaxLp() {
+		return Ressource.getMaxLeben(this);
 	}
+	
 	/**
-	 * Gibt die aktuellen LP zurueck.
-	 * @return Die aktuellen LP.
+	 * Gibt die aktuellen LP zurueck als Ganzzahl.
+	 * @return Die aktuellen LP als Ganzzahl.
 	 */
 	public int getLp() {
-		return lp;
-	}
-	/**
-	 * Gibt die maximalen MP zurueck.
-	 * @return Die maximalen MP.
-	 */
-	public int getMaxMp() {
-		return maxMp;
-	}
-	/**
-	 * Gibt die aktuellen MP zurueck.
-	 * @return Die aktuellen MP.
-	 */
-	public int getMp() {
-		return mp;
+		return Math.round(ressourcen[0]);
 	}
 	
 	/**
-	 * Gibt ein Attribut aufgrund des Namens oder Parameternamens zurueck,
+	 * Gibt den aktuellen Wert einer Ressource zurueck.
+	 * @param ressource Die Ressource, die gesucht wird.
+	 * @return Den aktuellen Wert einer Ressource.
+	 */
+	public int getRessource(Ressource ressource) {
+		return Math.round(ressourcen[ressource.getId()]);
+	}
+	
+	/**
+	 * Gibt die temporaere Initiative des Lebewesens zurueck.
+	 * @return Die temporaere Initiative.
+	 */
+	public float getInitiative() {
+		return Ressource.getInitiative(this);
+	}
+	
+	/**
+	 * Gibt den Wert eines Attributs zurueck,
 	 * falls es dieses Attribut nicht gibt wird -1 zurueckgegeben.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Namens.
+	 * @param attribut Das Attribut, dessen Wert gesucht wird.
 	 * @return Den Wert des Attributs.
 	 */
-	public int getAttribut(String nameOderParam) {
-		for(Attribut a : Attribut.getAttribute())
-			if(a.getName().equals(nameOderParam) || a.getParam().equals(nameOderParam))
-				return attribute[a.getId()].getWert();
-		return -1;
+	public int getWert(Attribut attribut) {
+		return attribute.getWert(attribut);
 	}
 	
 	/**
-	 * Gibt ein temporaeres Attribut aufgrund des Namens oder Parameternamens zurueck,
+	 * Gibt ein temporaeres Attributs zurueck,
 	 * falls es dieses Attribut nicht gibt wird -1 zurueckgegeben.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Namens.
+	 * @param attribut Das Attribut, dessen Wert gesucht wird.
 	 * @return Den Wert des temporaeren Attributs.
 	 */
-	public int getTempAttribut(String nameOderParam) {
-		for(Attribut a : Attribut.getAttribute())
-			if(a.getName().equals(nameOderParam) || a.getParam().equals(nameOderParam))
-				return attribute[a.getId()].getTemp();
-		return -1;
+	public int getTemp(Attribut attribut) {
+		return attribute.getTemp(attribut);
 	}
 	
 	/**
-	 * Gibt den Wert fuer eine Resistenz zurueck, basierend auf dem Namen oder dem Parameter.
-	 * @param nameOderParm Der Name oder die Parameterschreibweise.
+	 * Gibt den Wert fuer eine Resistenz zurueck.
+	 * @param resistenz Die Resistenz, deren Wert gesucht wird.
 	 * @return Den Wert der Resistenz in Prozent, falls es dies Resistenz nicht gibt wird -1 zurueckgegeben.
 	 */
-	public float getResistenz(String nameOderParam) {
-		for(Resistenz r : Resistenz.getResistenzen())
-			if(r.getName().equals(nameOderParam) || r.getParam().equals(nameOderParam))
-				return resistenzen[r.getId()].getWert();
-		return -1.0f;
+	public float getResistenz(Resistenz resistenz) {
+		return resistenzen.getWert(resistenz);
 	}
 	
 	/**
-	 * Gibt eine temporaere Resistenz aufgrund des Namens oder Parameternamens zurueck,
+	 * Gibt eine temporaere Resistenz zurueck,
 	 * falls es diese Resistenz nicht gibt wird -1 zurueckgegeben.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Namens.
+	 * @param resistenz Die Resistenz, deren temporaerer Wert gesucht wird.
 	 * @return Den Wert der temporaeren Resistenz.
 	 */
-	public float getTempResistenz(String nameOderParam) {
-		for(Resistenz r : Resistenz.getResistenzen())
-			if(r.getName().equals(nameOderParam) || r.getParam().equals(nameOderParam))
-				return resistenzen[r.getId()].getTemp();
-		return -1.0f;
+	public float getTempResistenz(Resistenz resistenz) {
+		return resistenzen.getTemp(resistenz);
 	}
 	
 	/**
@@ -237,7 +222,15 @@ public abstract class Entity implements Serializable {
 	 */
 	public Faehigkeit[] getFaehigkeiten() {
 		return faehigkeiten.toArray(new Faehigkeit[0]);
-		}
+	}
+	
+	/**
+	 * Gibt alle Faehigkeiten in einer Liste zurueck.
+	 * @return Alle Faehigkeiten.
+	 */
+	public Vector<Drop<Faehigkeit>> getFaehigkeitenAlsDrop() {
+		return faehigkeitenG;
+	}
 	
 	/**
 	 * Gibt die Angriffsfaehigkeit des Entitys zurueck(muss ueberschrieben werden).
@@ -252,60 +245,53 @@ public abstract class Entity implements Serializable {
 	 * Fuegt den LP einen Betrag hinzu.
 	 * @param wert Erhoeht die LP um diesen Wert.
 	 */
-	public void addLp(int wert) {
-		lp = Math.min(lp + wert, maxLp);
+	public void addLp(float wert) {
+		ressourcen[0] = Math.min(ressourcen[0] + wert, getMaxLp());
 	}
 	
 	/**
-	 * Fuegt den MP einen Betrag hinzu.
-	 * @param wert Erhoeht die MP um diesen Wert.
-	 */
-	public void addMp(int wert) {
-		mp = Math.min(mp + wert, maxMp);
-	}
-	
-	/**
-	 * Fuegt einem Attribut einen gewissen Wert hinzu, dazu wird der Name oder die Parameterschreibweise des Attributs benoetigt.
+	 * Fuegt einer Ressource einen Wert hinzu.
+	 * @param ressource Die Ressource, der ein Wert hinzugefuegt werden soll.
 	 * @param wert Der Wert, der hinzugefuegt werden soll.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Attributs.
 	 */
-	public void addAttribut(int wert, String nameOderParam) {
-		for(Attribut a : Attribut.getAttribute())
-			if(a.getName().equals(nameOderParam) || a.getParam().equals(nameOderParam))
-				attribute[a.getId()].addWert(wert);
+	public void addRessource(Ressource ressource, float wert) {
+		ressourcen[ressource.getId()] = Math.min(ressourcen[ressource.getId()] + wert, Ressource.getMaxRessource(ressource, this));
 	}
 	
 	/**
-	 * Fuegt einem Attribut einen gewissen temporaeren Wert hinzu, dazu wird der Name oder die Parameterschreibweise des Attributs benoetigt.
-	 * @param wert Der temporaere Wert, der hinzugefuegt werden soll.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Attributs.
-	 */
-	public void addTempAttribut(int tempWert, String nameOderParam) {
-		for(Attribut a : Attribut.getAttribute())
-			if(a.getName().equals(nameOderParam) || a.getParam().equals(nameOderParam))
-				attribute[a.getId()].addTemp(tempWert);
-	}
-	
-	/**
-	 * Fuegt der Resistenz einen gewissen Wert hinzu, dazu wird der Name oder die Parameterschreibweise der Resistenz benoetigt.
+	 * Fuegt einem Attribut einen gewissen Wert hinzu.
 	 * @param wert Der Wert, der hinzugefuegt werden soll.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise der Resistenz.
+	 * @param attribut Das Attribut, dem etwas hinzugefuegt werden soll.
 	 */
-	public void addResistenz(float wert, String nameOderParam) {
-		for(Resistenz r : Resistenz.getResistenzen())
-			if(r.getName().equals(nameOderParam) || r.getParam().equals(nameOderParam))
-				resistenzen[r.getId()].addWert(wert);
+	public void addAttribut(int wert, Attribut attribut) {
+		attribute.addWert(attribut, wert);
 	}
 	
 	/**
-	 * Fuegt der Resistenz einen gewissen temporaeren Wert hinzu, dazu wird der Name oder die Parameterschreibweise der Resistenz benoetigt.
+	 * Fuegt einem Attribut einen gewissen temporaeren Wert hinzu.
 	 * @param wert Der temporaere Wert, der hinzugefuegt werden soll.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise der Resistenz.
+	 * @param attribut Das Attribut, dem ein temporaerer Wert hinzugefuegt werden soll.
 	 */
-	public void addTempResistenz(float tempWert, String nameOderParam) {
-		for(Resistenz r : Resistenz.getResistenzen())
-			if(r.getName().equals(nameOderParam) || r.getParam().equals(nameOderParam))
-				resistenzen[r.getId()].addTemp(tempWert);
+	public void addTempAttribut(int tempWert, Attribut attribut) {
+		attribute.addTemp(attribut, tempWert);
+	}
+	
+	/**
+	 * Fuegt der Resistenz einen gewissen Wert hinzu.
+	 * @param wert Der Wert, der hinzugefuegt werden soll.
+	 * @param resistenz Die Resistenz, der ein Wert hinzugefuegt werden soll.
+	 */
+	public void addResistenz(float wert, Resistenz resistenz) {
+		resistenzen.addWert(resistenz, wert);
+	}
+	
+	/**
+	 * Fuegt der Resistenz einen gewissen temporaeren Wert hinzu.
+	 * @param wert Der temporaere Wert, der hinzugefuegt werden soll.
+	 * @param resistenz Die Resistenz, der ein temporaerer Wert hinzugefuegt werden soll.
+	 */
+	public void addTempResistenz(float tempWert, Resistenz resistenz) {
+		resistenzen.addTemp(resistenz, tempWert);
 	}
 	
 	/**
@@ -325,10 +311,11 @@ public abstract class Entity implements Serializable {
 	/**
 	 * Fuegt eine neue Faehigkeit dem Lebewesen hinzu.
 	 * @param faehigkeit Die neue Faehigkeit.
+	 * @param wahrscheinlichkeit Die Wahrscheinlichkeit fuer einen Gegner, dass er diese Faehigkeit verwendet.
 	 */
-	public void addFaehigkeit(Faehigkeit faehigkeit) {
-		if(!faehigkeiten.contains(faehigkeit))
-			faehigkeiten.add(faehigkeit);
+	public void addFaehigkeit(Faehigkeit faehigkeit, int wahrscheinlichkeit) {
+		if(!faehigkeitenG.contains(faehigkeit))
+			faehigkeitenG.add(new Drop<Faehigkeit>(wahrscheinlichkeit, faehigkeit));
 	}
 	
 	/* - Alle anderen Methoden - */
@@ -337,10 +324,10 @@ public abstract class Entity implements Serializable {
 	 * Setzt die temporaeren Attribute zurueck.
 	 */
 	public void resetTemp() {
-		for(int i = 0; i < Attribut.getMaxId(); i++)
-			attribute[i].resetTemp();
-		for(int i = 0; i < Resistenz.getMaxId(); i++)
-			resistenzen[i].resetTemp();
+		attribute.resetTemp();
+		resistenzen.resetTemp();
+		for(Ressource r : Ressource.getRessourcen())
+			ressourcen[r.getId()] = Math.min(ressourcen[r.getId()], Ressource.getMaxRessource(r, this));
 	}
 
 	/**
@@ -352,41 +339,40 @@ public abstract class Entity implements Serializable {
 	public int fuegeSchadenZu(int angriff, Schadensart schadensart) {
 		// Zuerst wird der Schaden nur mit dem Resistenzen Attribut berechnet.
 		double schaden = Math.pow(1.6, Math.log(angriff / Math.max(Resistenz.getResistenz(schadensart).getAttribut(this), 1))) * angriff / 4;
-		// Danach kommt die prozentuale Resistenz.
-		schaden *= (100.0f - resistenzen[Resistenz.getResistenz(schadensart).getId()].getTemp()) / 100.0f;
-		lp = Math.max(lp - (int) schaden, 0);
+		// Danach kommt die prozentuale Resistenz, diese kann nicht groesser als 100% sein, weil sonst der Schaden negativ wird.
+		schaden *= (100.0f - Math.min(resistenzen.getTemp(Resistenz.getResistenz(schadensart)), 100.0f)) / 100.0f;
+		ressourcen[0] = Math.max(ressourcen[0] - (float) schaden, 0);
 		
 		return (int) schaden;
 	}
 	
 	/**
-	 * Fuegt moegliche Drops hinzu.
-	 * @param drops Die moeglichen Drops, die der Gegner fallen laesst.
+	 * Laesst das Entity sich erholen und es regeneriert seine Ressourcen.
 	 */
-	public void addDrop(Drop... drops) {
-		for(Drop d : drops)
-			loot.add(d);
+	public void regeneriere() {
+		for(Ressource r : Ressource.getRessourcen())
+			ressourcen[r.getId()] = Math.min(Ressource.getMaxRessource(r, this), ressourcen[r.getId()] + r.getRessourceRegeneration(this));
+	}
+	
+	/**
+	 * Fuegt einen moeglichen Drop hinzu.
+	 * @param drop Ein moeglicher Drop, den der Gegner fallen lassen kann.
+	 */
+	public void addDrop(Drop<Stapel> drop) {
+		loot.add(drop);
 	}
 	
 	/**
 	 * Gibt den Loot zurueck, der von dem Gegner erhalten wurde.
 	 * @return Den Loot.
 	 */
+	@SuppressWarnings("unchecked") // TODO
 	public Stapel[] getLoot() {
-		int sigmaChance = 0;
-		for(Drop d : loot)
-			sigmaChance += d.getChance();
-		if(sigmaChance == 0)
+		Stapel[] s = loot.firstElement().drop(SpielWelt.WELT.r, loot.toArray(new Drop[0]));
+		if(s == null)
 			return new Stapel[0];
-		
-		// Exklusive obere Grenze!
-		int nInt = SpielWelt.WELT.r.nextInt(sigmaChance + 1);
-		for(Drop d : loot) 
-			if(nInt >= sigmaChance - d.getChance() && nInt <= sigmaChance)
-				return d.getGegenstaende();
-			else
-				sigmaChance -= d.getChance();
-		return new Stapel[0];
+		else
+			return s;
 	}
 
 }

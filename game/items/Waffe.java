@@ -2,8 +2,6 @@ package game.items;
 
 import java.util.Vector;
 
-import game.entity.Attribut;
-import game.entity.EntityAttribut;
 import util.NumerusGenus;
 
 /**
@@ -55,20 +53,14 @@ public class Waffe extends AusruestbarerGegenstand {
 	 * @param beschreibung Die Beschreibung der Waffe.
 	 * @param hand Die Hand, in der die Waffe gefuehrt werden kann.
 	 * @param art Die Art der Waffe, muss im WeltenGenerator genauer festgelegt werden, welche Arten von Waffen es in diesem Abenteuer gibt.
-	 * @param lebenspunkte Der Lebenspunktebonus beim Tragen dieser Waffe.
-	 * @param magiepunkte Der Magiepunktebonus beim Tragen dieser Waffe.
 	 * @param attributswerte Die Attributsboni beim Tragen dieser Waffe.
 	 */
-	public Waffe(String[] namenWaffe, String plural, NumerusGenus numerusGenus, String beschreibung, byte hand, Waffenart art, int lebenspunkte, int magiepunkte,
-			int... attributswerte) {
+	public Waffe(String[] namenWaffe, String plural, NumerusGenus numerusGenus, String beschreibung, byte hand, Waffenart art, int... attributswerte) {
 	    super(namenWaffe, plural, numerusGenus, beschreibung);
 	    this.hand = hand;
 	    this.waffenart = art;
 	    
-	    this.lp = lebenspunkte;
-	    this.mp = magiepunkte;
-	    for(int i = 0; i < Attribut.getMaxId(); i++)
-			attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], attributswerte[i]);
+	    attribute.addAlleWerte(attributswerte);
 	}
 	
 	/* --- Methoden --- */

@@ -75,7 +75,7 @@ public class Schadensart implements Serializable {
 	 * @return Der Attributswert fuer das Bonus Attribut.
 	 */
 	public int getAttribut(Entity entity) {
-		return entity.getTempAttribut(Attribut.getAttribut(attribut).getName());
+		return entity.getTemp(Attribut.getAttribut(attribut));
 	}
 	
 	/**

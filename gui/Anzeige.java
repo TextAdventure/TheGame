@@ -1,11 +1,12 @@
 package gui;
 
+
 import java.awt.Color;
 
 import game.Ort;
 import game.UntersuchbaresObjekt;
-import game.entity.EntityAttribut;
-import game.entity.EntityResistenz;
+import game.entity.Attribut;
+import game.entity.Resistenz;
 import game.items.AusruestbarerGegenstand;
 
 import javax.swing.JScrollPane;
@@ -140,19 +141,19 @@ public class Anzeige extends JTextPane {
 			AusruestbarerGegenstand g = (AusruestbarerGegenstand)print;
 			if(g.hasWerte()) {
 				println();
-				for(EntityAttribut ea : g.getAttribute()) {
+				for(Attribut a : Attribut.getAttribute()) {
 					// Vorzeichen bestimmen
-					if(ea.getWert() < 0)
-						println(ea.getWert() + " " + ea.getAttribut().getName());
-					else if(ea.getWert() > 0)
-						println("+" + ea.getWert() + " " + ea.getAttribut().getName());
+					if(g.getAttribut(a) < 0)
+						println(g.getAttribut(a) + " " + a.getName());
+					else if(g.getAttribut(a) > 0)
+						println("+" + g.getAttribut(a) + " " + a.getName());
 				}
-				for(EntityResistenz er : g.getResistenzen()) {
+				for(Resistenz r : Resistenz.getResistenzen()) {
 					// Vorzeichen bestimmen
-					if(er.getWert() < 0)
-						println(er.getWert() + "% " + er.getResistenz().getName());
-					else if(er.getWert() > 0)
-						println("+" + er.getWert() + "% " + er.getResistenz().getName());
+					if(g.getResistenz(r) < 0)
+						println(g.getResistenz(r) + "% " + r.getName());
+					else if(g.getResistenz(r) > 0)
+						println("+" + g.getResistenz(r) + "% " + r.getName());
 				}
 			}
 		}

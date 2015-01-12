@@ -40,7 +40,7 @@ public class Spieler extends Entity {
 	private Ausruestung ausruestung;
 	
 	// Die Listener
-	transient private Vector<Object> listeners;
+	private transient Vector<Object> listeners;
 	
 	/* --- Konstruktor --- */
 	
@@ -72,15 +72,16 @@ public class Spieler extends Entity {
 	public void setLevels(Level[] levels) {
 		this.levels = levels;
 		
-		this.maxLp = levels[0].getLpBonus();
-		this.lp = this.maxLp;
-		this.maxMp = levels[0].getMpBonus();
-		this.mp = this.maxMp;
+		// TODO Level korrigieren!!!
 		
 		for(Attribut a : Attribut.getAttribute())
-			this.addAttribut(levels[0].getAttributsBonus(a.getName()), a.getName());
+			this.addAttribut(levels[0].getAttributsBonus(a), a);
 		
 		level = 1;
+		
+		// Leben etc. auffuellen.
+		for(Ressource r : Ressource.getRessourcen())
+			this.addRessource(r, Ressource.getMaxRessource(r, this));
 	}
 	
 	/**
@@ -108,16 +109,11 @@ public class Spieler extends Entity {
 				SpielWelt.WELT.println("Glückwunsch! Dein Level erhöht sich auf " + level + ".");
 				SpielWelt.WELT.println("Deine Attribute verbesseren sich!");
 				
-				SpielWelt.WELT.println("LP: " + maxLp + " +" + levels[level].getLpBonus());
-				maxLp += levels[level].getLpBonus();
-				
-				SpielWelt.WELT.println("MP: " + maxMp + " +" + levels[level].getMpBonus());
-				maxMp += levels[level].getMpBonus();
-				
 				for(Attribut a : Attribut.getAttribute()) {
-					SpielWelt.WELT.println(a.getName() + ": " + getAttribut(a.getName()) + " +" + levels[level].getAttributsBonus(a.getName()));
-					this.addAttribut(levels[level].getAttributsBonus(a.getName()), a.getName());
+					SpielWelt.WELT.println(a.getName() + ": " + getWert(a) + " +" + levels[level].getAttributsBonus(a));
+					this.addAttribut(levels[level].getAttributsBonus(a), a);
 				}
+				
 				SpielWelt.WELT.println();
 			}
 		}
@@ -143,9 +139,8 @@ public class Spieler extends Entity {
 	 * Fuegt den Faehigkeiten des Spielers eine neue hizu.
 	 * @param faehigkeit Die neue Faehigkeit des Spielers.
 	 */
-	@Override
 	public void addFaehigkeit(Faehigkeit faehigkeit) {
-		super.addFaehigkeit(faehigkeit);
+		faehigkeiten.add(faehigkeit);
 		notifyListeners(faehigkeit);
 	}
 	
@@ -196,22 +191,16 @@ public class Spieler extends Entity {
 	    for(AusruestbarerGegenstand g : alt2) {
 	    	if(g != null) {
 	    		inventar.addGegenstand(g, 1);
-	    		maxLp -= g.getLp();
-	    		lp = Math.min(lp, maxLp);
-	    		maxMp =- g.getMp();
-	    		mp = Math.min(mp, maxMp);
 	    		for(Attribut a : Attribut.getAttribute())
-	    			this.addAttribut(-g.getAttribut(a.getName()), a.getName());
+	    			this.addAttribut(-g.getAttribut(a), a);
 	    		for(Resistenz r : Resistenz.getResistenzen())
-	    			this.addResistenz(-g.getResistenz(r.getName()), r.getName());
+	    			this.addResistenz(-g.getResistenz(r), r);
 	    	}	
 	    }
-	    maxLp += gegenstand.getLp();
-	    maxMp += gegenstand.getMp();
 	    for(Attribut a : Attribut.getAttribute())
-			this.addAttribut(gegenstand.getAttribut(a.getName()), a.getName());
+			this.addAttribut(gegenstand.getAttribut(a), a);
 	    for(Resistenz r : Resistenz.getResistenzen())
-    			this.addResistenz(gegenstand.getResistenz(r.getName()), r.getName());
+    			this.addResistenz(gegenstand.getResistenz(r), r);
 	    resetTemp();
 	    this.notifyListeners(); // Fuer die AusruestungsAnzeige.
 	    return true;
@@ -240,14 +229,10 @@ public class Spieler extends Entity {
 	    }
 	    for(AusruestbarerGegenstand g : alt2) {
 	    	inventar.addGegenstand(g, 1);
-	    	maxLp -= g.getLp();
-	    	if(lp > maxLp) lp = maxLp;
-	    	maxMp -= g.getMp();
-	    	if(mp > maxMp) mp = maxMp;
 	    	for(Attribut a : Attribut.getAttribute())
-    			this.addAttribut(-g.getAttribut(a.getName()), a.getName());
+    			this.addAttribut(-g.getAttribut(a), a);
 	    	for(Resistenz r : Resistenz.getResistenzen())
-	    		this.addResistenz(-g.getResistenz(r.getName()), r.getName());
+	    		this.addResistenz(-g.getResistenz(r), r);
 	    }
 	    resetTemp();
 	    this.notifyListeners(); // Fuer die AusruestungsAnzeige.
@@ -277,19 +262,18 @@ public class Spieler extends Entity {
 	 */
 	public void zeigeStatusAn(SpielWelt welt) {
 	    welt.print("Statuswerte:");
-	    welt.println("Leben " + lp + "/" + maxLp);
-	    welt.println("Magie " + mp + "/" + maxMp);
+	    welt.println(Ressource.getRessource((byte) 0).getName() + ": " + Math.round(Math.floor(ressourcen[0])) + "/" + Math.round(Math.floor(Ressource.getMaxLeben(this)))); 
 	    welt.println("Level: " + level);
 	    if(levels != null && levels.length > level + 1)
 	    	welt.println("XP: " + getXpFuerLevelUp() + " zum nächsten Level, insgesamt " + xp);
 	    else
 	    	welt.println("XP: insgesamt " + xp);
 	    welt.println();
-	    for(int i = 0; i < Attribut.getMaxId(); i++)
-	    	welt.println(Attribut.ATTRIBUTE[i].getName() + ": " + this.getAttribut(Attribut.ATTRIBUTE[i].getName()));
+	    for(Attribut a : Attribut.getAttribute())
+	    	welt.println(a.getName() + ": " + this.getWert(a));
 	    welt.println();
-	    for(int i = 0; i < Resistenz.getMaxId(); i++)
-	    	welt.println(Resistenz.RESISTENZEN[i].getName() + ": " + this.getResistenz(Resistenz.RESISTENZEN[i].getName()) + "%");
+	    for(Resistenz r : Resistenz.getResistenzen())
+	    	welt.println(r.getName() + ": " + this.getResistenz(r) + "%");
 	    welt.println();
 	    for(EntityDamageAmplifier eda : schadensMultiplikatoren)
 	    	welt.println(eda.getSchadensart().getName() + " wird um " + eda.getProzetual() + "% und um " + eda.getAbsolut() + " erhöht");

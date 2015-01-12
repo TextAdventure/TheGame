@@ -13,24 +13,22 @@ public class EntityResistenz implements Serializable {
 
 	/* --- Variablen --- */
 	
-	// Die Resistenz.
-	private byte resistenz;
 	// Der Wert der Resistenz.
-	private float wert;
+	private float[] werte;
 	// Der temporaere Wert der Resistenz.
-	private float temp;
+	private transient float[] temps;
 	
 	/* --- Konstruktor --- */
 	
 	/**
-	 * Eine neue EntityResistenz wird mithilfe einer Resistenz und einem Wert erstellt.
-	 * @param resistenz Die Resistenz, dieser Resistenz.
-	 * @param wert Der Wert der Resistenz.
+	 * Ein EntityResistenz verwaltet alle Resistenzen eines Lebewesens.
+	 * @param werte Die Startwerte des Entities.
 	 */
-	public EntityResistenz(Resistenz resistenz, float wert) {
-		this.resistenz = resistenz.getId();
-		this.wert = wert;
-		this.temp = wert;
+	public EntityResistenz(int[] werte) {
+		this.werte = new float[Resistenz.getMaxId()];
+		this.temps = new float[Resistenz.getMaxId()];
+		addAlleWerte(werte);
+		resetTemp();
 	}
 	
 	/* --- Methoden --- */
@@ -39,48 +37,70 @@ public class EntityResistenz implements Serializable {
 	 * Fuegt der Resistenz einen Wert hinzu.	
 	 * @param wert Der Wert, der hinzugefuegt werden soll.
 	 */
-	public void addWert(float wert) {
-		this.wert += wert;
+	public void addWert(Resistenz resistenz, float wert) {
+		this.werte[resistenz.getId()] += wert;
 	}
 	
 	/**
-	 * Gibt den Wert der Resistenz zurueck.
+	 * Fuegt alle Resistenzen hinzu mit einem Array, fehlende Werte werden hinten mit 0 ergaenzt.
+	 * @param werte Das Array mit allen Werten.
+	 */
+	private void addAlleWerte(int[] werte) {		
+		for(byte b = 0; b < Resistenz.getMaxId() && werte.length > b; b++)
+			addWert(Resistenz.getResistenz(b), werte[b]);
+		if(werte.length < Resistenz.getMaxId())
+			for(byte b = (byte) werte.length; b < Resistenz.getMaxId(); b++)
+				addWert(Resistenz.getResistenz(b), 0);
+	}
+	
+	/**
+	 * Gibt den Wert einer Resistenz zurueck.
+	 * @param resistenz Die gesuchte Resistenz.
 	 * @return Den Wert der Resistenz.
 	 */
-	public float getWert() {
-		return wert;
+	public float getWert(Resistenz resistenz) {
+		return werte[resistenz.getId()];
 	}
 	
 	/**
-	 * Fuegt der temporaeren Resistenz einen Wert hinzu.
-	 * @param wert Der Weert, der hinzugefuegt werden soll.
+	 * Fuegt einer temporaeren Resistenz einen Wert hinzu.
+	 * @param resistenz Die Resistenz, der ein temporaere Wert hinzugefuegt werden soll.
+	 * @param wert Der Wert, der hinzugefuegt werden soll.
 	 */
-	public void addTemp(float wert) {
+	public void addTemp(Resistenz resistenz, float wert) {
+		if(temps == null)
+			resetTemp();
 		// Der temporaere Wert ist mindestens 1, da ansonsten merkwuerdige Ergebnisse bei Schaden etc. herauskommen wuerden
-		this.temp = Math.max(wert + temp, 1);
+		this.temps[resistenz.getId()] = Math.max(wert + temps[resistenz.getId()], 1);
 	}
 	
 	/**
-	 * Gibt den Wert der temporaere Resistenz zurueck.
+	 * Gibt den Wert einer temporaere Resistenz zurueck.
+	 * @param resistenz Die Resistenz, deren temporaerer Wert gesucht wird.
 	 * @return Den Wert der temporaeren Resistenz.
 	 */
-	public float getTemp() {
-		return temp;
+	public float getTemp(Resistenz resistenz) {
+		if(temps == null)
+			resetTemp();
+		return temps[resistenz.getId()];
 	}
 	
 	/**
-	 * Setzt den temporaeren Wert zurueck.
+	 * Setzt die temporaeren Werte zurueck.
 	 */
 	public void resetTemp() {
-		this.temp = this.wert;
+		this.temps = this.werte;
 	}
 	
 	/**
-	 * Gibt die Resistenz zurueck.	
-	 * @return Die Resistenz.
+	 * Gibt an, ob dieses Lebewesen irgendwelche Werte besitzt.
+	 * @return True, wenn es Werte hat, ansonsten false.
 	 */
-	public Resistenz getResistenz() {
-		return Resistenz.getResistenz(resistenz);
+	public boolean hasWerte() {
+		for(float wert : werte)
+			if(wert != 0.0f)
+				return true;
+		return false;
 	}
 
 }

@@ -1,3 +1,9 @@
+Optionen
+========
+
+-OptionsDialog.class hinzugefügt
+
+
 Ereignisse globalisieren
 ========================
 

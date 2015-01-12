@@ -538,7 +538,7 @@ public class Ort implements Serializable, IPrintable {
 	}
 	
 	/**
-	 * Aendert die Wahrscheinlichkeit fuer einen Kampf an diesem Ort.
+	 * Aendert die Wahrscheinlichkeit fuer einen Kampf an diesem Ort in Prozent.
 	 * @param wahrscheinlichkeit Die neue Wahrscheinlichkeit fuer einen Kampf.
 	 * @return Sich selbst.
 	 */

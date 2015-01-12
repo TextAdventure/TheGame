@@ -9,6 +9,7 @@ import game.entity.Entity;
 import game.entity.Faehigkeit;
 import game.entity.Gegner;
 import game.entity.Resistenz;
+import game.entity.Ressource;
 import game.entity.Schadensart;
 import game.entity.Spieler;
 import game.items.AusruestbarerGegenstand;
@@ -89,6 +90,8 @@ public class SpielWelt implements Serializable, StringListener {
 	private ArrayList<Vector<Kombination>> kombinationen;
 	// Alle Ereignisse im Spiel(wird benoetigt, um die Ereignisse zu speichern und zu laden)
 	private Ereignis[] ereignisse;
+	// Alle Ressourcen im Spiel(wird benoetigt, um die Ressourcen zu speichern und zu laden)
+	private Ressource[] ressourcen;
 	// Alle Attribute im Spiel(wird benoetigt, um die Attribute zu speichern und zu laden)
 	private Attribut[] attribute;
 	// Alle Schadensarten im Spiel(wird benoetigt, um die Schadensarten zu speichern und zu laden)
@@ -155,10 +158,11 @@ public class SpielWelt implements Serializable, StringListener {
 
 	    Gegenstand.setAlleGegenstaende(this.gegenstaende);
 	    Kombination.setAlleKombinationen(this.kombinationen);
-	    Ereignis.setAlleEreignisse(ereignisse);
-	    Attribut.ATTRIBUTE = this.attribute;
+	    Ereignis.setAlleEreignisse(this.ereignisse);
+	    Ressource.setRessourcen(this.ressourcen);
+	    Attribut.setAttribute(this.attribute);
 	    Schadensart.SCHADEN = this.schadensarten;
-	    Resistenz.RESISTENZEN = this.resistenzen;
+	    Resistenz.setResistenzen(this.resistenzen);
 	    Farbe.setAlleFarben(this.farben);
 	}
 	
@@ -169,9 +173,10 @@ public class SpielWelt implements Serializable, StringListener {
 		this.gegenstaende = Gegenstand.getAlleGegenstaende();
 	    this.kombinationen = Kombination.getAlleKombinationen();
 	    this.ereignisse = Ereignis.getAlleEreignisse();
-	    this.attribute = Attribut.ATTRIBUTE;
+	    this.ressourcen = Ressource.getRessourcen();
+	    this.attribute = Attribut.getAttribute();
 	    this.schadensarten = Schadensart.SCHADEN;
-	    this.resistenzen = Resistenz.RESISTENZEN;
+	    this.resistenzen = Resistenz.getResistenzen();
 	    this.farben = Farbe.getAlleFarben();
 	}
 	
@@ -308,18 +313,25 @@ public class SpielWelt implements Serializable, StringListener {
 		for(Entity g : kampf.getKampfGegner())
 			if(g.getLp() > 0)
 				aktionen.add(new KampfAktion(g, g.getFaehigkeit(evt), spieler));
-
+		
 		Collections.sort(aktionen);
 
+		// Alle am Kampf beteiligten Entities regenerieren.
+		for(Entity g : kampf.getKampfGegner())
+			g.regeneriere();
+		spieler.regeneriere();
+		
 		for(KampfAktion aktion : aktionen.toArray(new KampfAktion[0])) {
-			if(aktion.isGueltigeAktion()) aktion.fuehreAktionAus();
+			if(aktion.isGueltigeAktion())
+				aktion.fuehreAktionAus();
 			if(spieler.getLp() <= 0) {
 				kampfEndet(false);
 				return;
 			} else if(aktion.getZiel().getLp() <= 0) {
 				kampf.toeteGegner(aktion.getZiel());
 				for(Stapel s : aktion.getZiel().getLoot())
-					loot.addGegenstand(s);
+					if(s != null)
+						loot.addGegenstand(s);
 				for(KampfAktion a : aktionen.toArray(new KampfAktion[0]))
 					if(a.getAngreifer() == aktion.getZiel())
 						a.ungueltig();
@@ -335,21 +347,12 @@ public class SpielWelt implements Serializable, StringListener {
 	    for(KampfEffekt ke : kampfEffekte.toArray(new KampfEffekt[0])) {
 	    	switch(ke.getTyp()) {
 	    		case(Effekt.HEILEN):
-	    			int lp = ke.getBonusLpMp(spieler.getMaxLp());
+	    			float lp = ke.getBonusLpMp(spieler.getMaxLp());
 	    			if(lp == 0)
 	    				kampfEffekte.remove(ke);
 	    			else
 	    				ausgabe.println("Du stellst " + lp + " LP wieder her.");
 	    			spieler.addLp(lp);
-	    		break;
-	    			
-	    		case(Effekt.MPREGENERATION):
-	    			int mp = ke.getBonusLpMp(spieler.getMaxMp());
-	    			if(mp == 0)
-	    				kampfEffekte.remove(ke);
-	    			else
-	    				ausgabe.println("Du stellst " + mp + " MP wieder her.");
-	    			spieler.addMp(mp);
 	    		break;
 	    	}
 	    }
@@ -434,6 +437,8 @@ public class SpielWelt implements Serializable, StringListener {
 	 */
 	public void setAktuellePositon(Ort zielort) {		
 		spielerPosition = zielort;
+		// Spieler regeneriert sich bei jedem Ortswechsel.
+		spieler.regeneriere();
 		if(map != null)
 			map.updateMiniMap(spielerPosition);
 		Kampf k = spielerPosition.findetKampfStatt();
@@ -606,15 +611,9 @@ public class SpielWelt implements Serializable, StringListener {
 	    	} else if(!kaempft && g.istEinsetzbarAusserhalb() && spieler.getInventar().containsGegenstand(g)) {
 	    		switch(g.getEffekt().getTyp()) {
 	    		case(Effekt.HEILEN):
-	    			int lp = g.getEffekt().getBonus(spieler.getMaxLp());
+	    			float lp = g.getEffekt().getBonus(spieler.getMaxLp());
 	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " und stellst " + Math.min(spieler.getMaxLp()-spieler.getLp(), lp) + " LP wieder her.");
 	    			spieler.addLp(lp);
-	    			break;
-	    		case(Effekt.MPREGENERATION):
-	    			int mp = g.getEffekt().getBonus(spieler.getMaxMp());
-	    			ausgabe.println("Du verwendest " + g.getNumGen().getBest(NumerusGenus.AKKUSATIV).toLowerCase() + g.getNameExtended() + " und stellst " + Math.min(spieler.getMaxMp()-spieler.getMp(), mp) + " MP wieder her.");
-	    			spieler.addMp(mp);
-	    			break;
 	    		}
 	    		spieler.getInventar().removeGegenstand(g, 1);
 	    		eingesetzt = true;

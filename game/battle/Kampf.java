@@ -86,8 +86,10 @@ public class Kampf implements Serializable {
 	 */
 	public void toeteGegner(Entity gegner) {
 		for(Entity g : kampf)
-			if(g.getName().equals(gegner.getName()))
+			if(g.getName().equals(gegner.getName())) {
 				g = null;
+				return;
+			}
 	}
 	
 	/**

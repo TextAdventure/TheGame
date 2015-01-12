@@ -42,7 +42,7 @@ public class EntityDamageAmplifier implements Serializable {
 	 * @return Den Schaden inklusive der Verstaerkung, dabei wird zu erst der prozentuale, dann der absolute Bonus verrechnet.
 	 */
 	public int getAmplifiedDamage(int schaden) {
-		int rueckgabe = (int) (schaden * prozent / 100.0f);
+		int rueckgabe = (int) (schaden * (prozent / 100.0f + 1.0f));
 		rueckgabe += absolut;
 		return rueckgabe;
 	}

@@ -2,8 +2,6 @@ package game.items;
 
 import java.util.Vector;
 
-import game.entity.Attribut;
-import game.entity.EntityAttribut;
 import util.NumerusGenus;
 
 /**
@@ -42,19 +40,13 @@ public class Accessoire extends AusruestbarerGegenstand {
 	 * @param numerusGenus Der Numerus und Genus.
 	 * @param beschreibung Die Beschreibung fuer dieses Accessoire.
 	 * @param typ Der Typ dieses Accessoires.
-	 * @param lebenspunkte Der Lebenspunktebonus beim Tragen des Accessoires.
-	 * @param magiepunkte Der Magiepunktebonus beim Tragen des Accessoires.
 	 * @param attributswerte Die Attributsboni beim Tragen des Accessoires.
 	 */
-	public Accessoire(String[] namenAccessoire, String plural, NumerusGenus numerusGenus, String beschreibung, byte typ, int lebenspunkte, int magiepunkte,
-			int... attributswerte) {		
+	public Accessoire(String[] namenAccessoire, String plural, NumerusGenus numerusGenus, String beschreibung, byte typ, int... attributswerte) {		
 		super(namenAccessoire, plural, numerusGenus, beschreibung);
 	    this.typ = typ;
 	    
-	    this.lp = lebenspunkte;
-	    this.mp = magiepunkte;
-	    for(int i = 0; i < Attribut.getMaxId(); i++)
-			attribute[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], attributswerte[i]);
+	    attribute.addAlleWerte(attributswerte);
 	}
 	
 	/* --- Methoden --- */

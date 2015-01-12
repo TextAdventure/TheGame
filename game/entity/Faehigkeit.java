@@ -46,7 +46,7 @@ public class Faehigkeit implements Serializable {
 	 * @param waffenarten Die Waffentypen mit denen man diese Faehigkeit ausfuehren kann.
 	 */
 	public Faehigkeit(String name, NumerusGenus numerusGenus, String ausgabe, Schadensart schadensart,
-			String bonus, String kosten, Waffenart[] waffenarten) {
+			String bonus, String kosten, Waffenart... waffenarten) {
 		this.name = name;
 	    this.numGen = numerusGenus;
 	    this.ausgabe = ausgabe;

@@ -22,7 +22,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	// Der Gegenstand, der eingesetzt werden soll.
 	private VerwendbarerGegenstand gegenstand;
 	// Die effektive Flinkheit des Angreifers.
-	private int flk;
+	private int initiative;
 	// Das Ziel, das angegriffen wird.
 	private Entity ziel;
 	
@@ -38,7 +38,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		this.angreifer = angreifer;
 		this.faehigkeit = faehigkeit;
 		this.gegenstand = null;
-		this.flk = (int) (angreifer.getTempAttribut("flk") * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
+		this.initiative = (int) (angreifer.getInitiative() * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
 		this.ziel = ziel;
 	}
 	
@@ -52,7 +52,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		this.angreifer = benutzer;
 		this.gegenstand = gegenstand;
 		this.faehigkeit = gegenstand.getFaehigkeit();
-		this.flk = (int) (angreifer.getTempAttribut("flk") * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
+		this.initiative = (int) (angreifer.getInitiative() * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
 		this.ziel = ziel;
 	}
 
@@ -62,8 +62,8 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	 * Gibt die Flinkheit des Angreifers zurueck.
 	 * @return Die Flinkheit des Angreifers.
 	 */
-	public int getFlk() {
-		return flk;
+	public int getInitiative() {
+		return initiative;
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		if(faehigkeit != null) {
 			int angriff = (int) (faehigkeit.getBonus(angreifer) * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
 			angriff = angreifer.getSchadensBonus(faehigkeit.getSchadensart(), angriff);
-			// Der Schaden ist auf 99.999 begrenz, aber ist gleichzeitig immer groesser als 0t.
+			// Der Schaden ist auf 99.999 begrenzt, aber ist gleichzeitig immer groesser als 0.
 			int schaden = Math.min(Math.max(ziel.fuegeSchadenZu(angriff, faehigkeit.getSchadensart()), 0), 99999);
 			// Ausgabe
 			String ausgabe = faehigkeit.getAusgabe();
@@ -158,9 +158,9 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	 */
 	@Override
 	public int compareTo(KampfAktion aktion) {
-		if(this.flk > aktion.getFlk())
+		if(this.initiative > aktion.getInitiative())
 			return -1;
-		else if(this.flk == aktion.getFlk())
+		else if(this.initiative == aktion.getInitiative())
 			return 0;
 		else
 			return 1;

@@ -16,30 +16,19 @@ public class Level implements Serializable {
 	// Die Erfahrung bis zu diesem Level.
 	private int erfahrung;
 	
-	// Aenderungen der Hauptwerte.
-	private int lpBonus;
-	private int mpBonus;
-	
 	// Aenderungen der Attribute.	
-	private EntityAttribut[] attributsBonus;
+	private EntityAttribut attributsBonus;
 	
 	/* --- Konstruktor --- */
 	
 	/**
 	 * Ein neues Level wird mit allen Veraenderungen der Statuswerte generiert.
 	 * @param erfahrung Die benoetigte Erfahrung bis zu diesem Level.
-	 * @param lpBonus Der Bonus auf die Lebenspunkte.
-	 * @param mpBonus Der Bonus auf die Magiepunkte.
 	 * @param attributsBonus Der Bonus auf das Attribut in der entsprechenden ID-Reihenfolge.
 	 */
-	public Level(int erfahrung, int lpBonus, int mpBonus, int... attributsBonus) {
+	public Level(int erfahrung, int... attributsBonus) {
 		this.erfahrung = erfahrung;
-		this.lpBonus = lpBonus;
-		this.mpBonus = mpBonus;
-		this.attributsBonus = new EntityAttribut[Attribut.getMaxId()];
-		for(int i = 0; i < Attribut.getMaxId(); i++)
-			this.attributsBonus[i] = new EntityAttribut(Attribut.ATTRIBUTE[i], attributsBonus[i]);
-			
+		this.attributsBonus = new EntityAttribut(attributsBonus);
 	}
 	
 	/* --- Methoden --- */
@@ -53,31 +42,12 @@ public class Level implements Serializable {
 	}
 	
 	/**
-	 * Gibt den Bonus fuer die Lebenspunkte fuer dieses Level zurueck.
-	 * @return Der Bonus fuer die Lebenspunkte.
-	 */
-	public int getLpBonus() {
-		return lpBonus;
-	}
-	
-	/**
-	 * Gibt den Bonus fuer die Magiepunkte duer dieses Level zurueck.
-	 * @return Der Bonus fuer die Magiepunkte.
-	 */
-	public int getMpBonus() {
-		return mpBonus;
-	}
-	
-	/**
-	 * Gibt den Bonus fuer ein bestimmtes Attribut zurueck, basierend auf dem Namen oder der Parameterschreibweise.
-	 * @param nameOderParam Der Name oder die Parameterschreibweise des Attributs.
+	 * Gibt den Bonus fuer ein bestimmtes Attribut zurueck.
+	 * @param attribut Das Attribut, fuer das der Bonus ermittelt werden soll.
 	 * @return Den Bonuswert fuer das Attribut, -1 wenn es das Attribut nicht gibt.
 	 */
-	public int getAttributsBonus(String nameOderParam) {
-		for(EntityAttribut ea : attributsBonus)
-			if(ea.getAttribut().getName().equals(nameOderParam) || ea.getAttribut().getParam().equals(nameOderParam))
-				return ea.getWert();
-		return -1;
+	public int getAttributsBonus(Attribut attribut) {
+		return attributsBonus.getWert(attribut);
 	}
 	
 	/* --- statische Methoden --- */
@@ -92,36 +62,28 @@ public class Level implements Serializable {
 	public static Level[] createLinearLevels(int levelAnzahl, Level anfangsWerte, Level zielWerte) {
 		Level[] level = new Level[levelAnzahl + 2];
 		// Zuerst werden die Faktoren fuer die einzelnen Werte berechnet.
-		int erfFak = (zielWerte.getErfahrung() - anfangsWerte.getErfahrung()) / levelAnzahl;
-		int lpFak = (zielWerte.getLpBonus() - anfangsWerte.getLpBonus()) / levelAnzahl;
-		int mpFak = (zielWerte.getMpBonus() - anfangsWerte.getMpBonus()) / levelAnzahl;
-		int[] attributFaks = new int[anfangsWerte.attributsBonus.length];
-		for(int i = 0; i < attributFaks.length; i++)
-			attributFaks[i] = (zielWerte.getAttributsBonus(Attribut.ATTRIBUTE[i].getName()) 
-					- anfangsWerte.getAttributsBonus(Attribut.ATTRIBUTE[i].getName())) / levelAnzahl;
+		int erfFak = Math.round((float) (zielWerte.getErfahrung() - anfangsWerte.getErfahrung()) / (float) levelAnzahl);
+		int[] attributFaks = new int[Attribut.getMaxId()];
+		for(Attribut a : Attribut.getAttribute())
+			attributFaks[a.getId()] = Math.round((float) (zielWerte.getAttributsBonus(a)	- anfangsWerte.getAttributsBonus(a)) / (float) levelAnzahl);
 		
 		int sigmaErf = anfangsWerte.getErfahrung();
-		int sigmaLp = anfangsWerte.getLpBonus();
-		int sigmaMp = anfangsWerte.getMpBonus();
 		int[] sigmaAttribute = new int[attributFaks.length];
 		
 		level[0] = anfangsWerte;
 		for(int i = 1; i <= levelAnzahl; i++) {
-			level[i] = new Level(erfFak, lpFak, mpFak, attributFaks);
+			level[i] = new Level(erfFak, attributFaks);
 			sigmaErf += erfFak;
-			sigmaLp += lpFak;
-			sigmaMp += mpFak;
 			for(int j = 0; j < sigmaAttribute.length; j++)
 				sigmaAttribute[j] += attributFaks[j];
 		}
 		
-		for(int i = 0; i < sigmaAttribute.length; i++) {
-			sigmaAttribute[i] += anfangsWerte.getAttributsBonus(Attribut.ATTRIBUTE[i].getName());
-			sigmaAttribute[i] = zielWerte.getAttributsBonus(Attribut.ATTRIBUTE[i].getName()) - sigmaAttribute[i] + attributFaks[i];
+		for(Attribut a : Attribut.getAttribute()) {
+			sigmaAttribute[a.getId()] += anfangsWerte.getAttributsBonus(a);
+			sigmaAttribute[a.getId()] = zielWerte.getAttributsBonus(a) - sigmaAttribute[a.getId()] + attributFaks[a.getId()];
 		}			
 		
-		level[levelAnzahl + 1] = new Level(zielWerte.getErfahrung() - sigmaErf, zielWerte.getLpBonus() - sigmaLp + lpFak, zielWerte.getMpBonus() - sigmaMp + mpFak
-				, sigmaAttribute);
+		level[levelAnzahl + 1] = new Level(zielWerte.getErfahrung() - sigmaErf, sigmaAttribute);
 		
 		return level;
 	}

@@ -73,10 +73,15 @@ public class GUI extends JFrame implements CaretListener {
 	    playerInfo = new JPanel();*/
 
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	    //setPreferredSize(new Dimension(1000, 600));
+	    
+	    // Layout und Components //
+	    
+	    setPreferredSize(new java.awt.Dimension(1000, 655));
 	    setBounds(5, 5, 1000, 655);
 	    setLayout(null);
 
+	    setResizable(false);
+	    
 	    add(anzeige.getJScrollPane());
 	    add(eingabe);
 	    add(info.getJScrollPane());
@@ -84,16 +89,17 @@ public class GUI extends JFrame implements CaretListener {
 	    displays.addTab("Fähigkeiten", faehigkeiten.getJScrollPane());
 	    displays.addTab("Ausrüstung", ausruestung.getJScrollPane());
 	    add(displays);
-
 	    add(map);
 	    /*add(directions);
-	    add(playerInfo);*/
-
+	    add(playerInfo);*/	    
+	    
 	    anzeige.getJScrollPane().setLocation(5, 5);
-	    eingabe.setLocation(5, 380);
-	    info.getJScrollPane().setLocation(5, 405);
-	    displays.setBounds(700, 5, 290, 395);
-	    map.setLocation(355, 400);
+	    eingabe.setLocation(5, 380);	    
+	    info.getJScrollPane().setLocation(5, 405);	    
+	    displays.setBounds(700, 5, 290, 395);	    
+	    map.setLocation(355, 400);	    
+	    this.pack();
+	    
 	    /*directions.setBounds(0, 400, 350, 250);
 	    playerInfo.setBounds(650, 400, 350, 250);*/
 
@@ -114,9 +120,6 @@ public class GUI extends JFrame implements CaretListener {
 	    interpreter.ueberpruefeBefehl("");
 
 	    kombination = new KombinationsGUI(this, SpielWelt.WELT.getSpieler().getInventar());
-
-	    setResizable(false);
-	    setVisible(true);
 
 	    KeyAdapter ka = new KeyAdapter() {
 
@@ -153,6 +156,7 @@ public class GUI extends JFrame implements CaretListener {
 	    this.addKeyListener(ka);
 
 	    text = "";
+	    setVisible(true);
 	}
 
 	/**

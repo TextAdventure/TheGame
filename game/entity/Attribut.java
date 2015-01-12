@@ -1,6 +1,7 @@
 package game.entity;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * Ein Attribut fuer alle Entities, die auch von Gegenstaenden verwendet werden muessen.
@@ -11,17 +12,17 @@ public class Attribut implements Serializable {
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
 
+	/* --- statische Konstanten --- */
+	
 	// Statisches Array mit allen Attributen, die ID ist der Index des Attributs.
-	public static Attribut[] ATTRIBUTE = new Attribut[Byte.MAX_VALUE];
+	private static Attribut[] attribute = new Attribut[0];
 	
 	/* --- Variablen --- */
 	
 	// Der Name(fuer den Spieler sichtbar) des Attributs.
-	private String name;	
+	private String name;
 	// Der Parametername des Attributs, der nur intern verwendet wird.
-	private String param;	
-	// Die ID des Attributs, es kann maximal 128 Attribute geben.
-	private byte id;
+	private String param;
 	
 	/* --- Konstruktor --- */
 	
@@ -33,14 +34,14 @@ public class Attribut implements Serializable {
 	public Attribut(String name, String paramName) {
 		this.name = name;
 		this.param = paramName;
-		for(byte i = 0; i < ATTRIBUTE.length && i < 128; i++) {
-			if(ATTRIBUTE[i] == null) {
-				this.id = i;
-				ATTRIBUTE[id] = this;
-				break;
-			}
-		}
 		
+		Vector<Attribut> neu = new Vector<Attribut>();
+		
+		for(Attribut a : attribute)
+			neu.add(a);
+		neu.add(this);
+		
+		setAttribute(neu.toArray(new Attribut[0]));
 	}
 	
 	/* --- Methoden --- */
@@ -66,7 +67,11 @@ public class Attribut implements Serializable {
 	 * @return Die ID des Attributs.
 	 */
 	public byte getId() {
-		return id;
+		for(byte b = 0; b < getMaxId(); b++)
+			if(getAttribut(b).equals(this))
+				return b;
+		// Das sollte eigentlich nicht passieren...
+		return -1;
 	}
 	
 	/* --- statische Methoden --- */
@@ -89,31 +94,33 @@ public class Attribut implements Serializable {
 	 * @return Das gesuchte Attribut, null falls es so ein Attribut nicht gibt.
 	 */
 	public static Attribut getAttribut(byte id) {
-		if(ATTRIBUTE.length < id)
+		if(getMaxId() <= id)
 			return null;
-		return ATTRIBUTE[id];
+		return attribute[id];
 	}
 	
 	/**
 	 * Gibt ein Array mit allen belegten Attributen zurueck.
 	 * @return Ein Array mit allen Attribute, die im Spiel verwendet werden.
 	 */
-	public static Attribut[] getAttribute() {
-		Attribut[] a = new Attribut[getMaxId()];
-		for(int i = 0; i < a.length; i++)
-			a[i] = ATTRIBUTE[i];
-		return a;
+	public static synchronized Attribut[] getAttribute() {
+		return attribute;
+	}
+	
+	/**
+	 * Legt Alle Attribute fest und ueberschreibt die vorherigen,
+	 * @param attribute Die neue Liste mit allen Attributen.
+	 */
+	public static synchronized void setAttribute(Attribut[] alleAttribute) {
+		attribute = alleAttribute;
 	}
 	
 	/**
 	 * Gibt den hoechsten belegten ID Platz zurueck.
-	 * @return Den hoechsten ID Wert, -1 falls alle Plaetze belegt sind.
+	 * @return Den hoechsten ID Wert.
 	 */
 	public static byte getMaxId() {
-		for(byte i = 0; i < ATTRIBUTE.length; i++)
-			if(ATTRIBUTE[i] == null)
-				return i;
-		return -1;
+		return (byte) attribute.length;
 	}
 	
 }

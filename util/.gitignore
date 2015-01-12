@@ -11,3 +11,7 @@
 /InventarEvent.class
 /InventarListener.class
 /SpielerListener.class
+/ID.class
+/Dropper.class
+/Dropper$Drop.class
+/Drop.class

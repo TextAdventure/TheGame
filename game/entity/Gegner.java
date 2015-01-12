@@ -1,6 +1,10 @@
 package game.entity;
 
-import game.Drop;
+import java.util.Vector;
+
+import game.SpielWelt;
+import game.items.Stapel;
+import util.Drop;
 import util.NumerusGenus;
 
 /**
@@ -25,12 +29,12 @@ public class Gegner extends Entity {
 	 * @param numGen Das Geschlecht des Gegners.
 	 * @param beschreibung Die Beschreibung des Gegners.
 	 * @param xp Die XP fuer das besiegen des Gegners.
-	 * @param leben Die Lebenspunkte des Gegners.
-	 * @param magie Die Magiepunkte des Gegners.
 	 * @param attributswert Die Attribute des Gegners.
 	 */
-	public Gegner(String name, NumerusGenus numGen, String beschreibung, int xp, int leben, int magie, int... attributswerte) {
-		super(name, numGen, beschreibung, leben, magie, attributswerte);	    
+	public Gegner(String name, NumerusGenus numGen, String beschreibung, int xp, int... attributswerte) {
+		super(name, numGen, beschreibung, attributswerte);
+		
+		faehigkeitenG = new Vector<Drop<Faehigkeit>>();
 		
 	    this.xp = xp;
 	}
@@ -40,11 +44,11 @@ public class Gegner extends Entity {
 	 * @param gegner Der Gegener, der dupliziert werden soll.
 	 */
 	public Gegner(Gegner gegner) {
-		this(gegner.getName(), gegner.getNumGen(), gegner.getBeschreibung(), gegner.getXp(), gegner.getMaxLp(), gegner.getMaxMp(), gegner.getAttributswerte());
+		this(gegner.getName(), gegner.getNumGen(), gegner.getBeschreibung(), gegner.getXp(), gegner.attribute.getAlleWerte());
 		
-	    for(Faehigkeit f : gegner.getFaehigkeiten())
-	    	this.addFaehigkeit(f);
-	    for(Drop d : gegner.loot)
+	    for(Drop<Faehigkeit> f : gegner.getFaehigkeitenAlsDrop())
+	    	this.addFaehigkeit(f.getObjekt(), f.getWahrscheinlichkeit());
+	    for(Drop<Stapel> d : gegner.loot)
 	    	this.loot.add(d);
 	}
 	  
@@ -57,22 +61,17 @@ public class Gegner extends Entity {
 	public int getXp() {
 		return xp;
 	}
-	  
-	/**
-	 * Gibt die Attributswerte als Array zurueck.
-	 * @return Eine Liste mit allen Attributswerten.
-	 */
-	private int[] getAttributswerte() {
-		int[] attributswerte = new int[attribute.length];
-		for(int i = 0; i < attributswerte.length; i++)
-			attributswerte[i] = attribute[i].getWert();
-		return attributswerte;
-	}
 	
-	// PROVISORIUM: Gibt den Agriff des Gegners zurueck. TODO
+	/**
+	 * Gibt eine Faehigkeit des Gegners zurueck, basierend auf den uebergebenen Faehigkeiten und deren Wahrscheinlichkeit.
+	 * @param kommando Das Kommando, das der Spieler eingegeben hat(fuer den Gegner irrelevant).
+	 * @return Eine zufaellige Faehigkeit des Gegners.
+	 */
+	@SuppressWarnings("unchecked") // TODO
 	@Override
 	public Faehigkeit getFaehigkeit(String kommando) {
-		return faehigkeiten.firstElement();
+		Faehigkeit[] f = faehigkeitenG.firstElement().drop(SpielWelt.WELT.r, faehigkeitenG.toArray(new Drop[0]));
+		return f[0];
 	}
 	
 	// PROVISORIUM: Aendert den Namen des Gegners. TODO

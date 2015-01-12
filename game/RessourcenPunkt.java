@@ -3,6 +3,8 @@ package game;
 import game.items.Stapel;
 
 import java.io.Serializable;
+
+import util.Drop;
 import util.NumerusGenus;
 
 /**
@@ -29,7 +31,7 @@ public class RessourcenPunkt implements Serializable {
 	// Die aktuelle Anzahl an verbleibenden Abbau Moeglichkeiten.
 	private int aktuelleAnzahl;
 	// Die Drops, die moeglich sind.
-	private Drop[] drops;
+	private Drop<Stapel>[] drops;
 	
 	/* --- Konstruktor --- */
 	
@@ -41,7 +43,8 @@ public class RessourcenPunkt implements Serializable {
 	 * @param maxAnzahl Die maximale Anzahl, die der Ressourcen Punkt hintereinander abgebaut werden kann(-1 beduetet unendlich oft).
 	 * @param drops Die moeglichen Drops von diesem Ressourcen Punkt.
 	 */
-	public RessourcenPunkt(String name, NumerusGenus numGen, int wiederherstellungszeit, int maxAnzahl, Drop... drops) {
+	@SafeVarargs // TODO
+	public RessourcenPunkt(String name, NumerusGenus numGen, int wiederherstellungszeit, int maxAnzahl, Drop<Stapel>... drops) {
 		this.name = name;
 		this.numGen = numGen;
 		this.wiederherstellungszeit = wiederherstellungszeit;
@@ -64,16 +67,7 @@ public class RessourcenPunkt implements Serializable {
 			if(aktuelleAnzahl > 0)
 				aktuelleAnzahl--;
 			
-			int sigmaChance = 0;
-			for(Drop d : drops)
-				sigmaChance += d.getChance();
-			// Exklusive obere Grenze!
-			int nInt = SpielWelt.WELT.r.nextInt(sigmaChance + 1);
-			for(int i = drops.length - 1; i >= 0; i--) 
-				if(nInt > sigmaChance - drops[i].getChance() && nInt <= sigmaChance)
-					return drops[i].getGegenstaende();
-				else
-					sigmaChance -= drops[i].getChance();
+			return drops[0].drop(SpielWelt.WELT.r, drops);
 		}
 		return null;
 	}

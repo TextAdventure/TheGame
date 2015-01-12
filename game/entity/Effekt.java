@@ -16,20 +16,6 @@ public class Effekt implements Serializable {
 	
 	// Heilen: param = Menge der Heilung(%, -)[pro Runde;Anzahl Runden] bsp.: [-]10[r4][%][;4[r2]]
 	public static final byte HEILEN = 0;
-	// MP-Wiederherstellung: param = Menge der Wiederherstellung(%, -)[pro Runde;Anzahl Runden] bsp.: [-]16[%][;3]
-	public static final byte MPREGENERATION = 1;
-	// Angriff+: param = Bonus-Angriff(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]29[%][;2]
-	public static final byte ANGBONUS = 2;
-	// Verteidigung+: param = Bonus-Verteidigung(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]82[%][;10]
-	public static final byte DEFBONUS = 3;
-	// MagAngriff+: param = Bonus-MagAngriff(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]4[%][;1]
-	public static final byte MAGANGBONUS = 4;
-	// MagVerteidigung+: param = Bonus-MagVerteidigung(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]99[%][;99]
-	public static final byte MAGDEFBONUS = 5;
-	// Praezision+: param = Bonus-Praezision(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]34[%][;6]
-	public static final byte PRZBONUS = 6;
-	// Flinkheit+: param = Bonus-Flinkheit(%, -)[Effekt;Dauer](Ohne Dauer, fuer Rest von Kampf) bsp.: [-]75[%][;5]
-	public static final byte FLKBONUS = 7;
 	  
 	/* --- Variablen --- */
 	
@@ -107,7 +93,7 @@ public class Effekt implements Serializable {
 	 * @param grundwert Der Grundwert des Spielers fuer diesen Effekt.
 	 * @return Der reine Bonus wird zurueckgegeben.
 	 */
-	public int getBonus(int grundwert) {
+	public float getBonus(float grundwert) {
 	    String wert = parameter;
 	    // Der Attributsbonus wird extrahiert.
 	    if(wert.indexOf(";") > 0) 
@@ -132,7 +118,7 @@ public class Effekt implements Serializable {
 	    	zahl += r.nextInt(random + 1);
 	    // Gibt den Bonus zurueck.
 	    if(prozent) {
-	    	return (int)(grundwert * zahl / 100.0);
+	    	return (grundwert * zahl / 100.0f);
 	    } else {
 	    	return zahl;
 	    }

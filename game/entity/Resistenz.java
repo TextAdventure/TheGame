@@ -1,6 +1,7 @@
 package game.entity;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * Die Resistenz vor einer bestimmten Schadensart, speichert das Attribut mir dem abgewehrt wird und den Namen der Resistenz.
@@ -14,7 +15,7 @@ public class Resistenz implements Serializable {
 	/* --- statische Konstanten --- */
 	
 	// Ein statiches Array mit allen Resistenzen, die ID ist der Index.
-	public static Resistenz[] RESISTENZEN = new Resistenz[Byte.MAX_VALUE];
+	private static Resistenz[] resistenzen = new Resistenz[0];
 	
 	/* --- Variablen --- */
 	
@@ -26,8 +27,6 @@ public class Resistenz implements Serializable {
 	private byte schadensart;
 	// Die ID des Attributes, das diesen Schaden reduziert.
 	private byte attribut;
-	// Die ID der Resistenz.
-	private byte id;
 	
 	/* --- Konstruktor --- */
 	
@@ -43,13 +42,14 @@ public class Resistenz implements Serializable {
 		this.param = paramName;
 		this.schadensart = (byte) schadensart.getId();
 		this.attribut = (byte) attribut.getId();
-		for(byte i = 0; i < RESISTENZEN.length && i < Byte.MAX_VALUE; i++) {
-			if(RESISTENZEN[i] == null) {
-				this.id = i;
-				RESISTENZEN[id] = this;
-				break;
-			}
-		}
+		
+		Vector<Resistenz> neu = new Vector<Resistenz>();
+		
+		for(Resistenz r : resistenzen)
+			neu.add(r);
+		neu.add(this);
+		
+		setResistenzen(neu.toArray(new Resistenz[0]));
 	}
 
 	/* --- Methoden --- */
@@ -79,20 +79,24 @@ public class Resistenz implements Serializable {
 	}
 	
 	/**
+	 * Gibt den Attributswert zurueck mit dem diese Art von Schaden abgewehrt werden kann.
+	 * @param entity Das Entity fuer das der Wert berechnet werden soll.
+	 * @return Den temporaeren Wert der Abwehr fuer diese Art von Schaden.
+	 */
+	public int getAttribut(Entity entity) {
+		return entity.getTemp(Attribut.getAttribut(attribut));
+	}
+	
+	/**
 	 * Gibt die ID der Resistenz zurueck.
 	 * @return Die ID der Resistenz.
 	 */
 	public byte getId() {
-		return id;
-	}
-	
-	/**
-	 * Gibt den Attributswert zurueck mit dem diese Art von Schaden abgewehrt werden kann.
-	 * @param entity Das Entity fuer das der Wert berechnet werden soll.
-	 * @return Der Wert der Abwehr fuer dies Art von Schaden.
-	 */
-	public int getAttribut(Entity entity) {
-		return entity.getTempAttribut(Attribut.getAttribut(attribut).getName());
+		for(byte b = 0; b < getMaxId(); b++)
+			if(getResistenz(b).equals(this))
+				return b;
+		// Das sollte eigentlich nicht passieren...
+		return -1;
 	}
 	
 	/* --- statische Methoden --- */
@@ -105,7 +109,7 @@ public class Resistenz implements Serializable {
 	public static Resistenz getResistenz(byte id) {
 		if(getMaxId() < id)
 			return null;
-		return RESISTENZEN[id];
+		return resistenzen[id];
 	}
 	
 	/**
@@ -125,21 +129,23 @@ public class Resistenz implements Serializable {
 	 * @return Den hoechsten ID Platz, oder -1 wenn alle belegt sind.
 	 */
 	public static byte getMaxId() {
-		for(byte i = 0; i < RESISTENZEN.length; i++)
-			if(RESISTENZEN[i] == null)
-				return i;
-		return -1;
+		return (byte) resistenzen.length;
 	}
 	
 	/**
 	 * Gibt ein Array mit allen belegten Resistenzen zurueck.
 	 * @return Ein Array mit allen Resistenzen, die im Spiel verwendet werden.
 	 */
-	public static Resistenz[] getResistenzen() {
-		Resistenz[] r = new Resistenz[getMaxId()];
-		for(int i = 0; i < r.length; i++)
-			r[i] = RESISTENZEN[i];
-		return r;
+	public static synchronized Resistenz[] getResistenzen() {
+		return resistenzen;
+	}
+
+	/**
+	 * Legt alle Resistenzen fest und ueberschreibt die vorherigen.
+	 * @param neueResistenzen Die neue Liste mit allen Attributen.
+	 */
+	public static synchronized void setResistenzen(Resistenz[] neueResistenzen) {
+		resistenzen = neueResistenzen;		
 	}
 	
 }

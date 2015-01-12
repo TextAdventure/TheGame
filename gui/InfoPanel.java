@@ -55,7 +55,6 @@ public class InfoPanel extends Anzeige {
 		
 		println("Schadensart: " + faehigkeit.getSchadensart().getName());		
 		println("Schaden: " +  faehigkeit.getBonusExtended(spieler));
-		println("\nKosten: " + faehigkeit.getKosten(spieler.getMaxMp()) + " MP");
 		println("\nMögliche Waffen:");
 		for(Waffenart wa : faehigkeit.getGueltigeWaffen())
 			println("\t" + wa.getName());
