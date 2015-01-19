@@ -2,6 +2,7 @@ package util;
 
 import java.io.Serializable;
 import java.util.Random;
+import java.util.Vector;
 
 /**
  * Ein Drop wird verwendet um zufaellig zwischen mehreren Dingen zu unterscheiden.
@@ -60,27 +61,39 @@ public class Drop<E> implements Serializable {
 		return objekte;
 	}
 	
+	/* --- statische Methoden --- */
+	
 	/**
-	 * Waehlt einen zufaelligen Drop aus und gibt dessen Inhalt zurueck.
-	 * @param random Ein RNG.
-	 * @param drops Die Drops aus denen ausgewaehlt werden kann.
-	 * @return Den zufaelligen Drop.
+	 * Waehlt einen der Drops aus mithilfe des Zufallszahlengenerators und gibt diesen dann zurueck.
+	 * @param random Ein Zufallszahlengenerator.
+	 * @param drops Die Drops aus denen ausgewaehlt werden soll.
+	 * @return Einen zufaelligen Drop aus den Drops.
 	 */
-	@SuppressWarnings("unchecked") // TODO Spaeter ersetzen durch etwas anderes!
-	public E[] drop(Random random, Drop<E>... drops) {
+	public static <T> T[] drop(Random random, Drop<T>[] drops) {
 		int sigmaChance = 0;
-		for(Drop<E> d : drops)
+		for(Drop<T> d : drops)
 			sigmaChance += d.getWahrscheinlichkeit();
 		// Exklusive obere Grenze!
-		int nInt = random.nextInt(sigmaChance + 1);
-		for(int i = drops.length - 1; i >= 0; i--) 
-			if(nInt > sigmaChance - drops[i].getWahrscheinlichkeit() && nInt <= sigmaChance)
-				return drops[i].getObjekte();
+		int nInt = random.nextInt(sigmaChance + 1);		
+		for(Drop<T> d : drops)
+			if(nInt <= sigmaChance && nInt >= sigmaChance - d.getWahrscheinlichkeit()) // TODO <= statt <
+				return d.getObjekte();
 			else
-				sigmaChance -= drops[i].getWahrscheinlichkeit();
+				sigmaChance -= d.getWahrscheinlichkeit();
+		
 		// Das sollte eigentlich nicht passieren... TODO
 		System.err.println("Drop: Fehler beim auswaehlen.");
 		return drops[0].getObjekte();
+	}
+	
+	/**
+	 * Gibt ein Array zurueck, basierend auf einem Vector<Drop<T>>.
+	 * @param drops Das Vector-Objekt.
+	 * @return Ein Array mit allen Objekten des Vector-Objekts.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Drop<T>[] toArray(Vector<Drop<T>> drops) {
+		return (Drop<T>[]) drops.toArray(new Drop[0]);
 	}
 
 }

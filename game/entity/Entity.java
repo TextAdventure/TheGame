@@ -39,11 +39,11 @@ public abstract class Entity implements Serializable {
 	// Alle Faehigkeiten des Lebewesens.
 	protected Vector<Faehigkeit> faehigkeiten;
 	// Alle Faehigkeiten der Gegner.
-	protected Vector<Drop<Faehigkeit>> faehigkeitenG;
+	protected Drop<Faehigkeit>[] faehigkeitenG;
 
 	// Fuer Gegner.class
 	// Alle Drops, die der Gegner fallen lassen kann.
-	protected Vector<Drop<Stapel>> loot;
+	protected Drop<Stapel>[] loot;
 	
 	/* --- Konstruktor --- */
 	
@@ -75,8 +75,6 @@ public abstract class Entity implements Serializable {
 		resetTemp();
 		
 		faehigkeiten = new Vector<Faehigkeit>();
-		
-		loot = new Vector<Drop<Stapel>>();
 	}
 	
 	
@@ -99,8 +97,6 @@ public abstract class Entity implements Serializable {
 		resetTemp();
 		
 		faehigkeiten = new Vector<Faehigkeit>();
-		
-		loot = new Vector<Drop<Stapel>>();
 	}
 	
 	/* --- Methoden --- */
@@ -228,7 +224,7 @@ public abstract class Entity implements Serializable {
 	 * Gibt alle Faehigkeiten in einer Liste zurueck.
 	 * @return Alle Faehigkeiten.
 	 */
-	public Vector<Drop<Faehigkeit>> getFaehigkeitenAlsDrop() {
+	public Drop<Faehigkeit>[] getFaehigkeitenAlsDrop() {
 		return faehigkeitenG;
 	}
 	
@@ -314,8 +310,12 @@ public abstract class Entity implements Serializable {
 	 * @param wahrscheinlichkeit Die Wahrscheinlichkeit fuer einen Gegner, dass er diese Faehigkeit verwendet.
 	 */
 	public void addFaehigkeit(Faehigkeit faehigkeit, int wahrscheinlichkeit) {
-		if(!faehigkeitenG.contains(faehigkeit))
-			faehigkeitenG.add(new Drop<Faehigkeit>(wahrscheinlichkeit, faehigkeit));
+		Vector<Drop<Faehigkeit>> neu = new Vector<Drop<Faehigkeit>>();
+		if(faehigkeitenG != null)
+			for(Drop<Faehigkeit> d : faehigkeitenG)
+				neu.add(d);
+		neu.add(new Drop<Faehigkeit>(wahrscheinlichkeit, faehigkeit));
+		this.faehigkeitenG = Drop.toArray(neu);
 	}
 	
 	/* - Alle anderen Methoden - */
@@ -356,19 +356,24 @@ public abstract class Entity implements Serializable {
 	
 	/**
 	 * Fuegt einen moeglichen Drop hinzu.
-	 * @param drop Ein moeglicher Drop, den der Gegner fallen lassen kann.
+	 * @param wahrscheinlichkeit Die Wahrscheinlichkeit fuer diesen Drop.
+	 * @param stapel Die Gegenstaende, die bei diesem Drop fallengelassen werden.
 	 */
-	public void addDrop(Drop<Stapel> drop) {
-		loot.add(drop);
+	public void addDrop(int wahrscheinlichkeit, Stapel... stapel) {
+		Vector<Drop<Stapel>> neu = new Vector<Drop<Stapel>>();
+		if(loot != null)
+			for(Drop<Stapel> d : loot)
+				neu.add(d);
+		neu.add(new Drop<Stapel>(wahrscheinlichkeit, stapel));
+		this.loot = Drop.toArray(neu);
 	}
 	
 	/**
 	 * Gibt den Loot zurueck, der von dem Gegner erhalten wurde.
 	 * @return Den Loot.
 	 */
-	@SuppressWarnings("unchecked") // TODO
-	public Stapel[] getLoot() {
-		Stapel[] s = loot.firstElement().drop(SpielWelt.WELT.r, loot.toArray(new Drop[0]));
+	public <E> Stapel[] getLoot() {		
+		Stapel[] s = Drop.drop(SpielWelt.WELT.r, loot);
 		if(s == null)
 			return new Stapel[0];
 		else

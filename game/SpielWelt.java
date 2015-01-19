@@ -61,21 +61,23 @@ public class SpielWelt implements Serializable, StringListener {
 
 	// Dieses Variabeln werden NICHT gespeichert
 	// Die Anzeige, die alle auszugebende Dinge ausgibt.
-	transient private Anzeige ausgabe;
+	private transient Anzeige ausgabe;
 	// Die Map fuer den Spieler.
-	transient private MiniMap map;
+	private transient MiniMap map;
+	// Nach dem Kampf werden einmalig Ereignisse ausgefuehrt.
+	public transient boolean ereignis;
 	// Der Boolean, der angibt, ob sich der Spieler im Kampf befindet.
-	transient public boolean kaempft;
+	public transient boolean kaempft;
 	// Der Kampf, der gerade ausgefochten wird.
-	transient private Kampf kampf;
+	private transient Kampf kampf;
 	// Der gesamte Loot fuer den Spieler.
-	transient private Inventar loot;
+	private transient Inventar loot;
 	// Der Boolean, der angibt, ob sich der Spieler im Gespräch befindet.
-	transient private boolean spricht;
+	private transient boolean spricht;
 	//NPC, mit dem gerade gesprochen wird.
-	transient private NPC gespraechspartner;
+	private transient NPC gespraechspartner;
 	// Alle Statusveraenderungen, die im Kampf aktiv sind.
-	transient private Vector<KampfEffekt> kampfEffekte;
+	private transient Vector<KampfEffekt> kampfEffekte;
 
 	// Diese Variablen werden gespeichert
 	// Der Spieler
@@ -121,6 +123,7 @@ public class SpielWelt implements Serializable, StringListener {
 	    farben = new Vector<Farbe>();
 
 	    kaempft = false;
+	    ereignis = false;
 
 	    setWelt(this);
 	}
@@ -394,6 +397,8 @@ public class SpielWelt implements Serializable, StringListener {
 	    	ausgabe.println("Du wurdest besiegt!");
 	    	spieler.addLp(-spieler.getLp() + spieler.getMaxLp());
 	    }
+	    
+	    ereignis = true;
 	}
 
 	/* --- Gesprächs-Methoden --- */

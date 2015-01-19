@@ -11,7 +11,6 @@ import game.items.*;
 import game.logic.aktion.*;
 import game.logic.bedingung.*;
 import game.logic.ereignis.*;
-import util.Drop;
 import util.Farbe;
 import util.NumerusGenus;
 
@@ -81,6 +80,8 @@ public final class WeltenGenerator {
 		Ruestung drachenHelm = new Ruestung(new String[] { "<c=brennend>Drachenhelm</c>" }, "<c=brennend>Drachenhelme</c>", NumerusGenus.MASKULIN,
 				"Dieser Helm wurde aus Drachenschuppen gefertigt und reduziert physischen Schaden um <p=physischeResistenz>%!", Ruestung.HELM, 0, 12, 0, 18, 3);
 		
+		new Kombination(1000, new Stapel(hallo, 1), new Stapel(hallo, 1), new Stapel(drachenHelm, 1));
+		
 		
 		Gegner schleim = new Gegner("Schleim", NumerusGenus.MASKULIN, "Ein munterer kleiner Schleim.", 5, 12, 11, 2, 7, 4);
 		Faehigkeit huepfen = new Faehigkeit("Hüpfen", NumerusGenus.NEUTRUM, "§0 hüpft auf dich und verursacht # Schaden.", physisch, "0", "0", new Waffenart[0]);
@@ -88,18 +89,18 @@ public final class WeltenGenerator {
 		Faehigkeit sprungangriff = new Faehigkeit("Sprungangriff", NumerusGenus.MASKULIN, "§0 springt hoch und stürzt sich auf dich! Du erleidest # Schaden.",
 				physisch, "100%", "0", new Waffenart[0]);
 		schleim.addFaehigkeit(sprungangriff, 5);
-		schleim.addDrop(new Drop<Stapel>(80, (Stapel) null));
-		schleim.addDrop(new Drop<Stapel>(20, new Stapel(schleimRing, 1)));
+		schleim.addDrop(80, (Stapel) null);
+		schleim.addDrop(20, new Stapel(schleimRing, 1));
 		
 		Gegner drache = new Gegner("Drache", NumerusGenus.MASKULIN, "Ein feuerspuckendes Ungetüm!", 25, 27, 31, 11, 72, 14);
 		Faehigkeit klaue = new Faehigkeit("Klaue", NumerusGenus.FEMININ, "Die Klaue §1 trifft dich und verursacht # Schaden!", physisch, "15%", "0", new Waffenart[0]);
 		drache.addFaehigkeit(klaue, 7);
 		drache.addFaehigkeit(sprungangriff, 1);
-		drache.addDrop(new Drop<Stapel>(10, (Stapel) null));
-		drache.addDrop(new Drop<Stapel>(3, new Stapel(drachenHelm, 1)));
+		drache.addDrop(10, (Stapel) null);
+		drache.addDrop(3, new Stapel(drachenHelm, 1));
 		
 		Ort ort1 = new Ort("<c=heiß>Ort 1</c>", "Das ist ein <c=heiß>heißer</c> Ort.");
-		ort1.addGegenstand(hallo, 1);
+		ort1.addGegenstand(hallo, 2);
 		ort1.addGegenstand(flammenwerfer, 1);
 		Ort ort2 = new Ort("Ort 2", "Das ist der 2. Ort.");
 		Ort ort3 = new Ort("Der Ort", "Ein ganz besonderer Ort. Hier ist eine <c=brennend>Hitze</c>").setWahrscheinlichkeitFuerKampf(90.0);
@@ -123,7 +124,7 @@ public final class WeltenGenerator {
 		ort4.addAusgang(Ausgang.NORDEN, ort1);
 		ort1.addAusgang(Ausgang.SUEDEN, ort4);
 		
-		new OrtBetretenEreignis(ort4, 3, new SpielerHatGegenstandBedingung(hallo, 1), new SpielerAddGegenstandAktion(hallo, 1)
+		new OrtBetretenEreignis(ort4, -1, new SpielerHatGegenstandBedingung(hallo, 1), new SpielerAddGegenstandAktion(hallo, 1)
 								, new AusgabeAktion("Dein Hallo hat ein weiteres angezogen und es wandert direkt in dein Inventar!"));
 		
 		new UntersuchungsEreignis(obj, 1, new SpielerHatAusgeruestetBedingung(flammenwerfer), new LegeAbAktion(flammenwerfer)

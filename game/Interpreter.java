@@ -75,7 +75,9 @@ public class Interpreter {
 	    }
 
 	    // Die Position des Spielers anzeigen.
-	    welt.spielerPositionAnzeigen(false);
+	    welt.spielerPositionAnzeigen(welt.ereignis);
+	    if(welt.ereignis)
+	    	welt.ereignis = false;
 
 	    // Die Booleans werden zurueckgesetzt.
 	    gueltigesKommando = false;

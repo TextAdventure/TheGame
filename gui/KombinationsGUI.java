@@ -12,60 +12,72 @@ import javax.swing.JFrame;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import game.SpielWelt;
 import game.items.Gegenstand;
 import game.items.Inventar;
 import game.items.Kombination;
 import game.items.Stapel;
 
+/**
+ * Die KombinationsGUI kann aufgerufen werden und bietet dann die Moeglichkeit, dass der Spieler Gegenstaende kombiniert.
+ * @author Marvin
+ */
 public class KombinationsGUI extends JFrame implements ActionListener, ChangeListener {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
 
+	/* --- Variablen --- */
+	
 	// Das Inventar des Spielers
-	private Inventar inventory;
+	private transient Inventar inventar;
 
 	// Alle Gegenstaende, die aus dem Inventar des Spielers entfernt werden muessen.
-	private Vector<Gegenstand> zuEntfernen;
+	private transient Vector<Gegenstand> zuEntfernen;
 
 	// Die JComboBoxes(Dropdownmenu)
-	private ItemChooser[] edukte;
+	private transient ItemChooser[] edukte;
 
 	// Das Resultat
-	private JTextField produktTF;
-	private Gegenstand produkt;
-	private JSpinner produktS;
+	private transient JTextField produktTF;
+	private transient Gegenstand produkt;
+	private transient JSpinner produktS;
 
 	// Alle Buttons in diesem Frame
-	private JButton schliessen;
-	private JButton herstellen;
+	private transient JButton schliessen;
+	private transient JButton herstellen;
 
 	// Der Fortschrittsbalken
-	private Fortschritt fortschritt;
+	private transient Fortschritt fortschritt;
 
 	// Die aktuelle Kombination
-	private Kombination kombination;
+	private transient Kombination kombination;
 
-	public KombinationsGUI(GUI parent, Inventar inventory){
+	/* --- Konstruktor --- */
+	
+	/**
+	 * Erstellt eine neu KombinationsGUI mit der man Gegenstaende kombinieren kann.
+	 * @param gui
+	 * @param inventar
+	 */
+	public KombinationsGUI(GUI gui, Inventar inventar) {
 	    super("Kombinieren");
 	    this.setVisible(false);
 
-	    this.inventory = inventory;
+	    this.inventar = inventar;
 
 	    this.setSize(400, 340);
-	    this.setLocation((parent.getWidth() - getWidth()) / 2 + parent.getX(), (parent.getHeight() - getHeight()) / 2 + parent.getY());
-	    this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	    this.setLocation((gui.getWidth() - getWidth()) / 2 + gui.getX(), (gui.getHeight() - getHeight()) / 2 + gui.getY());
+	    this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    this.setLayout(null);
 
 	    produktTF = new JTextField();
 	    SpinnerNumberModel snm = new SpinnerNumberModel(1, 1, 99, 1);
 	    produktS = new JSpinner(snm);
-	    schliessen = new JButton("Schlieï¿½en");
+	    schliessen = new JButton("Schließen");
 	    herstellen = new JButton("Herstellen");
 	    fortschritt = new Fortschritt(50, 220, 300, 25);
 
@@ -82,7 +94,7 @@ public class KombinationsGUI extends JFrame implements ActionListener, ChangeLis
 
 	    produktTF.setBounds(65, 235, 290, 25);
 	    produktTF.setEditable(false);
-	    produktTF.setHorizontalAlignment(SwingConstants.CENTER);
+	    produktTF.setHorizontalAlignment(JTextField.CENTER);
 	    produktS.setBounds(25, 235, 40, 25);
 	    produktS.setEnabled(false);
 	    produktS.addChangeListener(this);
@@ -100,124 +112,128 @@ public class KombinationsGUI extends JFrame implements ActionListener, ChangeLis
 	    this.setResizable(false);
 	}
 
-	// @override  Wird immer aufgerufen, wenn ein neues Element angewaehlt wird.
-	public void actionPerformed(ActionEvent evt){
-		if(evt.getSource().equals(schliessen)) {
+	/**
+	 * Wird aufgerufen, wenn ein Button geklickt wird. 
+	 */
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if(evt.getSource().equals(schliessen))
 			setVisible(false);
-	    }
-		// HIER MUESS NOCH DIE ANZAHL ANGEPASST WERDEN
+		// HIER MUSS NOCH DIE ANZAHL ANGEPASST WERDEN
 	    if(evt.getSource().equals(herstellen)) {
 	    	for(int i = 0; i < ((Integer)produktS.getValue()).intValue(); i++) {
 		    	stelleHer(kombination.getDauer());
-		    	inventory.addGegenstand(kombination.getStapel(produkt));
+		    	inventar.addGegenstand(kombination.getStapel(produkt));
 	    	}
-	    	for(ItemChooser ic: edukte){
+	    	for(ItemChooser ic : edukte) {
 	    		Gegenstand g = ic.getSelectedItem();
-	    		inventory.removeGegenstand(kombination.getStapel(g));
+	    		inventar.removeGegenstand(kombination.getStapel(g));
 	    		ic.reset();
 	    	}
 	    	updateWerte();
 	    	return;
 	    }
 
-	    for(ItemChooser ic: edukte){
+	    for(ItemChooser ic: edukte)
 	    	ic.resetNumber();
-	    }
 
-	    if(evt.getSource().equals(edukte[0].getSource())){
-	    	if(!(edukte[0].getSelectedItem() == null)) edukte[0].removeFirst();
-	    	else return;
+	    if(evt.getSource().equals(edukte[0].getSource())) {
+	    	if(!(edukte[0].getSelectedItem() == null))
+	    		edukte[0].removeFirst();
+	    	else
+	    		return;
 	    	Vector<Gegenstand> ge = Kombination.istKombinierbarMit(edukte[0].getSelectedItem());
-	    	if(!ge.isEmpty()){
+	    	if(!ge.isEmpty()) {
 	    		ge = sort(ge);
-	    		for(int j = 1; j < 3; j++){
+	    		for(int j = 1; j < 3; j++)
 	    			edukte[j].reset();
-	    		}
-	    		for(Gegenstand g: ge.toArray(new Gegenstand[0])){
-	    			if(inventory.containsGegenstand(g)) edukte[1].addItem(g);
-	    		}
+	    		for(Gegenstand g : ge)
+	    			if(inventar.containsGegenstand(g))
+	    				edukte[1].addItem(g);
 	    		edukte[1].setEnabled(true);
 	    		edukte[2].setEnabled(false);
-	    	}else{
+	    	} else {
 	    		edukte[1].setEnabled(false);
 	    	}
 	    }
 
 	    if(evt.getSource().equals(edukte[1].getSource())){
-	    	if(edukte[1].getItemCount() < 1) return;
-	    	if(!(edukte[1].getSelectedItem() == null)) edukte[1].removeFirst();
-	    	else return;
+	    	if(edukte[1].getItemCount() < 1)
+	    		return;
+	    	if(!(edukte[1].getSelectedItem() == null))
+	    		edukte[1].removeFirst();
+	    	else
+	    		return;
 	    	Vector<Gegenstand> ge = Kombination.istKombinierbarMit(edukte[0].getSelectedItem(), edukte[1].getSelectedItem());
-	    	if(!ge.isEmpty()){
+	    	if(!ge.isEmpty()) {
 	    		ge = sort(ge);
 	    		edukte[2].reset();
-	    		for(Gegenstand g: ge.toArray(new Gegenstand[0])){
-	    			if(inventory.containsGegenstand(g)) edukte[2].addItem(g);
-	    		}
+	    		for(Gegenstand g : ge.toArray(new Gegenstand[0]))
+	    			if(inventar.containsGegenstand(g))
+	    				edukte[2].addItem(g);
 	    		edukte[2].setEnabled(true);
-	    	}else{
+	    	    check();
+	    	} else {
 	    		edukte[2].setEnabled(false);
 	    	}
 	    }
 
 
 	    if(evt.getSource().equals(edukte[2].getSource())){
-	    	if(!(edukte[2].getSelectedItem() == null)) edukte[2].removeFirst();
+	    	if(!(edukte[2].getSelectedItem() == null))
+	    		edukte[2].removeFirst();
 	    }
-	    check();
 	}
-
-	// @override Wird immer ausgefuehrt, wenn der JSpinner veraendert wurde.
-	public void stateChanged(ChangeEvent evt){
+	
+	/**
+	 * Wird aufgerufen, wenn einer der JSpinner veraendert wurde.
+	 */
+	@Override
+	public void stateChanged(ChangeEvent evt) {
 		int value = ((Integer)produktS.getValue()).intValue();
-	    for(ItemChooser ic: edukte){
-	    	if(ic.getSelectedItem() != null){
+	    for(ItemChooser ic : edukte) {
+	    	if(ic.getSelectedItem() != null) {
 	    		ic.setValue(kombination.getStapel(ic.getSelectedItem()).getAnzahl() * value);
-	    		System.out.println(kombination.getStapel(ic.getSelectedItem()).getAnzahl() * value);
 	    	}
 	    }
 	    check();
 	}
 
 	// Diese Methode sortiert den uebergebenen Vector.
-	private Vector<Gegenstand> sort(Vector<Gegenstand> gegenstaende){
+	private Vector<Gegenstand> sort(Vector<Gegenstand> gegenstaende) {
 		Vector<Gegenstand> ge = new Vector<Gegenstand>();
 	    Inventar i = new Inventar();
-	    for(Gegenstand g: gegenstaende.toArray(new Gegenstand[0])){
+	    for(Gegenstand g : gegenstaende.toArray(new Gegenstand[0]))
 	    	i.addGegenstand(g, 1);
-	    }
 	    i.sortiere();
-	    for(Gegenstand g: i.getAlleGegenstaende()){
+	    for(Gegenstand g : i.getAlleGegenstaende())
 	    	ge.add(g);
-	    }
 	    return ge;
 	}
 
 	// Aktualisiert das verwendete Inventar.
-	public void setInventory(Inventar inventory){
-		this.inventory = inventory;
+	public void setInventory(Inventar inventar) {
+		this.inventar = inventar;
 	    zuEntfernen.removeAllElements();
 	    this.setVisible(true);
 	    updateWerte();
 	}
 
 	// Aktualisiert alle ComboBoxes
-	private void updateWerte(){
+	private void updateWerte() {
 	    Vector<Gegenstand> alle = Kombination.istKombinierbarMit(null);
 	    Vector<Gegenstand> schnittmenge = new Vector<Gegenstand>();
 
-	    for(Gegenstand g: alle.toArray(new Gegenstand[0])){
-	    	if(inventory.containsGegenstand(g)) schnittmenge.add(g);
-	    }
+	    for(Gegenstand g : alle.toArray(new Gegenstand[0]))
+	    	if(inventar.containsGegenstand(g)) schnittmenge.add(g);
 	    schnittmenge = sort(schnittmenge);
-	    for(ItemChooser ic: edukte){
+	    for(ItemChooser ic : edukte) {
 	    	ic.reset();
 	    	ic.setEnabled(false);
 	    }
 	    edukte[0].setEnabled(true);
-	    for(Gegenstand g: schnittmenge.toArray(new Gegenstand[0])){
-	    	if(inventory.containsGegenstand(g)) edukte[0].addItem(g);
-	    }
+	    for(Gegenstand g : schnittmenge.toArray(new Gegenstand[0]))
+	    	if(inventar.containsGegenstand(g)) edukte[0].addItem(g);
 	    produktS.setValue(1);
 	}
 
@@ -231,12 +247,12 @@ public class KombinationsGUI extends JFrame implements ActionListener, ChangeLis
 	    else
 	    	produkt = Kombination.kombiniere(e1, e2);
 	    if(produkt != null) {
-	    	kombination = Kombination.getKombination(produkt);for(ItemChooser ic : edukte) {
+	    	kombination = Kombination.getKombination(produkt);
+	    	for(ItemChooser ic : edukte)
 	    		if(kombination.getStapel(ic.getSelectedItem()) != null)
 	    			ic.setValue(kombination.getStapel(ic.getSelectedItem()).getAnzahl());
-	    	}
-	    	if(!kombination.istEinrichtungVorhanden()) {
-	    		produktTF.setText("Benï¿½tigt " + kombination.getEinrichtung().getName());
+	    	if(!kombination.istEinrichtungVorhanden(SpielWelt.WELT.getAktuellePosition())) {
+	    		produktTF.setText("Benötigt " + kombination.getEinrichtung().getName());
 	    		kombination = null;
 	    		produktS.setEnabled(false);
 	    		herstellen.setEnabled(false);
@@ -253,7 +269,7 @@ public class KombinationsGUI extends JFrame implements ActionListener, ChangeLis
 	    	else
 	    		s3 = new Stapel(e3, kombination.getStapel(e3).getAnzahl() * value);
 
-	    	if(inventory.containsGegenstand(s1) && inventory.containsGegenstand(s2) && (inventory.containsGegenstand(s3) | s3 == null)) {
+	    	if(inventar.containsGegenstand(s1) && inventar.containsGegenstand(s2) && (inventar.containsGegenstand(s3) | s3 == null)) {
 	    		herstellen.setEnabled(true);
 	    		produktS.setEnabled(true);
 	    	}
@@ -267,16 +283,15 @@ public class KombinationsGUI extends JFrame implements ActionListener, ChangeLis
 
 	// Diese Methode laesst den Timer die uebergebene Zeit laufen.
 	private void stelleHer(long dauer) {
-		for(ItemChooser ic : edukte) {
+		for(ItemChooser ic : edukte)
 			ic.setEnabled(false);
-	    }
 	    long start = System.currentTimeMillis();
 	    long zeit = start;
 	    while(zeit < start + dauer) {
-	    	try{
+	    	try {
 	    		Thread.sleep(20);
-	    	}catch(InterruptedException e){
-	    		System.err.println("Das Programm konnte nicht warten!");
+	    	} catch(InterruptedException e) {
+	    		System.err.println("KombinationsGUI: Das Programm konnte nicht warten");
 	    	}
 	    	zeit = System.currentTimeMillis();
 	    	fortschritt.setValue((double)(zeit - start) / (double)dauer, getGraphics());
@@ -302,11 +317,7 @@ public class KombinationsGUI extends JFrame implements ActionListener, ChangeLis
 			this.value = value;
 			paint(g);
 		}
-
-		/*
-		 * (nicht-Javadoc)
-		 * @see java.awt.Canvas#paint(java.awt.Graphics)
-		 */
+		
 		public void paint(Graphics g) {
 			g.setColor(new Color(50, 250, 100));
 			g.fillRect(getX(), getY(), (int)Math.round(getWidth() * value), getHeight());

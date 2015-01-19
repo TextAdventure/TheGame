@@ -67,7 +67,7 @@ public class RessourcenPunkt implements Serializable {
 			if(aktuelleAnzahl > 0)
 				aktuelleAnzahl--;
 			
-			return drops[0].drop(SpielWelt.WELT.r, drops);
+			return Drop.drop(SpielWelt.WELT.r, drops);
 		}
 		return null;
 	}

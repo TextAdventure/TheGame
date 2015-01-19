@@ -2,6 +2,10 @@ Optionen
 ========
 
 -OptionsDialog.class hinzugefügt
+-Verbesserungen der Attribute, Resistenzen und deren Implementierung
+-Ressource.class hinzugefügt für Ressourcen, die Entities nutzen können
+-Drop.class vereinheitlicht, sodass er für alles verwendet werden kann
+-Kombinationen überarbeitet
 
 
 Ereignisse globalisieren

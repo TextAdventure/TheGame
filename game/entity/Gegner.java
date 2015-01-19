@@ -1,7 +1,5 @@
 package game.entity;
 
-import java.util.Vector;
-
 import game.SpielWelt;
 import game.items.Stapel;
 import util.Drop;
@@ -34,7 +32,7 @@ public class Gegner extends Entity {
 	public Gegner(String name, NumerusGenus numGen, String beschreibung, int xp, int... attributswerte) {
 		super(name, numGen, beschreibung, attributswerte);
 		
-		faehigkeitenG = new Vector<Drop<Faehigkeit>>();
+		faehigkeitenG = null;
 		
 	    this.xp = xp;
 	}
@@ -49,7 +47,7 @@ public class Gegner extends Entity {
 	    for(Drop<Faehigkeit> f : gegner.getFaehigkeitenAlsDrop())
 	    	this.addFaehigkeit(f.getObjekt(), f.getWahrscheinlichkeit());
 	    for(Drop<Stapel> d : gegner.loot)
-	    	this.loot.add(d);
+	    	this.addDrop(d.getWahrscheinlichkeit(), d.getObjekte());
 	}
 	  
 	/* --- Methoden --- */
@@ -67,10 +65,9 @@ public class Gegner extends Entity {
 	 * @param kommando Das Kommando, das der Spieler eingegeben hat(fuer den Gegner irrelevant).
 	 * @return Eine zufaellige Faehigkeit des Gegners.
 	 */
-	@SuppressWarnings("unchecked") // TODO
 	@Override
 	public Faehigkeit getFaehigkeit(String kommando) {
-		Faehigkeit[] f = faehigkeitenG.firstElement().drop(SpielWelt.WELT.r, faehigkeitenG.toArray(new Drop[0]));
+		Faehigkeit[] f = Drop.drop(SpielWelt.WELT.r, faehigkeitenG);
 		return f[0];
 	}
 	
