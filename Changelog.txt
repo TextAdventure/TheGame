@@ -4,8 +4,12 @@ Optionen
 -OptionsDialog.class hinzugefügt
 -Verbesserungen der Attribute, Resistenzen und deren Implementierung
 -Ressource.class hinzugefügt für Ressourcen, die Entities nutzen können
--Drop.class vereinheitlicht, sodass er für alles verwendet werden kann
+-Drop.class vereinheitlicht, sodass sie für alles verwendet werden kann
 -Kombinationen überarbeitet
+-KritischerTreffer.class hinzugefügt und implementiert, sodass er von Entities berücksichtigt wird
+-Fehler behoben, bei dem der Plural von Gegenständen falsch angezeigt wurde in der InventarAnzeige
+-KombinationsGUI.class aktualisiert, sie unterstützt jetzt eine größere Freiheit beim kombinieren von Gegenständen und die Möglichkeit von 1 Edukt Kombinationen
+-KombinationsGUI.class Aussehen wurde komplett überarbeitet
 
 
 Ereignisse globalisieren

@@ -46,7 +46,7 @@ public final class WeltenGenerator {
 		Schadensart physisch = new Schadensart("Physischer Schaden", staerke);
 		Schadensart feuerS = new Schadensart("Feuerschaden", staerke);
 		
-		new Resistenz("Physische Resistenz", "physicheResistenz", physisch, gewand);
+		new Resistenz("Physische Resistenz", "physischeResistenz", physisch, gewand);
 		new Resistenz("Feuerresistenz", "feuerResistenz", feuerS, resistenz);
 		
 		Faehigkeit schlagen = new Faehigkeit("Schlagen", NumerusGenus.NEUTRUM, "&0 wird von dir geschlagen und erleidet # Schaden.",
@@ -62,6 +62,9 @@ public final class WeltenGenerator {
 		Level ziel = new Level(250, 100, 82, 49, 31, 63);
 		
 		welt.getSpieler().setLevels(Level.createLinearLevels(10, start, ziel));
+		
+		welt.getSpieler().kritisch.addKritChance(50, 100);
+		welt.getSpieler().kritisch.addKritMultiplikator(100, 50);
 		
 		welt.getSpieler().addFaehigkeit(schlagen);
 		welt.getSpieler().addFaehigkeit(feuerstoss);
@@ -79,8 +82,9 @@ public final class WeltenGenerator {
 		schleimRing.addResistenz(feuerS, 5);
 		Ruestung drachenHelm = new Ruestung(new String[] { "<c=brennend>Drachenhelm</c>" }, "<c=brennend>Drachenhelme</c>", NumerusGenus.MASKULIN,
 				"Dieser Helm wurde aus Drachenschuppen gefertigt und reduziert physischen Schaden um <p=physischeResistenz>%!", Ruestung.HELM, 0, 12, 0, 18, 3);
+		drachenHelm.addResistenz(physisch, 99);
 		
-		new Kombination(1000, new Stapel(hallo, 1), new Stapel(hallo, 1), new Stapel(drachenHelm, 1));
+		new Kombination(1000, new Stapel(hallo, 2), new Stapel(drachenHelm, 1));
 		
 		
 		Gegner schleim = new Gegner("Schleim", NumerusGenus.MASKULIN, "Ein munterer kleiner Schleim.", 5, 12, 11, 2, 7, 4);
@@ -101,7 +105,7 @@ public final class WeltenGenerator {
 		
 		Ort ort1 = new Ort("<c=heiﬂ>Ort 1</c>", "Das ist ein <c=heiﬂ>heiﬂer</c> Ort.");
 		ort1.addGegenstand(hallo, 2);
-		ort1.addGegenstand(flammenwerfer, 1);
+		ort1.addGegenstand(flammenwerfer, 2);
 		Ort ort2 = new Ort("Ort 2", "Das ist der 2. Ort.");
 		Ort ort3 = new Ort("Der Ort", "Ein ganz besonderer Ort. Hier ist eine <c=brennend>Hitze</c>").setWahrscheinlichkeitFuerKampf(90.0);
 		UntersuchbaresObjekt obj = new UntersuchbaresObjekt("<c=heiﬂ>Hitze</c>", "Sie ist <c=heiﬂ>heiﬂ</c>.");

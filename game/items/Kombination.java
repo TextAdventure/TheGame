@@ -25,7 +25,7 @@ public class Kombination implements Serializable {
 	// Liste aller Kombinationen.
 	private static ArrayList<Vector<Kombination>> alleKombinationen = new ArrayList<Vector<Kombination>>(3);
 	
-	static{
+	static {
 		alleKombinationen.add(new Vector<Kombination>());            // 1 Edukt Kombinationen
 	    alleKombinationen.add(new Vector<Kombination>());            // 2 Edukt Kombinationen
 	    alleKombinationen.add(new Vector<Kombination>());            // 3 Edukt Kombinationen
@@ -42,7 +42,7 @@ public class Kombination implements Serializable {
 		zutaten = gegenstaende;
 	    this.dauer = dauer;
 	    // es wird automatisch aufgrund der Laenge die Kombination dem richtigen Vector zugeordnet.
-	    Kombination.addKombination(this, zutaten.length - 1);
+	    alleKombinationen.get(zutaten.length - 2).add(this);
 	}
 	
 	/* --- Methoden --- */
@@ -102,11 +102,11 @@ public class Kombination implements Serializable {
 	 * Gibt ein Array mit allen Edukten zurueck.
 	 * @return Ein Array, das alle Edukte dieser Kombination enthaelt.
 	 */
-	private Gegenstand[] getAlleEdukte() {
-		Gegenstand[] g = new Gegenstand[zutaten.length - 1];
+	public Stapel[] getAlleEdukte() {
+		Stapel[] s = new Stapel[zutaten.length - 1];
 	    for(int i = zutaten.length - 2; i >= 0; i--)
-	    	g[i] = zutaten[i].getGegenstand();
-	    return g;
+	    	s[i] = zutaten[i];
+	    return s;
 	}
 	
 	/**
@@ -130,15 +130,6 @@ public class Kombination implements Serializable {
 	}
 	
 	/* --- statische Methoden --- */
-	
-	/**
-	 * Fuegt der List der Kombinationen eine neue hinzu, mit einer bestimmten anzahl an Edukten.
-	 * @param kombination Die Kombination, die hinzugefuegt werden soll.
-	 * @param edukte Die Anzahl der Edukte der Kombination.
-	 */
-	private static void addKombination(Kombination kombination, int edukte) {
-		alleKombinationen.get(edukte - 1).add(kombination);
-	}
 	
 	/**
 	 * Gibt die Liste mit allen Kombinationen, wird benoetigt, um diese zu speichern und zu laden.
@@ -179,22 +170,32 @@ public class Kombination implements Serializable {
 	}
 
 	/**
-	 * Ueberprueft, ob es sich um eine gueltige Kombination handelt und gibt das Ergebnis zurueck.
+	 * Ueberprueft, ob es sich um eine gueltige Kombination handelt und gibt diese Kombination dann zurueck.
+	 * @param edukt1 Das erste Edukt.
+	 * @return Die Kombination, falls es diese gibt, ansonsten null.
+	 */
+	public static Kombination kombiniere(Stapel edukt1) {
+		for(Kombination k : getAlleKombinationen(1))
+			for(Stapel s : k.getAlleEdukte())
+				if(s.equals(edukt1))
+					return k;
+		return null;
+	}
+	
+	/**
+	 * Ueberprueft, ob es sich um eine gueltige Kombination handelt und gibt diese Kombination dann zurueck.
 	 * @param edukt1 Das erste Edukt.
 	 * @param edukt2 Das zweite Edukt.
-	 * @return Das Produkt der Kombination, falls es diese gibt, ansonsten null.
+	 * @return Die Kombination, falls es diese gibt, ansonsten null.
 	 */
-	public static Gegenstand kombiniere(Gegenstand edukt1, Gegenstand edukt2) {
+	public static Kombination kombiniere(Stapel edukt1, Stapel edukt2) {
 	    boolean erstes;
 	    for(Kombination k : getAlleKombinationen(2)) {
 	    	erstes = false;
-	    	/*if((edukt1.equals(k.getEdukt(1).getGegenstand()) & edukt2.equals(k.getEdukt(2).getGegenstand())) |
-	    			(edukt1.equals(k.getEdukt(2).getGegenstand()) & edukt2.equals(k.getEdukt(1).getGegenstand())))
-	    		return k.getProdukt().getGegenstand();*/
-	    	for(Gegenstand g : k.getAlleEdukte()) {
-	    		if((g.equals(edukt1) || g.equals(edukt2)) && erstes)
-	    			return k.getProdukt().getGegenstand();
-	    		if(g.equals(edukt1) || g.equals(edukt2))
+	    	for(Stapel s : k.getAlleEdukte()) {
+	    		if((s.equals(edukt1) || s.equals(edukt2)) && erstes)
+	    			return k;
+	    		if(s.equals(edukt1) || s.equals(edukt2))
 	    			erstes = true;
 	    	}
 	    }
@@ -202,31 +203,29 @@ public class Kombination implements Serializable {
 	}
 	
 	/**
-	 * Ueberprueft, ob es sich um eine gueltige Kombination handelt und gibt das Ergebnis zurueck.
+	 * Ueberprueft, ob es sich um eine gueltige Kombination handelt und gibt diese Kombination dann zurueck.
 	 * @param edukt1 Das erste Edukt.
 	 * @param edukt2 Das zweite Edukt.
 	 * @param edukt3 Das dritte Edukt.
-	 * @return Das Produkt der Kombination, falls es duese gibt, ansonsten null.
+	 * @return Die Kombination, falls es diese gibt, ansonsten null.
 	 */
-	public static Gegenstand kombiniere(Gegenstand edukt1, Gegenstand edukt2, Gegenstand edukt3) {
+	public static Kombination kombiniere(Stapel edukt1, Stapel edukt2, Stapel edukt3) {
 	    boolean erstes, zweites;
 	    for(Kombination k : getAlleKombinationen(3)) {
 	    	erstes = false;
 	    	zweites = false;
-	    	for(Gegenstand g : k.getAlleEdukte()) {
-	    		if((g.equals(edukt1) || g.equals(edukt2) || g.equals(edukt3)) && erstes && zweites)
-	    			return k.getProdukt().getGegenstand();
-	    		if((g.equals(edukt1) || g.equals(edukt2) || g.equals(edukt3)) && erstes)
+	    	for(Stapel s : k.getAlleEdukte()) {
+	    		if((s.equals(edukt1) || s.equals(edukt2) || s.equals(edukt3)) && erstes && zweites)
+	    			return k;
+	    		if((s.equals(edukt1) || s.equals(edukt2) || s.equals(edukt3)) && erstes)
 	    			zweites = true;
-	    		if(g.equals(edukt1) || g.equals(edukt2) ||g.equals(edukt3))
+	    		if(s.equals(edukt1) || s.equals(edukt2) ||s.equals(edukt3))
 	    			erstes = true;
 	    	}
 	    }
 	    return null;
 	}
-	  
-	// Diese Methode gibt einen Vector zurueck, der alle Gegenstaende beinhaltet, die mit diesem Gegenstand kombinierbar sind.
-	// Wenn null uebergeben wird, dann werden alle Gegenstaende zurueckgegeben.
+	
 	/**
 	 * Gibt eine Liste mit allen Gegenstaenden zurueck, die mit diesem Gegenstand kombinierbar sind.
 	 * Falls null uebergeben wird, dann werden alle Gegenstaende zurueckgegeben, die bei Kombinationen verwendet werden.
@@ -238,16 +237,17 @@ public class Kombination implements Serializable {
 	    if(gegenstand == null) {
 	    	for(int i = 1; i < 4; i++) {
 	    		for(Kombination k : getAlleKombinationen(i))
-	    			for(Gegenstand g : k.getAlleEdukte())
-	    				liste.add(g);
+	    			for(Stapel s : k.getAlleEdukte())
+	    				if(!liste.contains(s.getGegenstand()))
+	    					liste.add(s.getGegenstand());
 	    	}
 	    	return liste;
 	    }
-	    for(int i = 1; i < 4; i++){
+	    for(int i = 1; i < 4; i++) {
 	    	for(Kombination k : getAlleKombinationen(i))
-	    		for(Gegenstand g : k.getAlleEdukte())
-	    			if(k.istEdukt(gegenstand) && !liste.contains(g))
-		    			liste.add(g);
+	    		for(Stapel s : k.getAlleEdukte())
+	    			if(k.istEdukt(gegenstand) && !liste.contains(s.getGegenstand()) && !s.getGegenstand().equals(gegenstand))
+		    			liste.add(s.getGegenstand());
 	    }
 	    return liste;
 	}

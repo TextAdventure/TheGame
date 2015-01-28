@@ -23,7 +23,7 @@ public class Inventar implements Serializable {
 	private Geldbeutel geldbeutel;
 	  
 	// Alle Listener fuer dieses Inventar.
-	transient private Vector<Object> listeners;
+	private transient Vector<Object> listeners;
 
 	/* --- Der Konstruktor --- */
 	
@@ -35,7 +35,9 @@ public class Inventar implements Serializable {
 	    geldbeutel = new Geldbeutel();
 	    listeners = new Vector<Object>();
 	}
-	  
+	
+	/* --- Methoden --- */
+	
 	/**
 	 * Fuegt einen neuen Gegenstand dem Inventar hinzu.
 	 * @parma gegenstand Der neue Gegenstand fuer das Inventar.
@@ -61,7 +63,7 @@ public class Inventar implements Serializable {
 	    gegenstaende.add(new Stapel(gegenstand, anzahl));
 	    notifyListeners(gegenstand.getName());
 	}
-	  
+	
 	/**
 	 * Fuegt einen Stapel dem Inventar hinzu.
 	 * @param stapel Der neue Stapel fuer Inventar.
@@ -69,7 +71,7 @@ public class Inventar implements Serializable {
 	public void addGegenstand(Stapel stapel) {
 		addGegenstand(stapel.getGegenstand(), stapel.getAnzahl());
 	}
-	  
+	
 	/**
 	 * Entfernt einen Gegenstand aus dem Inventar.
 	 * @param gegenstand Der zu entfernende Gegenstand.
@@ -79,16 +81,13 @@ public class Inventar implements Serializable {
 	    //clearNull(); TODO
 	    if(gegenstand == null) 
 	    	return;
-	    for(Stapel s: gegenstaende.toArray(new Stapel[0])) {
-	    	if(s.getGegenstand() == gegenstand) {
-	    		if(!s.removeAnzahl(anzahl)) {
+	    for(Stapel s: gegenstaende.toArray(new Stapel[0]))
+	    	if(s.getGegenstand().equals(gegenstand))
+	    		if(!s.removeAnzahl(anzahl))
 	    			gegenstaende.remove(s);
-	    		}
-	    	}
-	    }
 	    notifyListeners();
 	}
-	  
+	
 	/**
 	 * Entfernt einen Gegenstand aus dem Inventar basierend auf einem Stapel.
 	 * @param stapel Der zu entfernende Stapel.
@@ -98,23 +97,23 @@ public class Inventar implements Serializable {
 			return;
 	    removeGegenstand(stapel.getGegenstand(), stapel.getAnzahl());
 	}
-	  
+	
 	/**
 	 * Entfernt alle vorhandenen Gegenstaende eines bestimmten Gegenstands aus dem Inventar.
 	 * @param gegenstand Der zu entfernende Gegenstand.
 	 */
 	public void removeAlleGegenstand(Gegenstand gegenstand) {
-	    clearNull();
+		//clearNull(); TODO
 	    if(gegenstand == null) 
 	    	return;
 	    for(Stapel s: gegenstaende.toArray(new Stapel[0])) {
-	    	if(s.getGegenstand() == gegenstand) {
+	    	if(s.getGegenstand().equals(gegenstand)) {
 	    		gegenstaende.remove(s);
 	    	}	
 	    }
 	    notifyListeners();
 	}
-	  
+	
 	/**
 	 * Ueberprueft, ob sich der angegebene Gegenstand im Inventar befindet.
 	 * @param gegenstand Der Gegenstand, auf den ueberprueft werden soll.
@@ -123,55 +122,36 @@ public class Inventar implements Serializable {
 	public boolean containsGegenstand(Gegenstand gegenstand) {
 	    return containsGegenstand(new Stapel(gegenstand, 1));
 	}
-	  
-	/**
-	 * Ueberprueft, ob sich der angegeben Gegenstand im Inventar befindet und ob es auch mehr als die uebergebene Anzahl sind.
-	 * @param gegenstand Der Gegenstand, auf den ueberprueft werden soll.
-	 * @param anzahl Die Mindestanzahl des Gegenstands im Inventar.
-	 * @return Gibt zurueck, ob sich der Gegenstand im Inventar befindet in einer gewissen Anzahl.
-	 *
-	public boolean containsGegenstand(Gegenstand gegenstand, int anzahl) {
-	    clearNull();
-	    if(gegenstand == null) 
-	    	return false;
-	    for(Stapel s: gegenstaende)
-	    	if(s.getGegenstand() == gegenstand && s.getAnzahl() >= anzahl) 
-	    		return true;
-	    for(Stapel s : geldbeutel.getAlleStapel())
-	    	if(s.getGegenstand() == gegenstand && geldbeutel.getMenge((Waehrung) s.getGegenstand()) >= anzahl)
-	    		return true;
-	    return false;
-	}
-	  
+	
 	/**
 	 * Ueberprueft, ob sich der angegeben Gegenstand im Inventar befindet und ob es auch mehr als die uebergebene Anzahl sind.
 	 * @param stapel dDer Stapel des Gegenstands.
 	 * @return Gibt zurueck, ob sich der Gegenstand im Inventar befindet in einer gewissen Anzahl.
 	 */
 	public boolean containsGegenstand(Stapel stapel) {
-		clearNull();
+		//clearNull(); TODO
 	    if(stapel == null || stapel.getGegenstand() == null) 
 	    	return false;
-	    for(Stapel s: gegenstaende)
-	    	if(s.getGegenstand() == stapel.getGegenstand() && s.getAnzahl() >= stapel.getAnzahl()) 
+	    for(Stapel s : gegenstaende)
+	    	if(s.getGegenstand().equals(stapel.getGegenstand()) && s.getAnzahl() >= stapel.getAnzahl()) 
 	    		return true;
 	    for(Stapel s : geldbeutel.getAlleStapel())
-	    	if(s.getGegenstand() == stapel.getGegenstand() && geldbeutel.getMenge((Waehrung) s.getGegenstand()) >= stapel.getAnzahl())
+	    	if(s.getGegenstand().equals(stapel.getGegenstand()) && geldbeutel.getMenge((Waehrung) s.getGegenstand()) >= stapel.getAnzahl())
 	    		return true;
 	    return false;
 	}
-	  
+	
 	/**
 	 * Gibt zurueck, ob das Inventar leer ist.
-	 * @return  Gibt true zurueck, falls das Inventar leer ist.
+	 * @return True, falls das Inventar leer ist, ansonsten false.
 	 */
 	public boolean istLeer() {
-		if(gegenstaende.size() == 0 && geldbeutel.istLeer())
+		if(gegenstaende.isEmpty() && geldbeutel.istLeer())
 	    	return true;
 	    else
 	    	return false;	    
 	}
-	  
+	
 	/**
 	 * Gibt ein Array mit allen Gegenstaenden zurueck.
 	 * @return Alle Gegenstaende die sich im Inventar befinden.
@@ -190,6 +170,7 @@ public class Inventar implements Serializable {
 	public Stapel[] getStapel() {
 		return gegenstaende.toArray(new Stapel[0]);
 	}
+	
 	/**
 	 * Gibt ein Array mit allen Stapeln zurueck inklusive der Waehrungen.
 	 * @return Alle Gegenstaende als Stapel im Inventar.
@@ -202,7 +183,7 @@ public class Inventar implements Serializable {
 			s.add(stapel);
 		return s.toArray(new Stapel[0]);
 	}
-
+	
 	/**
 	 * Gibt den Stapel entsprechend fuer einen Gegenstand zurueck.
 	 * @param gegenstand Der Gegenstand des gesuchten Stapels.
@@ -215,45 +196,12 @@ public class Inventar implements Serializable {
 	    }
 	    return null;
 	}
-	  
+	
 	/**
 	 * Sortiert die Gegenstaende im Inventar alphabetisch.
 	 */
 	public void sortiere() {
-		Vector<String> v = new Vector<String>();
-	    for(Gegenstand g: getAlleGegenstaende()) {
-	    	v.add(g.getName());
-	    }
-	    Collections.sort(v);
-	    Vector<Stapel> g = new Vector<Stapel>();
-	    for(String s: v.toArray(new String[0])) {
-	    	Gegenstand ge = Gegenstand.getGegenstand(s);
-	    	if(containsGegenstand(ge)) 
-	    		g.add(new Stapel(ge, getStapel(ge).getAnzahl()));
-	    }
-	    gegenstaende = g;
-	}
-	  
-	/**
-	 * Gibt eine Kopie des Inventars zurueck.
-	 * @return Eine Kopie des Inventars. 
-	 */
-	public Inventar clone() {
-	    Inventar i = new Inventar();
-	    for(Stapel s: this.getAlleStapel()) {
-	    	i.addGegenstand(s);
-	    }
-	    return i;
-	}
-	  
-	/**
-	 * Entfernt alle null-Gegenstaende im Inventar.
-	 */
-	private void clearNull() {
-	    for(Gegenstand g : this.getAlleGegenstaende()) {
-	    	if(g == null) 
-	    		gegenstaende.remove(g);
-	    }
+		Collections.sort(gegenstaende);
 	}
 	
 	/**
@@ -262,10 +210,8 @@ public class Inventar implements Serializable {
 	 */
 	public Geldbeutel getGeldbeutel() {
 		return geldbeutel;
-	}
+	}	
 	
-	
-	  
 	/**
 	 * Fuegt dem Ineventar einen neuen Listener hinzu.
 	 * @param listener Der neue Listener, der hinzugefuegt werden soll.
@@ -280,7 +226,7 @@ public class Inventar implements Serializable {
 			notifyListeners();
 	    }
 	}
-	  
+	
 	/**
 	 * Updated alle StringListener und InventoryListener dieses Inventars.
 	 * @param gegenstandName Die Namen der neuen Gegenstaende.
@@ -302,4 +248,14 @@ public class Inventar implements Serializable {
 	    }
 	}
 	
+	/**
+	 * Entfernt alle null-Gegenstaende im Inventar.
+	 *
+	private void clearNull() {
+	    for(Gegenstand g : gegenstaende.toArray(new Gegenstand[0])) {
+	    	if(g == null) 
+	    		gegenstaende.remove(g);
+	    }
+	}*/
+
 }

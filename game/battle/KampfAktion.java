@@ -105,7 +105,7 @@ public class KampfAktion implements Comparable<KampfAktion> {
 	}
 	
 	/**
-	 * Fuehrt die Aktion aus.
+	 * Fuehrt die Kampfaktion aus.
 	 */
 	public void fuehreAktionAus() {
 		if(faehigkeit == null && gegenstand != null) {
@@ -116,6 +116,8 @@ public class KampfAktion implements Comparable<KampfAktion> {
 		if(faehigkeit != null) {
 			int angriff = (int) (faehigkeit.getBonus(angreifer) * (SpielWelt.WELT.r.nextInt(31) + 85) / 100.0);
 			angriff = angreifer.getSchadensBonus(faehigkeit.getSchadensart(), angriff);
+			// Hier kann der Schaden kritisch werden.
+			angriff = angreifer.kritisch.kritischerTreffer(angriff, SpielWelt.WELT.r);
 			// Der Schaden ist auf 99.999 begrenzt, aber ist gleichzeitig immer groesser als 0.
 			int schaden = Math.min(Math.max(ziel.fuegeSchadenZu(angriff, faehigkeit.getSchadensart()), 0), 99999);
 			// Ausgabe

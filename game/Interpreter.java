@@ -146,6 +146,9 @@ public class Interpreter {
 	    	if(kommando == Kommando.WEGWERFEN)
 	    		welt.werfeWeg(eingabe);
 	    	
+	    	if(kommando == Kommando.OPTIONEN)
+	    		gui.zeigeOptionenAn();
+	    	
 	    	welt.println();
 	    	gueltigesKommando = true;
 	    }

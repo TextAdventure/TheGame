@@ -35,6 +35,8 @@ public abstract class Entity implements Serializable {
 	protected EntityResistenz resistenzen;
 	// Alle Schadensmultiplikatoren des Entities.
 	protected EntityDamageAmplifier[] schadensMultiplikatoren;
+	// Die kritische Treffer wahrscheinlichkeit des Entities.
+	public KritischerTreffer kritisch;
 	
 	// Alle Faehigkeiten des Lebewesens.
 	protected Vector<Faehigkeit> faehigkeiten;
@@ -73,6 +75,7 @@ public abstract class Entity implements Serializable {
 		for(int i = 0; i < Schadensart.getMaxId(); i++)
 			schadensMultiplikatoren[i] = new EntityDamageAmplifier(Schadensart.SCHADEN[i], 0.0f, 0);
 		resetTemp();
+		this.kritisch = new KritischerTreffer(0, 0);		
 		
 		faehigkeiten = new Vector<Faehigkeit>();
 	}
@@ -95,6 +98,7 @@ public abstract class Entity implements Serializable {
 		for(int i = 0; i < Schadensart.getMaxId(); i++)
 			schadensMultiplikatoren[i] = new EntityDamageAmplifier(Schadensart.SCHADEN[i], 0.0f, 0);
 		resetTemp();
+		this.kritisch = new KritischerTreffer(0, 0);	
 		
 		faehigkeiten = new Vector<Faehigkeit>();
 	}

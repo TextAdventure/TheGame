@@ -32,7 +32,7 @@ public abstract class AusruestbarerGegenstand extends Gegenstand {
 	 * darf auch nicht verwendet werden, da diese Klasse abstract ist.
 	 */
 	protected AusruestbarerGegenstand(String[] namenGegenstand, String plural, NumerusGenus numerusGenus, String beschreibung) {
-		super(namenGegenstand, beschreibung, numerusGenus, beschreibung);
+		super(namenGegenstand, plural, numerusGenus, beschreibung);
 		
 		attribute = new EntityAttribut(new int[0]);
 	    resistenzen = new EntityResistenz(new int[0]);

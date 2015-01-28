@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  *  Diese Klasse ist ein Stapel von Gegenstaenden, jeder hat eine bestimmte maximale Groesse.
  */
-public class Stapel implements Serializable {
+public class Stapel implements Comparable<Stapel>, Serializable {
 
 	// Die serielle Versionsnummer
 	private static final long serialVersionUID = 1L;
@@ -85,4 +85,39 @@ public class Stapel implements Serializable {
 	public void addStapel(Stapel stapel) {
 		this.anzahl += stapel.getAnzahl();
 	}
+	
+	/**
+	 * Testet, ob zwei Stapel gleich sind, das bedeutet, dass der Gegenstand und die Anzahl gleich sein muessen.
+	 * @param stapel Der Stapel, der getestet werden soll.
+	 * @return True, wenn der Gegenstand und die Anzahl gleich sind oder wenn die super Methode true zurueck gibt, ansonsten false.
+	 */
+	@Override
+	public boolean equals(Object stapel) {
+		if(super.equals(stapel))
+			return true;
+		else if(stapel instanceof Stapel) {
+			Stapel s = (Stapel) stapel;
+			if(s.getGegenstand() == null)
+				return false;
+			return (s.getGegenstand().equals(this.getGegenstand()) && s.getAnzahl() == this.getAnzahl());
+		} else
+			return false;
+	}
+	
+	/**
+	 * Vergleicht diesen Stapel mit einem anderen und gibt eien Zahl zurueck basierened darauf,
+	 * ob der andere Stapel kleiner(-1), gleich(0) oder groesser(1) ist als dieser. Es wird
+	 * dabei lediglich der Name der Gegenstaende beachtet.
+	 * @param stapel Der Stapel mit dem dieser hier verglichen wird.
+	 * @return -1, wenn der andere Stapel kleiner ist als dieser. 0, wenn Beide gleich sind und
+	 * 1, wenn der andere Stapel groesser ist als dieser.
+	 */
+	@Override
+	public int compareTo(Stapel stapel) {
+		if(this.equals(stapel))
+			return 0;
+		else
+			return this.getGegenstand().getNameExtended().compareTo(stapel.getGegenstand().getNameExtended());
+	}
+
 }

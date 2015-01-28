@@ -234,6 +234,13 @@ public class Kommando implements Serializable {
 	    	beginnt = false;
 	    }
 	    
+	    for(String s : OPTIONEN.getPraefixe()) {
+	    	if(befehl.toLowerCase().startsWith(s)) {
+	    		// man braucht das Kommando sowieso nicht
+	    		return OPTIONEN;
+	    	}
+	    }
+	    
 	    return INVALID;
 	}
 	
@@ -263,5 +270,8 @@ public class Kommando implements Serializable {
 	public static final Kommando OEFFNEN = new Kommando(new String[]{"öffne", "plündere", "leere"}, new String[]{"", "", ""});
 	// Der Wert fuer das Wegwerfen Kommando.
 	public static final Kommando WEGWERFEN = new Kommando(new String[]{"wirf", "lass", "lass"}, new String[]{"weg", "fallen", "liegen"});
+	
+	// Der Wert fuer das Optionen Kommando.
+	public static final Kommando OPTIONEN = new Kommando(new String[]{"optionen"}, new String[]{""});
 
 }

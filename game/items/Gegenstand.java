@@ -9,7 +9,7 @@ import util.NumerusGenus;
 /**
  * Ein Gegenstand mit ein paar grundlegenden Eigenschaften.
  */
-public class Gegenstand implements Serializable, IPrintable {
+public class Gegenstand implements Comparable<Gegenstand>, Serializable, IPrintable {
 
 	// Die serielle Versionsnummer.
 	private static final long serialVersionUID = 1L;
@@ -209,7 +209,32 @@ public class Gegenstand implements Serializable, IPrintable {
 				return true;
 		return false;
 	}
+	
+	/**
+	 * Die toString()-Methode eines Gegenstands liefert dessen Namen als String.
+	 * @return Der Name dieses Gegenstands.
+	 */
+	@Override
+	public String toString() {
+		return getName();
+	}
 
+	/**
+	 * Vergleicht diesen Gegenstand mit einem anderen und gibt eien Zahl zurueck basierened darauf,
+	 * ob der andere Gegenstand kleiner(-1), gleich(0) oder groesser(1) ist als dieser. Es wird
+	 * dabei lediglich der Name der Gegenstaende beachtet.
+	 * @param gegenstand Der Gegenstand mit dem dieser hier verglichen wird.
+	 * @return -1, wenn der andere Gegenstand kleiner ist als dieser. 0, wenn Beide gleich sind und
+	 * 1, wenn der andere Gegenstand groesser ist als dieser.
+	 */
+	@Override
+	public int compareTo(Gegenstand gegenstand) {
+		if(this.equals(gegenstand))
+			return 0;
+		else
+			return this.getNameExtended().compareTo(gegenstand.getNameExtended());
+	}
+	
 	/* --- statische Methoden --- */
 	
 	/**
@@ -230,7 +255,7 @@ public class Gegenstand implements Serializable, IPrintable {
 	 * @return Der gesuchte Gegenstand, null falls es keinen solchen Gegenstand gibt.
 	 */
 	public static Gegenstand getGegenstand(short id) {
-		if(GEGENSTAENDE.length < id)
+		if(GEGENSTAENDE.length < id || id < 0)
 			return null;
 		return GEGENSTAENDE[id];
 	}
@@ -250,14 +275,5 @@ public class Gegenstand implements Serializable, IPrintable {
 	public static void setAlleGegenstaende(Gegenstand[] gegenstaende) {
 		GEGENSTAENDE = gegenstaende;
 	}
-	
-	/**
-	 * Die toString()-Methode eines Gegenstands liefert dessen Namen als String.
-	 * @return Der Name dieses Gegenstands.
-	 */
-	@Override
-	public String toString() {
-		return getName();
-	}
-	
+
 }

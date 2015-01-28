@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -195,9 +196,10 @@ public class GUI extends JFrame implements CaretListener {
 	    return eingabe;
 	}
 
-	/** @override               MOMENTAN NICHT SO WICHTIG
+	/**           MOMENTAN NICHT SO WICHTIG
 	 *  Die paint() wird ueberschrieben, sodass zuerst der Hintergrund gezeichnet werden kann.
 	 *
+	@Override
 	public void paint(Graphics g) {
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = (Graphics2D)img.getGraphics();
@@ -212,9 +214,19 @@ public class GUI extends JFrame implements CaretListener {
 	 *  Diese Methode startet die KombinationsGUI.
 	 */
 	public void kombinationsGUIStarten() {
-	    kombination.setInventory(SpielWelt.WELT.getSpieler().getInventar());
+	    kombination.setInventar(SpielWelt.WELT.getSpieler().getInventar());
 	}
-
+	
+	
+	public void zeigeOptionenAn() {
+		OptionsDialog dialog = new OptionsDialog();
+	    int result = dialog.zeigeDialog(this);
+	    if (result == OptionsDialog.OK) {
+	    	Font font = dialog.getAusgewaehltenFont(); 
+	    	System.out.println("Ausgewaehlter Font : " + font); //TODO spaeter wieder entfernen
+	    }
+	}
+	
 	@Override
 	public void caretUpdate(CaretEvent evt) {
 		text = ((JEditorPane)evt.getSource()).getSelectedText();
@@ -225,13 +237,12 @@ public class GUI extends JFrame implements CaretListener {
 	}
 
 
-	// MAIN METHODE TODO
+	// MAIN METHODE
 	/**
 	 * Eine neue GUI wird gestartet mit dem Spiel.
 	 */
 	public static void main(String[] args) {
 		new GUI();
 	}
-
 
 }
